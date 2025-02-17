@@ -4,7 +4,7 @@
       <!--Sidebar button-->
       <a
         href="javascript:void(0)"
-        class="flex h-12 w-12 cursor-pointer items-center justify-center rounded-md border border-solid border-gray-200 bg-white text-center align-middle text-base font-medium leading-normal text-stone-500 shadow-none transition-colors duration-150 ease-in-out"
+        class="flex h-12 w-12 cursor-pointer items-center justify-center rounded-md border border-solid border-gray-200 bg-white text-center align-middle text-base font-medium leading-normal text-stone-500 shadow-none transition-colors duration-150 ease-in-out dark:border-neutral-700 dark:bg-neutral-900"
         @click="toggleSideMenu()">
         <svg
           xmlns="http://www.w3.org/2000/svg"
