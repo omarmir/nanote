@@ -2,7 +2,8 @@ export type Notebook = {
   name: string
   createdAt: string
   updatedAt: string | null
-  fileCount: number
+  noteCount: number
+  notebookCount: number
   notebooks: string[]
 }
 
@@ -12,6 +13,11 @@ export type Note = {
   updatedAt: string | null
   notebook: string[]
   size?: number
+}
+
+export type NotebookContents = {
+  notes: Note[]
+  notebooks: Notebook[]
 }
 
 export type NoteResponse = {
