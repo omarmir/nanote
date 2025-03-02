@@ -47,12 +47,9 @@
                 <div class="mb-2.5 h-2 w-2/5 rounded-full bg-gray-200 dark:bg-gray-700"></div>
               </td>
             </tr>
-            <tr
-              v-for="notebook in notebookStore.notebooks"
-              :key="notebook.name"
-              class="border-b border-neutral-200 last:border-b-0 dark:border-neutral-700">
+            <tr v-for="notebook in notebookStore.notebook" :key="notebook">
               <td class="flex flex-col">
-                <NotebookRenameNotebook :notebook="notebook.name" @toggle="toggleNotes"></NotebookRenameNotebook>
+                <NotebookRenameNotebook :notebook="notebook" @toggle="toggleNotes"></NotebookRenameNotebook>
                 <NoteNotebookNotes
                   v-if="notebook.name === openNotebookNotes?.notebook"
                   class="ml-8"
@@ -89,34 +86,10 @@
   </CommonBaseCard>
 </template>
 <script lang="ts" setup>
-import type { Note } from '~/types/notebook'
-
 const store = useNoteStore()
 const notebookStore = useNotebookStore()
 
 const error: Ref<string | null> = ref(null)
-const openError: Ref<{ notebook: string; error: string } | null> = ref(null)
-const openNotebookNotes: Ref<{ notebook: string; notes: Note[] } | null> = ref(null)
 
 const notebookAddedError = (addError: string) => (error.value = addError)
-
-const toggleNotes = async (notebook: string) => {
-  if (openNotebookNotes.value?.notebook === notebook) {
-    openNotebookNotes.value = null
-    return
-  }
-  const resp = await store.getNotebookNotes(notebook)
-
-  if (resp.success) {
-    openNotebookNotes.value = { notebook, notes: resp.data }
-  } else {
-    openError.value = { notebook, error: resp.message }
-  }
-}
-
-const addedNote = (newNote: Note) => {
-  if (openNotebookNotes.value?.notebook === newNote.notebook) {
-    openNotebookNotes.value?.notes.push(newNote)
-  }
-}
 </script>
