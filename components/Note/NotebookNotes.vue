@@ -1,5 +1,6 @@
 <template>
   <div>
+    notes: {{ notes }}
     <NoteNewNote class="mb-4" :notebook @added="(note: Note) => emit('added', note)"></NoteNewNote>
     <ul v-if="notes">
       <li v-for="note in notes" :key="note.name" class="mb-4">

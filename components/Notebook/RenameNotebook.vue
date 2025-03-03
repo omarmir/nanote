@@ -14,7 +14,7 @@
       </button>
       <button
         class="flex flex-row items-center gap-2 hover:text-gray-500 dark:hover:text-gray-100"
-        @click="emit('toggle', notebook)">
+        @click="emit('toggle')">
         <svg xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0" viewBox="0 0 1024 1024">
           <path
             fill="currentColor"
@@ -56,9 +56,7 @@ const store = useNotebookStore()
 
 const { notebook } = defineProps<{ notebook: string }>()
 
-const emit = defineEmits<{
-  (e: 'toggle', payload: string): void
-}>()
+const emit = defineEmits(['toggle'])
 
 const newNotebookName = ref(notebook)
 const isRenaming = ref(false)

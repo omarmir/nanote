@@ -16,6 +16,7 @@ export type Note = {
 }
 
 export type NotebookContents = {
+  path: string
   notes: Note[]
   notebooks: Notebook[]
 }

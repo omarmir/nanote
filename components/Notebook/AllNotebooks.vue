@@ -47,16 +47,17 @@
                 <div class="mb-2.5 h-2 w-2/5 rounded-full bg-gray-200 dark:bg-gray-700"></div>
               </td>
             </tr>
-            <tr v-for="notebook in notebookStore.notebook" :key="notebook">
+            <tr v-for="notebook in notebookStore.notebook?.notebooks" :key="notebook.name">
               <td class="flex flex-col">
-                <NotebookRenameNotebook :notebook="notebook" @toggle="toggleNotes"></NotebookRenameNotebook>
+                <NotebookRenameNotebook
+                  :notebook="notebook.name"
+                  @toggle="toggleNotes(notebook)"></NotebookRenameNotebook>
                 <NoteNotebookNotes
-                  v-if="notebook.name === openNotebookNotes?.notebook"
+                  v-if="openNotebook?.notebooks[0].notebooks[0] === notebook.name"
                   class="ml-8"
                   :on-background="true"
                   :notebook="notebook.name"
-                  :notes="openNotebookNotes?.notes"
-                  @added="addedNote"></NoteNotebookNotes>
+                  :notes="openNotebook?.notes ?? null"></NoteNotebookNotes>
                 <CommonDangerAlert v-if="openError">{{ openError }}</CommonDangerAlert>
               </td>
               <td class="hidden pb-3 pt-4 align-top lg:table-cell">
@@ -73,7 +74,7 @@
                 <div class="flex w-full justify-center">
                   <div
                     class="flex size-6 flex-row items-center justify-center rounded-full bg-gray-200 text-xs font-medium text-gray-900 dark:bg-gray-700 dark:text-gray-200">
-                    <span>{{ notebook.fileCount }}</span>
+                    <span>{{ notebook.noteCount }}</span>
                   </div>
                 </div>
               </td>
@@ -86,10 +87,24 @@
   </CommonBaseCard>
 </template>
 <script lang="ts" setup>
+import type { Notebook, NotebookContents } from '~/types/notebook'
+
 const store = useNoteStore()
 const notebookStore = useNotebookStore()
 
 const error: Ref<string | null> = ref(null)
+const openError: Ref<{ notebook: string[]; error: string } | null> = ref(null)
+const openNotebook: Ref<NotebookContents | null> = ref(null)
 
 const notebookAddedError = (addError: string) => (error.value = addError)
+
+const toggleNotes = async (notebook: Notebook) => {
+  const resp = await notebookStore.getNotebookContents(notebook)
+
+  if (resp.success) {
+    openNotebook.value = resp.data ?? null
+  } else {
+    openError.value = { notebook: notebook.notebooks, error: resp.message }
+  }
+}
 </script>
