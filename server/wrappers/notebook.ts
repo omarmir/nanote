@@ -17,15 +17,10 @@ export function defineEventHandlerWithNotebook<T extends EventHandlerRequest, D>
   return defineEventHandler(async (event) => {
     // Decode the path and then remove characters we cannot have
     const params = decodeURIComponent(event.context.params?.path ?? '')
-    const notebooks = params.split('/').map((p) => p.replace(/[\\/:*?"<>|.]/g, '')) || []
-
-    if (notebooks.length === 0) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'Bad Request',
-        message: 'Missing notebook'
-      })
-    }
+    const notebooks = params
+      .split('/')
+      .map((p) => p.replace(/[\\/:*?"<>|.]/g, ''))
+      .filter(Boolean) // Removes empty strings
 
     // Construct paths
     const fullPath = join(basePath, ...notebooks)

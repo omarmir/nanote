@@ -1,34 +1,41 @@
 import { defineStore } from 'pinia'
-import type { FetchError } from 'ofetch'
 import type { Notebook, NotebookContents } from '~/types/notebook'
+import type { Result } from '~/types/result'
+import type { FetchError } from 'ofetch'
 
 export const useNotebookStore = defineStore('notebook', () => {
-  const {
-    data: notebook,
-    refresh,
-    status,
-    error
-  } = useFetch<NotebookContents>('/api/notebook', {
-    immediate: true,
-    lazy: false
-  })
+  const topLevelNotebookPath: Ref<string[]> = ref([])
+  const sidebarNotebookPath: Ref<string[]> = ref([])
 
-  const getNotebookContents = async (notebook: Notebook) => {
-    const pathArray: string[] = [...notebook.notebooks.filter((path) => path !== ''), notebook.name]
-    const path = pathArray.join('/')
+  const openNotebook = async (notebook: Notebook, type: 'main' | 'sidebar'): Promise<Result<NotebookContents>> => {
+    const path = notebookPathArrayJoiner(notebook)
+
+    if (type === 'main') {
+      topLevelNotebookPath.value = [...notebook.notebooks, notebook.name]
+    } else {
+      sidebarNotebookPath.value = [...notebook.notebooks, notebook.name]
+    }
+
     try {
       const resp = await $fetch<NotebookContents>(`/api/notebook/${path}`)
-      return { success: true, data: resp }
+      return {
+        success: true,
+        data: resp
+      }
     } catch (error) {
-      return { success: false, message: (error as FetchError).data.message }
+      return {
+        success: false,
+        message: (error as FetchError).data.message
+      }
     }
   }
 
+  const resetSidebarNotebook = () => (sidebarNotebookPath.value = [])
+
   return {
-    notebook,
-    getNotebookContents,
-    refresh,
-    status,
-    error
+    topLevelNotebookPath,
+    openNotebook,
+    sidebarNotebookPath,
+    resetSidebarNotebook
   }
 })

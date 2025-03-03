@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-2">
-    <div class="mt-2 flex flex-row items-center gap-2">
+    <div class="flex flex-row items-center gap-2">
       <button class="text-accent hover:text-accent-hover" @click="isRenaming = !isRenaming">
         <svg xmlns="http://www.w3.org/2000/svg" class="size-6" viewBox="0 0 24 24" title="Rename notebook">
           <g fill="currentColor">
@@ -25,7 +25,7 @@
         </svg>
         <div class="flex flex-col justify-start text-left text-sm font-semibold">
           <span v-show="!isRenaming" class="w-full py-2">
-            {{ notebook }}
+            {{ notebookName }}
           </span>
         </div>
       </button>
@@ -50,28 +50,19 @@
 </template>
 <script lang="ts" setup>
 import { onClickOutside } from '@vueuse/core'
-import { useNotebookStore } from '~/stores/notebooks'
+import type { Notebook, RenameNotebook } from '~/types/notebook'
+import type { FetchError } from 'ofetch'
 
-const store = useNotebookStore()
-
-const { notebook } = defineProps<{ notebook: string }>()
+const { notebook } = defineProps<{ notebook: Notebook }>()
 
 const emit = defineEmits(['toggle'])
 
-const newNotebookName = ref(notebook)
+const newNotebookName = ref(notebook.name)
+const notebookName = ref(notebook.name)
 const isRenaming = ref(false)
-// const renameInput = useTemplateRef('rename')
 const renameWrapper = useTemplateRef('rename-wrapper')
 const error: Ref<string | null> = ref(null)
 const renameState = ref(false)
-
-// watch(isRenaming, async (newVal) => {
-//   if (newVal) {
-//     newNotebookName.value = notebook
-//     await nextTick()
-//     renameInput.value?.focus()
-//   }
-// })
 
 onClickOutside(renameWrapper, () => {
   isRenaming.value = false
@@ -79,13 +70,19 @@ onClickOutside(renameWrapper, () => {
 
 const renameNotebook = async () => {
   renameState.value = true
-  const resp = await store.renameNotebook(notebook, newNotebookName.value)
-  if (resp.success) {
-    error.value = null
+  const path = notebookPathArrayJoiner(notebook)
+  try {
+    const resp = await $fetch<RenameNotebook>(`/api/notebook/${path}`, {
+      method: 'PUT',
+      body: {
+        newName: newNotebookName.value
+      }
+    })
+    notebookName.value = resp.newName
+  } catch (err) {
+    error.value = (err as FetchError).data.message
+  } finally {
     isRenaming.value = false
-  } else {
-    error.value = resp.message
   }
-  renameState.value = false
 }
 </script>

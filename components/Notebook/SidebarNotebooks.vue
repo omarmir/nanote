@@ -1,17 +1,17 @@
 <template>
   <ul class="list-style-none">
-    <li v-if="store.status === 'pending'" class="animate-pulse cursor-pointer select-none rounded-xl px-4 py-3">
+    <li v-if="status === 'pending'" class="animate-pulse cursor-pointer select-none rounded-xl px-4 py-3">
       <div class="mb-2.5 h-2 w-4/5 rounded-full bg-gray-400/30"></div>
     </li>
     <li
-      v-for="notebook in store.notebooks"
+      v-for="notebook in data?.notebooks"
       :key="notebook.name"
-      :class="{ 'bg-cyan-300/5': notebook.name === store.currentNotebook }"
-      class="items-center px-4 py-3">
+      class="items-center px-4 py-3"
+      :class="{ 'bg-cyan-300/5': notebook.name === notebookStore.sidebarNotebookPath[0] }">
       <button
         type="button"
         class="text-muted flex flex-grow flex-row items-center gap-2 overflow-x-clip text-left text-base font-medium text-gray-400 hover:text-white"
-        @click="toggleNotebook(notebook.name)">
+        @click="openNotebook(notebook)">
         <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 1024 1024">
           <path
             fill="currentColor"
@@ -25,31 +25,29 @@
         </div>
       </button>
       <div class="lg:hidden">
-        <NoteNotebookNotes
-          v-if="notebook.name === store.currentNotebook"
-          :notebook="notebook.name"
-          :notes="noteStore.currentNotes"
-          class="pl-7"></NoteNotebookNotes>
-        <CommonDangerAlert v-if="error" class="mb-4 mt-4">{{ error }}</CommonDangerAlert>
+        <NotebookContents
+          type="sidebar"
+          :on-background="true"
+          :notebook="notebook"
+          :show-children="true"></NotebookContents>
+        <CommonDangerAlert v-if="error" class="mb-4 mt-4">{{ error.data.message }}</CommonDangerAlert>
       </div>
     </li>
   </ul>
 </template>
 <script lang="ts" setup>
 import { useNotebookStore } from '~/stores/notebooks'
+import type { Notebook, NotebookContents } from '~/types/notebook'
+const { data, status, error } = useFetch<NotebookContents>('/api/notebook', {
+  immediate: true,
+  lazy: false
+})
 
-const store = useNotebookStore()
-const noteStore = useNoteStore()
-const isLoadingNotes = ref(false)
-const error: Ref<string | null> = ref(null)
+const notebookStore = useNotebookStore()
 
-const toggleNotebook = async (notebook: string) => {
-  isLoadingNotes.value = true
-  store.toggleNotebook(notebook)
-  const resp = await noteStore.getNotebookNotes(notebook, true)
+const emit = defineEmits<{
+  (e: 'openNotebook', payload: Notebook): void
+}>()
 
-  if (!resp.success) error.value = resp.message
-
-  isLoadingNotes.value = false
-}
+const openNotebook = async (notebook: Notebook) => emit('openNotebook', notebook)
 </script>

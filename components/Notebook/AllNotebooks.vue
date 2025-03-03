@@ -8,15 +8,15 @@
       </h3>
       <div class="min-w-xs relative my-2 flex w-1/3 min-w-72 flex-wrap items-center">
         <div class="relative my-2 flex w-full flex-wrap items-center">
-          <NotebookNewNotebook @error="notebookAddedError"></NotebookNewNotebook>
+          <!-- <NotebookNewNotebook @error="notebookAddedError"></NotebookNewNotebook> -->
         </div>
       </div>
     </div>
     <!-- end card header -->
     <!-- card body  -->
-    <CommonDangerAlert v-if="error" class="mb-4 rounded-none">
+    <!-- <CommonDangerAlert v-if="error" class="mb-4 rounded-none">
       {{ error }}
-    </CommonDangerAlert>
+    </CommonDangerAlert> -->
     <div class="block flex-auto px-9 py-8 pt-6">
       <div class="overflow-x-auto">
         <table class="text-dark my-0 w-full border-neutral-200 align-middle">
@@ -30,7 +30,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-if="notebookStore.status === 'pending'" class="animate-pulse">
+            <tr v-if="status === 'pending'" class="animate-pulse">
               <td>
                 <div class="mb-2.5 h-2 w-4/5 rounded-full bg-gray-200 dark:bg-gray-700"></div>
               </td>
@@ -47,18 +47,16 @@
                 <div class="mb-2.5 h-2 w-2/5 rounded-full bg-gray-200 dark:bg-gray-700"></div>
               </td>
             </tr>
-            <tr v-for="notebook in notebookStore.notebook?.notebooks" :key="notebook.name">
+            <tr v-for="notebook in data?.notebooks" :key="notebook.name">
               <td class="flex flex-col">
-                <NotebookRenameNotebook
-                  :notebook="notebook.name"
-                  @toggle="toggleNotes(notebook)"></NotebookRenameNotebook>
-                <NoteNotebookNotes
-                  v-if="openNotebook?.notebooks[0].notebooks[0] === notebook.name"
-                  class="ml-8"
+                <NotebookContents
                   :on-background="true"
-                  :notebook="notebook.name"
-                  :notes="openNotebook?.notes ?? null"></NoteNotebookNotes>
-                <CommonDangerAlert v-if="openError">{{ openError }}</CommonDangerAlert>
+                  :notebook="notebook"
+                  type="main"
+                  :show-children="notebookStore.topLevelNotebookPath[0] === notebook.name"></NotebookContents>
+                <CommonDangerAlert v-if="error">
+                  {{ error.data.message }}
+                </CommonDangerAlert>
               </td>
               <td class="hidden pb-3 pt-4 align-top lg:table-cell">
                 <div class="text-sm font-medium">
@@ -87,24 +85,10 @@
   </CommonBaseCard>
 </template>
 <script lang="ts" setup>
-import type { Notebook, NotebookContents } from '~/types/notebook'
-
-const store = useNoteStore()
+import type { NotebookContents } from '~/types/notebook'
+const { data, status, error } = useFetch<NotebookContents>('/api/notebook', {
+  immediate: true,
+  lazy: false
+})
 const notebookStore = useNotebookStore()
-
-const error: Ref<string | null> = ref(null)
-const openError: Ref<{ notebook: string[]; error: string } | null> = ref(null)
-const openNotebook: Ref<NotebookContents | null> = ref(null)
-
-const notebookAddedError = (addError: string) => (error.value = addError)
-
-const toggleNotes = async (notebook: Notebook) => {
-  const resp = await notebookStore.getNotebookContents(notebook)
-
-  if (resp.success) {
-    openNotebook.value = resp.data ?? null
-  } else {
-    openError.value = { notebook: notebook.notebooks, error: resp.message }
-  }
-}
 </script>

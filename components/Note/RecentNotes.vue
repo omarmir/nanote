@@ -35,7 +35,9 @@
                     <path fill="currentColor" d="M4 22V2h10l6 6v14zm9-13V4H6v16h12V9zM6 4v5zv16z" />
                   </svg>
                   <div class="flex flex-col justify-start">
-                    <NuxtLink :to="`/${note.notebook}/${note.name}`" class="text-sm font-semibold">
+                    <NuxtLink
+                      :to="`/note/${notePathArrayJoiner(note.notebook)}/${note.name}`"
+                      class="text-sm font-semibold">
                       {{ note.name }}
                     </NuxtLink>
                   </div>
@@ -43,7 +45,7 @@
               </td>
               <td>
                 <span class="text-sm font-medium">
-                  {{ note.notebook }}
+                  {{ note.notebook.join(' / ') }}
                 </span>
               </td>
               <td class="hidden lg:table-cell">

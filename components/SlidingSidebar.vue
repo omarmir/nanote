@@ -62,16 +62,28 @@
               <span class="flex select-none items-center px-4 py-3 text-xs font-medium text-neutral-200">
                 Notebooks
               </span>
-              <NotebookSidebarNotebooks></NotebookSidebarNotebooks>
+              <NotebookSidebarNotebooks @open-notebook="openNotebook"></NotebookSidebarNotebooks>
             </div>
           </div>
         </div>
       </div>
     </aside>
-    <NoteNotesSidebar v-if="store.currentNotebook" class="hidden lg:flex" @close="store.resetCurrentNotebook()">
-      <h2 class="text-lg font-bold text-white">{{ store.currentNotebook }}</h2>
-      <h3 class="flex select-none items-center text-xs font-medium text-neutral-200">Notes</h3>
-      <NoteNotebookNotes :notes="noteStore.currentNotes" :notebook="store.currentNotebook"></NoteNotebookNotes>
+    <NoteNotesSidebar
+      v-if="notebookStore.sidebarNotebookPath.length > 0"
+      class="hidden lg:flex"
+      @close="notebookStore.resetSidebarNotebook()">
+      <h2 class="text-lg font-bold text-white">
+        {{ notebookStore.sidebarNotebookPath[notebookStore.sidebarNotebookPath.length - 1] }}
+      </h2>
+      <h3 class="flex select-none items-center text-xs font-medium text-neutral-200">Contents</h3>
+      <div v-if="notebookContents" class="mt-4">
+        <NoteNewNote v-if="notebookContents" class="mb-4" :notebook="notebookContents.path"></NoteNewNote>
+        <NotebookContentItems
+          :notebook-contents="notebookContents"
+          :on-background="false"
+          type="sidebar"></NotebookContentItems>
+      </div>
+      <!-- <NoteNotebookNotes :notes="noteStore.currentNotes" :notebook="store.currentNotebook"></NoteNotebookNotes> -->
     </NoteNotesSidebar>
     <div
       v-if="isSidebarOpen"
@@ -81,11 +93,11 @@
 </template>
 <script lang="ts" setup>
 import { onClickOutside, useMagicKeys, whenever } from '@vueuse/core'
+import type { Notebook, NotebookContents } from '~/types/notebook'
 
 const { isSidebarOpen, outsideClick } = useSidebar()
 const input = useTemplateRef('sidebar')
-const store = useNotebookStore()
-const noteStore = useNoteStore()
+const notebookStore = useNotebookStore()
 const showCommandPalette = ref(false)
 
 onClickOutside(input, () => (isSidebarOpen.value = false))
@@ -107,4 +119,15 @@ const { ctrl_k } = useMagicKeys({
 whenever(ctrl_k, () => {
   showCommandPalette.value = true
 })
+
+const notebookContents: Ref<null | NotebookContents> = ref(null)
+const openError: Ref<string | null> = ref(null)
+const openNotebook = async (notebook: Notebook) => {
+  const contents = await notebookStore.openNotebook(notebook, 'sidebar')
+  if (contents.success) {
+    notebookContents.value = contents.data
+  } else {
+    openError.value = contents.message
+  }
+}
 </script>

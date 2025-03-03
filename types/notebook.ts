@@ -5,6 +5,7 @@ export type Notebook = {
   noteCount: number
   notebookCount: number
   notebooks: string[]
+  path: string
 }
 
 export type Note = {
@@ -19,6 +20,14 @@ export type NotebookContents = {
   path: string
   notes: Note[]
   notebooks: Notebook[]
+}
+
+export type Contents = {
+  name: string
+  path: string
+  array: string[]
+  notes: Note[]
+  notebooks: Contents[]
 }
 
 export type NoteResponse = {

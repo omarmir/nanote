@@ -5,7 +5,7 @@ const onUpload = async (file: File, notebook: string, note: string): Promise<str
   const formData = new FormData()
   formData.append('file', file)
 
-  const url = await $fetch(`/api/${notebook}/${note}/attachment`, {
+  const url = await $fetch<string>(`/api/${notebook}/${note}/attachment`, {
     method: 'POST',
     body: formData
   })
