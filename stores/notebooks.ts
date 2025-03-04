@@ -43,6 +43,7 @@ export const useNotebookStore = defineStore('notebook', () => {
         }
       })
       renameNotebookPath.value = { oldPath: [...notebook.notebooks, notebook.name], rename: resp }
+      //TODO: ON RENAME WE NEED TO UPDATE topLevelNotebookPath or find a way to live without tracking these.
       return { success: true, data: resp }
     } catch (err) {
       const error = (err as FetchError).data.message

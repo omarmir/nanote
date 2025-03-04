@@ -30,7 +30,7 @@ const {
   notebook,
   onBackground,
   type,
-  showChildren = false
+  showChildren = true
 } = defineProps<{
   notebook: Notebook
   onBackground: boolean
@@ -43,6 +43,7 @@ const notebookContents: Ref<NotebookContents | null> = ref(null)
 const openError: Ref<string | null> = ref(null)
 
 const openNotebook = async (possiblyRenamedNotebook: Notebook) => {
+  if (notebookContents.value) return
   const contents = await notebookStore.openNotebook(possiblyRenamedNotebook, type)
   if (contents.success) {
     notebookContents.value = contents.data

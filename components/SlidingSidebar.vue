@@ -73,7 +73,7 @@
       class="hidden lg:flex"
       @close="notebookStore.resetSidebarNotebook()">
       <h2 class="text-lg font-bold text-white">
-        {{ notebookStore.sidebarNotebookPath[notebookStore.sidebarNotebookPath.length - 1] }}
+        {{ notebookStore.sidebarNotebookPath[0] }}
       </h2>
       <h3 class="flex select-none items-center text-xs font-medium text-neutral-200">Contents</h3>
       <div v-if="notebookContents" class="mt-4">
