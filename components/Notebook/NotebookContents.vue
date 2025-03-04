@@ -1,6 +1,9 @@
 <template>
   <div>
-    <NotebookRenameNotebook :notebook="notebook" @toggle="openNotebook()"></NotebookRenameNotebook>
+    <NotebookRenameNotebook
+      :notebook="notebook"
+      :hide-rename="!onBackground"
+      @toggle="openNotebook"></NotebookRenameNotebook>
     <div v-if="showChildren">
       <CommonDangerAlert v-if="openError">
         {{ openError }}
@@ -21,6 +24,7 @@ import type { Note, Notebook, NotebookContents } from '~/types/notebook'
 
 const emit = defineEmits<{
   (e: 'added', payload: Note): void
+  (e: 'opened', payload: NotebookContents | null): void
 }>()
 const {
   notebook,
@@ -38,10 +42,11 @@ const notebookStore = useNotebookStore()
 const notebookContents: Ref<NotebookContents | null> = ref(null)
 const openError: Ref<string | null> = ref(null)
 
-const openNotebook = async () => {
-  const contents = await notebookStore.openNotebook(notebook, type)
+const openNotebook = async (possiblyRenamedNotebook: Notebook) => {
+  const contents = await notebookStore.openNotebook(possiblyRenamedNotebook, type)
   if (contents.success) {
     notebookContents.value = contents.data
+    emit('opened', notebookContents.value)
   } else {
     openError.value = contents.message
   }

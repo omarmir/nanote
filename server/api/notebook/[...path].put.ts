@@ -51,7 +51,8 @@ export default defineEventHandlerWithNotebook(
         newName: cleanNewName,
         createdAt: stats.birthtime.toISOString(),
         updatedAt: stats.mtime.toISOString(),
-        notebooks: notebook
+        notebooks: notebook.slice(0, -1), // Have to slice off itself since the notebooks is built off the fetch url which in this case includes this book
+        path: newPath
       } satisfies RenameNotebook
     } catch (error) {
       if (error instanceof URIError) {

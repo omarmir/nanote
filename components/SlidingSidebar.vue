@@ -62,7 +62,7 @@
               <span class="flex select-none items-center px-4 py-3 text-xs font-medium text-neutral-200">
                 Notebooks
               </span>
-              <NotebookSidebarNotebooks @open-notebook="openNotebook"></NotebookSidebarNotebooks>
+              <NotebookSidebarNotebooks @opened="openNotebook"></NotebookSidebarNotebooks>
             </div>
           </div>
         </div>
@@ -93,7 +93,7 @@
 </template>
 <script lang="ts" setup>
 import { onClickOutside, useMagicKeys, whenever } from '@vueuse/core'
-import type { Notebook, NotebookContents } from '~/types/notebook'
+import type { NotebookContents } from '~/types/notebook'
 
 const { isSidebarOpen, outsideClick } = useSidebar()
 const input = useTemplateRef('sidebar')
@@ -121,13 +121,7 @@ whenever(ctrl_k, () => {
 })
 
 const notebookContents: Ref<null | NotebookContents> = ref(null)
-const openError: Ref<string | null> = ref(null)
-const openNotebook = async (notebook: Notebook) => {
-  const contents = await notebookStore.openNotebook(notebook, 'sidebar')
-  if (contents.success) {
-    notebookContents.value = contents.data
-  } else {
-    openError.value = contents.message
-  }
+const openNotebook = (contents: NotebookContents | null) => {
+  notebookContents.value = contents
 }
 </script>

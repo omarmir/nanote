@@ -22,14 +22,6 @@ export type NotebookContents = {
   notebooks: Notebook[]
 }
 
-export type Contents = {
-  name: string
-  path: string
-  array: string[]
-  notes: Note[]
-  notebooks: Contents[]
-}
-
 export type NoteResponse = {
   notebook: string[]
   note: string
@@ -42,6 +34,7 @@ export type NoteResponse = {
 
 export type RenameNotebook = {
   oldName: string
+  path: string
   newName: string
   createdAt: string
   updatedAt: string

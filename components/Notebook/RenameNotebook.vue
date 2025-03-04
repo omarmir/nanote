@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-2">
     <div class="flex flex-row items-center gap-2">
-      <button class="text-accent hover:text-accent-hover" @click="isRenaming = !isRenaming">
+      <button v-if="!onSidebar" class="text-accent hover:text-accent-hover" @click="isRenaming = !isRenaming">
         <svg xmlns="http://www.w3.org/2000/svg" class="size-6" viewBox="0 0 24 24" title="Rename notebook">
           <g fill="currentColor">
             <path
@@ -13,8 +13,9 @@
         </svg>
       </button>
       <button
-        class="flex flex-row items-center gap-2 hover:text-gray-500 dark:hover:text-gray-100"
-        @click="emit('toggle')">
+        :class="{ 'text-gray-400': onSidebar, 'hover:text-gray-100': onSidebar, 'hover:text-gray-500': !onSidebar }"
+        class="flex flex-row items-center gap-2 dark:hover:text-gray-100"
+        @click="toggleNotebook()">
         <svg xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0" viewBox="0 0 1024 1024">
           <path
             fill="currentColor"
@@ -25,7 +26,7 @@
         </svg>
         <div class="flex flex-col justify-start text-left text-sm font-semibold">
           <span v-show="!isRenaming" class="w-full py-2">
-            {{ notebookName }}
+            {{ localNotebook.name }}
           </span>
         </div>
       </button>
@@ -50,19 +51,21 @@
 </template>
 <script lang="ts" setup>
 import { onClickOutside } from '@vueuse/core'
-import type { Notebook, RenameNotebook } from '~/types/notebook'
-import type { FetchError } from 'ofetch'
+import type { Notebook } from '~/types/notebook'
 
-const { notebook } = defineProps<{ notebook: Notebook }>()
+const { notebook, hideRename: onSidebar = false } = defineProps<{ notebook: Notebook; hideRename?: boolean }>()
 
-const emit = defineEmits(['toggle'])
+const emit = defineEmits<{
+  (e: 'toggle', payload: Notebook): void
+}>()
 
 const newNotebookName = ref(notebook.name)
-const notebookName = ref(notebook.name)
+const localNotebook = ref(notebook)
 const isRenaming = ref(false)
 const renameWrapper = useTemplateRef('rename-wrapper')
 const error: Ref<string | null> = ref(null)
 const renameState = ref(false)
+const notebookStore = useNotebookStore()
 
 onClickOutside(renameWrapper, () => {
   isRenaming.value = false
@@ -70,19 +73,34 @@ onClickOutside(renameWrapper, () => {
 
 const renameNotebook = async () => {
   renameState.value = true
-  const path = notebookPathArrayJoiner(notebook)
-  try {
-    const resp = await $fetch<RenameNotebook>(`/api/notebook/${path}`, {
-      method: 'PUT',
-      body: {
-        newName: newNotebookName.value
-      }
-    })
-    notebookName.value = resp.newName
-  } catch (err) {
-    error.value = (err as FetchError).data.message
-  } finally {
-    isRenaming.value = false
+  const resp = await notebookStore.renameNotebook(notebook, newNotebookName.value)
+  if (!resp.success) {
+    error.value = resp.message
   }
+  renameState.value = false
+  isRenaming.value = false
+}
+
+watch(
+  () => notebookStore.renameNotebookPath?.oldPath,
+  (newVal) => {
+    if (!newVal || !notebookStore.renameNotebookPath) return
+
+    const notebookPath = [...notebook.notebooks, notebook.name]
+
+    if (arraysEqual(newVal, notebookPath)) {
+      const rename = notebookStore.renameNotebookPath.rename
+      localNotebook.value = {
+        ...notebook,
+        name: rename.newName,
+        notebooks: rename.notebooks,
+        path: rename.path
+      }
+    }
+  }
+)
+
+const toggleNotebook = () => {
+  emit('toggle', localNotebook.value)
 }
 </script>
