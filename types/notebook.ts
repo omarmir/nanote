@@ -4,7 +4,7 @@ export type Notebook = {
   updatedAt: string | null
   noteCount: number
   notebookCount: number
-  notebooks: string[]
+  notebooks?: string[]
   path: string
 }
 
@@ -18,8 +18,8 @@ export type Note = {
 
 export type NotebookContents = {
   path: string
+  notebooks?: Record<string, Notebook>
   notes: Note[]
-  notebooks: Notebook[]
 }
 
 export type NoteResponse = {

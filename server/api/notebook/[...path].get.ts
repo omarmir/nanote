@@ -9,11 +9,10 @@ export default defineEventHandlerWithNotebook(async (_event, notebook, fullPath)
   try {
     // Read directory contents
     const files = await readdir(fullPath, { withFileTypes: true })
-    const notebookContents = {
+    const notebookContents: NotebookContents = {
       notes: [] as Note[],
-      notebooks: [] as Notebook[],
       path: fullPath
-    } satisfies NotebookContents
+    }
     // Process files concurrently
     await Promise.all(
       files.map(async (dirent) => {
@@ -66,13 +65,15 @@ export default defineEventHandlerWithNotebook(async (_event, notebook, fullPath)
             updatedAt:
               updatedAt?.toISOString() ??
               new Date(Math.max(stats.birthtime.getTime(), stats.mtime.getTime())).toISOString(),
-            path: [dirent.parentPath, dirent.name].join('/')
+            path: notebookPath
           } satisfies Notebook
-          notebookContents.notebooks.push(nestedNotebook)
+          if (!notebookContents.notebooks) {
+            notebookContents.notebooks = {}
+          }
+          notebookContents.notebooks[nestedNotebook.name] = nestedNotebook
         }
       })
     )
-
     return notebookContents
   } catch (error) {
     console.error('Error reading notebook:', error)
