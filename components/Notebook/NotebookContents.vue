@@ -39,17 +39,6 @@ const {
 }>()
 const notebookStore = useNotebookStore()
 
-const notebookContents: Ref<NotebookContents | null> = ref(null)
-const openError: Ref<string | null> = ref(null)
-
-const openNotebook = async (possiblyRenamedNotebook: Notebook) => {
-  if (notebookContents.value) return
-  const contents = await notebookStore.openNotebook(possiblyRenamedNotebook, type)
-  if (contents.success) {
-    notebookContents.value = contents.data
-    emit('opened', notebookContents.value)
-  } else {
-    openError.value = contents.message
-  }
-}
+const openNotebook = async (possiblyRenamedNotebook: Notebook) =>
+  await notebookStore.openNotebook(possiblyRenamedNotebook, type)
 </script>

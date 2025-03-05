@@ -3,11 +3,7 @@
     <li v-if="status === 'pending'" class="animate-pulse cursor-pointer select-none rounded-xl px-4 py-3">
       <div class="mb-2.5 h-2 w-4/5 rounded-full bg-gray-400/30"></div>
     </li>
-    <li
-      v-for="notebook in data?.notebooks"
-      :key="notebook.name"
-      class="items-center px-4 py-1"
-      :class="{ 'bg-cyan-300/5': notebook.name === notebookStore.sidebarNotebookPath[0] }">
+    <li v-for="notebook in data?.notebooks" :key="notebook.name" class="items-center px-4 py-1">
       <div class="lg:hidden">
         <NotebookContents
           type="sidebar"

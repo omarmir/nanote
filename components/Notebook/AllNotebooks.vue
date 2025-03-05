@@ -30,7 +30,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-if="status === 'pending'" class="animate-pulse">
+            <tr v-if="notebookStore.status === 'pending'" class="animate-pulse">
               <td>
                 <div class="mb-2.5 h-2 w-4/5 rounded-full bg-gray-200 dark:bg-gray-700"></div>
               </td>
@@ -47,16 +47,17 @@
                 <div class="mb-2.5 h-2 w-2/5 rounded-full bg-gray-200 dark:bg-gray-700"></div>
               </td>
             </tr>
-            <tr v-for="notebook in data?.notebooks" :key="notebook.name">
+            <pre>{{ notebookStore.notebooks?.notebooks }}</pre>
+            <tr v-for="notebook in notebookStore.notebooks?.notebooks" :key="notebook.name">
               <td class="flex flex-col">
                 <NotebookContents
                   :on-background="true"
                   :notebook="notebook"
                   type="main"
-                  :show-children="notebookStore.topLevelNotebookPath[0] === notebook.name"></NotebookContents>
-                <CommonDangerAlert v-if="error">
+                  :show-children="true"></NotebookContents>
+                <!-- <CommonDangerAlert v-if="error">
                   {{ error.data.message }}
-                </CommonDangerAlert>
+                </CommonDangerAlert> -->
               </td>
               <td class="hidden pb-3 pt-4 align-top lg:table-cell">
                 <div class="text-sm font-medium">
@@ -86,9 +87,5 @@
 </template>
 <script lang="ts" setup>
 import type { NotebookContents } from '~/types/notebook'
-const { data, status, error } = useFetch<NotebookContents>('/api/notebook', {
-  immediate: true,
-  lazy: false
-})
 const notebookStore = useNotebookStore()
 </script>

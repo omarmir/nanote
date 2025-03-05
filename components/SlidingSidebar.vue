@@ -68,7 +68,7 @@
         </div>
       </div>
     </aside>
-    <NoteNotesSidebar
+    <!-- <NoteNotesSidebar
       v-if="notebookStore.sidebarNotebookPath.length > 0"
       class="hidden lg:flex"
       @close="notebookStore.resetSidebarNotebook()">
@@ -83,8 +83,7 @@
           :on-background="false"
           type="sidebar"></NotebookContentItems>
       </div>
-      <!-- <NoteNotebookNotes :notes="noteStore.currentNotes" :notebook="store.currentNotebook"></NoteNotebookNotes> -->
-    </NoteNotesSidebar>
+    </NoteNotesSidebar> -->
     <div
       v-if="isSidebarOpen"
       class="fixed left-0 top-0 z-30 flex h-[100%] w-[100%] animate-overlayShow flex-row items-center justify-center bg-gray-950/50 lg:hidden"></div>

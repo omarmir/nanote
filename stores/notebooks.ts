@@ -4,46 +4,35 @@ import type { Result } from '~/types/result'
 import type { FetchError } from 'ofetch'
 
 export const useNotebookStore = defineStore('notebook', () => {
-  const topLevelNotebookPath: Ref<string[]> = ref([])
-  const sidebarNotebookPath: Ref<string[]> = ref([])
-  const renameNotebookPath: Ref<{ oldPath: string[]; rename: RenameNotebook } | null> = ref(null)
+  const { data: notebooks, status } = useFetch<NotebookContents>('/api/notebook', {
+    immediate: true,
+    lazy: false
+  })
 
-  const openNotebook = async (notebook: Notebook, type: 'main' | 'sidebar'): Promise<Result<NotebookContents>> => {
-    const path = notebookPathArrayJoiner(notebook)
-
-    if (type === 'main') {
-      topLevelNotebookPath.value = [...notebook.notebooks, notebook.name]
-    } else {
-      sidebarNotebookPath.value = [...notebook.notebooks, notebook.name]
-    }
-
+  const openNotebook = async (notebook: Notebook, type: 'main' | 'sidebar') => {
+    const apiPath = notebookPathArrayJoiner(notebook)
     try {
-      const resp = await $fetch<NotebookContents>(`/api/notebook/${path}`)
-      return {
-        success: true,
-        data: resp
+      const resp = await $fetch<NotebookContents>(`/api/notebook/${apiPath}`)
+      const nb = getNotebookByPathArray(notebook.notebooks, notebooks.value)
+      if (nb) {
+        nb.contents = resp
+      } else {
+        notebooks.value = resp
       }
     } catch (error) {
-      return {
-        success: false,
-        message: (error as FetchError).data.message
-      }
+      console.log(error)
     }
   }
 
-  const resetSidebarNotebook = () => (sidebarNotebookPath.value = [])
-
   const renameNotebook = async (notebook: Notebook, newNotebookName: string): Promise<Result<RenameNotebook>> => {
-    const path = notebookPathArrayJoiner(notebook)
+    const apiPath = notebookPathArrayJoiner(notebook)
     try {
-      const resp = await $fetch<RenameNotebook>(`/api/notebook/${path}`, {
+      const resp = await $fetch<RenameNotebook>(`/api/notebook/${apiPath}`, {
         method: 'PUT',
         body: {
           newName: newNotebookName
         }
       })
-      renameNotebookPath.value = { oldPath: [...notebook.notebooks, notebook.name], rename: resp }
-      //TODO: ON RENAME WE NEED TO UPDATE topLevelNotebookPath or find a way to live without tracking these.
       return { success: true, data: resp }
     } catch (err) {
       const error = (err as FetchError).data.message
@@ -52,11 +41,9 @@ export const useNotebookStore = defineStore('notebook', () => {
   }
 
   return {
-    topLevelNotebookPath,
     openNotebook,
-    sidebarNotebookPath,
-    resetSidebarNotebook,
-    renameNotebook,
-    renameNotebookPath
+    notebooks,
+    status,
+    renameNotebook
   }
 })

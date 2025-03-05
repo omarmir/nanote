@@ -4,7 +4,8 @@ export type Notebook = {
   updatedAt: string | null
   noteCount: number
   notebookCount: number
-  notebooks?: string[]
+  notebooks: string[]
+  contents?: NotebookContents
   path: string
 }
 
