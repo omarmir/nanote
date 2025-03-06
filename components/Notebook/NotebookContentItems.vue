@@ -2,7 +2,7 @@
   <ul v-if="notebookContents">
     <li v-for="note in notebookContents.notes" :key="note.name" class="mb-4">
       <NuxtLink
-        :to="`/${notePathArrayJoiner(note.notebook)}/${note.name}`"
+        :to="`/note/${notePathArrayJoiner(note.notebook)}/${note.name}`"
         :class="{ 'text-gray-900 hover:text-gray-400 dark:text-gray-400 dark:hover:text-gray-100': onBackground }"
         class="flex flex-col gap-1 text-gray-400 hover:text-gray-200"
         @click="outsideClick()">
@@ -19,7 +19,7 @@
       </NuxtLink>
     </li>
     <li v-for="nestedNotebook in notebookContents.notebooks" :key="nestedNotebook.path">
-      <NotebookContents :on-background :notebook="nestedNotebook" :show-children="true" :type></NotebookContents>
+      <NotebookContents :on-background :notebook="nestedNotebook" :show-childre="true" :type></NotebookContents>
     </li>
   </ul>
 </template>
@@ -28,7 +28,7 @@ import type { NotebookContents } from '~/types/notebook'
 const { outsideClick } = useSidebar()
 
 const { notebookContents, onBackground, type } = defineProps<{
-  notebookContents: NotebookContents | null
+  notebookContents: NotebookContents | null | undefined
   onBackground: boolean
   type: 'main' | 'sidebar'
 }>()

@@ -81,25 +81,6 @@ const renameNotebook = async () => {
   isRenaming.value = false
 }
 
-watch(
-  () => notebookStore.renameNotebookPath?.oldPath,
-  (newVal) => {
-    if (!newVal || !notebookStore.renameNotebookPath) return
-
-    const notebookPath = [...notebook.notebooks, notebook.name]
-
-    if (arraysEqual(newVal, notebookPath)) {
-      const rename = notebookStore.renameNotebookPath.rename
-      localNotebook.value = {
-        ...notebook,
-        name: rename.newName,
-        notebooks: rename.notebooks,
-        path: rename.path
-      }
-    }
-  }
-)
-
 const toggleNotebook = () => {
   emit('toggle', localNotebook.value)
 }

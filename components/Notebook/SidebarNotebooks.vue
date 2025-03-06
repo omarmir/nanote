@@ -17,24 +17,16 @@
           type="sidebar"
           :on-background="false"
           :notebook="notebook"
-          :show-children="false"
-          @opened="(contents) => emit('opened', contents)"></NotebookContents>
+          :show-children="false"></NotebookContents>
         <CommonDangerAlert v-if="error" class="mb-4 mt-4">{{ error.data.message }}</CommonDangerAlert>
       </div>
     </li>
   </ul>
 </template>
 <script lang="ts" setup>
-import { useNotebookStore } from '~/stores/notebooks'
 import type { NotebookContents } from '~/types/notebook'
 const { data, status, error } = useFetch<NotebookContents>('/api/notebook', {
   immediate: true,
   lazy: false
 })
-
-const notebookStore = useNotebookStore()
-
-const emit = defineEmits<{
-  (e: 'opened', payload: NotebookContents | null): void
-}>()
 </script>
