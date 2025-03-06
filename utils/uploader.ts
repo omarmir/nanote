@@ -1,7 +1,7 @@
 import type { Uploader } from '@milkdown/kit/plugin/upload'
 import type { Node } from '@milkdown/kit/prose/model'
 
-const onUpload = async (file: File, notebook: string, note: string): Promise<string> => {
+const onUpload = async (file: File, notebook: string[], note: string): Promise<string> => {
   const formData = new FormData()
   formData.append('file', file)
 
@@ -13,7 +13,7 @@ const onUpload = async (file: File, notebook: string, note: string): Promise<str
   return url
 }
 
-const createUploader = (notebook: string, note: string) => {
+const createUploader = (notebooks: string[], note: string) => {
   const uploader: Uploader = async (files, schema) => {
     const nodes: Node[] = await Promise.all(
       Array.from(files).map(async (file) => {

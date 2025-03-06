@@ -99,13 +99,13 @@ import type { SavingState } from '~/types/notebook'
 
 const {
   name,
-  notebook,
+  notebooks,
   savingState,
   isFocus = false
-} = defineProps<{ name: string; savingState: SavingState; notebook: string; isFocus?: boolean }>()
+} = defineProps<{ name: string; savingState: SavingState; notebooks: string[]; isFocus?: boolean }>()
 
 const store = useNoteStore()
-const notebookStore = useNotebookStore()
+const notebookStore = useNotebookStore() // TODO: Delete note from notebook store
 
 const note = ref(name)
 
@@ -117,7 +117,7 @@ const deleteDialog = ref(false)
 
 const renameNote = async () => {
   actionPending.value = true
-  const resp = await store.renameNote(notebook, name, note.value)
+  const resp = await store.renameNote(notebooks, name, note.value)
   if (resp.success) {
     error.value = null
     navigateTo(resp.data.newName)
@@ -128,7 +128,7 @@ const renameNote = async () => {
 
 const deleteNote = async () => {
   actionPending.value = true
-  const resp = await store.deleteNote(notebook, name, notebookStore.currentNotebook)
+  const resp = await store.deleteNote(notebooks, name)
   if (resp.success) {
     deleteError.value = null
     navigateTo('/')

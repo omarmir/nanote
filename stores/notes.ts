@@ -1,10 +1,16 @@
 import { defineStore } from 'pinia'
-import type { DeleteNote, Note, RenameNote, RenameNotebook } from '~/types/notebook'
+import type { DeleteNote, Note, RenameNote } from '~/types/notebook'
 import type { Result } from '~/types/result'
 import type { FetchError } from 'ofetch'
 
 export const useNoteStore = defineStore('note', () => {
   const currentNotes: Ref<Note[] | null> = ref(null)
+
+  const getPaths = (notebooks: string[], note: string): { apiPath: string; notePath: string[] } => {
+    const notePath = [...notebooks, note]
+    const apiPath = notePathArrayJoiner(notePath)
+    return { apiPath, notePath }
+  }
 
   const getNotebookNotes = async (notebook: string, setAsCurrent?: boolean): Promise<Result<Note[]>> => {
     try {
@@ -36,17 +42,12 @@ export const useNoteStore = defineStore('note', () => {
     }
   }
 
-  const deleteNote = async (
-    notebook: string,
-    note: string,
-    currentNotebook: string | null
-  ): Promise<Result<DeleteNote>> => {
+  const deleteNote = async (notebooks: string[], note: string): Promise<Result<DeleteNote>> => {
+    const { apiPath } = getPaths(notebooks, note)
     try {
-      const resp = await $fetch<DeleteNote>(`/api/${notebook}/${note}`, {
+      const resp = await $fetch<DeleteNote>(`/api/note/${apiPath}`, {
         method: 'DELETE'
       })
-      if (currentNotebook === notebook && currentNotes.value && currentNotes.value.length > 0)
-        currentNotes.value = currentNotes.value.filter((item) => item.name !== note && item.notebook !== notebook)
       return {
         success: true,
         data: resp
@@ -56,9 +57,10 @@ export const useNoteStore = defineStore('note', () => {
     }
   }
 
-  const renameNote = async (notebook: string, note: string, newName: string): Promise<Result<RenameNotebook>> => {
+  const renameNote = async (notebooks: string[], note: string, newName: string): Promise<Result<RenameNote>> => {
+    const { apiPath } = getPaths(notebooks, note)
     try {
-      const rename = await $fetch<RenameNote>(`/api/${notebook}/${note}`, {
+      const rename = await $fetch<RenameNote>(`/api/note/${apiPath}`, {
         body: { newName },
         method: 'PUT'
       })
