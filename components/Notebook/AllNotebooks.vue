@@ -50,25 +50,28 @@
             <CommonDangerAlert v-if="notebookStore.error">
               {{ notebookStore.error.data.message ?? notebookStore.error.message }}
             </CommonDangerAlert>
-            <tr v-for="notebook in notebookStore.notebooks?.notebooks" :key="notebook.name">
-              <td class="flex flex-col">
+            <tr
+              v-for="notebook in notebookStore.notebooks?.notebooks"
+              :key="notebook.name"
+              class="border-b border-neutral-200 last:border-b-0 dark:border-neutral-700">
+              <td class="flex flex-col py-2">
                 <NotebookContents
                   :on-background="true"
                   :notebook="notebook"
                   type="main"
                   :show-children="notebookStore.currentLevel(notebook, 'main')"></NotebookContents>
               </td>
-              <td class="hidden pb-3 pt-4 align-top lg:table-cell">
+              <td class="hidden py-2 align-top lg:table-cell">
                 <div class="text-sm font-medium">
                   <CommonDateDisplay :date="notebook.createdAt"></CommonDateDisplay>
                 </div>
               </td>
-              <td class="hidden pb-3 pt-4 align-top lg:table-cell">
+              <td class="hidden py-2 align-top lg:table-cell">
                 <div class="text-sm font-medium">
                   <CommonDateDisplay :date="notebook.updatedAt"></CommonDateDisplay>
                 </div>
               </td>
-              <td class="table-cell pb-3 pt-4 align-top">
+              <td class="table-cell py-2 align-top">
                 <div class="flex w-full justify-center">
                   <div
                     class="flex size-6 flex-row items-center justify-center rounded-full bg-gray-200 text-xs font-medium text-gray-900 dark:bg-gray-700 dark:text-gray-200">
@@ -76,7 +79,9 @@
                   </div>
                 </div>
               </td>
-              <td class="pb-3 pt-4 align-top"><NotebookDelete :notebook="notebook.name"></NotebookDelete></td>
+              <td class="py-2 align-top">
+                <NotebookDelete :notebook="notebook"></NotebookDelete>
+              </td>
             </tr>
           </tbody>
         </table>

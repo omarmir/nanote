@@ -25,8 +25,6 @@ export default defineEventHandlerWithNotebook(
       // Construct paths
       const newPath = resolve(join(parentFolder, cleanNewName))
 
-      console.log(newPath)
-
       // Check if new name exists
       try {
         await access(newPath, constants.F_OK)

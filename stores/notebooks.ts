@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { Notebook, NotebookContents, RenameNotebook } from '~/types/notebook'
+import type { DeleteNotebook, Notebook, NotebookContents, RenameNotebook } from '~/types/notebook'
 import type { Result } from '~/types/result'
 import type { FetchError } from 'ofetch'
 
@@ -16,9 +16,15 @@ export const useNotebookStore = defineStore('notebook', () => {
   const mainTopLevel: Ref<string[] | null> = ref(null)
   const sidebarTopLevel: Ref<string[] | null> = ref(null)
 
-  const openNotebook = async (notebook: Notebook, type: 'main' | 'sidebar'): Promise<Result<NotebookContents>> => {
+  const getPaths = (notebook: Notebook): { apiPath: string; notebookPath: string[] } => {
     const apiPath = notebookPathArrayJoiner(notebook)
     const notebookPath = [...notebook.notebooks, notebook.name]
+
+    return { apiPath, notebookPath }
+  }
+
+  const openNotebook = async (notebook: Notebook, type: 'main' | 'sidebar'): Promise<Result<NotebookContents>> => {
+    const { apiPath, notebookPath } = getPaths(notebook)
     try {
       const resp = await $fetch<NotebookContents>(`/api/notebook/${apiPath}`)
       const nb = getNotebookByPathArray(notebookPath, notebooks.value)
@@ -41,8 +47,8 @@ export const useNotebookStore = defineStore('notebook', () => {
   }
 
   const renameNotebook = async (notebook: Notebook, newNotebookName: string): Promise<Result<RenameNotebook>> => {
-    const apiPath = notebookPathArrayJoiner(notebook)
-    const notebookPath = [...notebook.notebooks, notebook.name]
+    const { apiPath, notebookPath } = getPaths(notebook)
+
     try {
       const resp = await $fetch<RenameNotebook>(`/api/notebook/${apiPath}`, {
         method: 'PUT',
@@ -63,7 +69,7 @@ export const useNotebookStore = defineStore('notebook', () => {
   }
 
   const currentLevel = (notebook: Notebook, type: 'main' | 'sidebar'): boolean => {
-    const notebookPath = [...notebook.notebooks, notebook.name]
+    const { notebookPath } = getPaths(notebook)
     if (type === 'main' && mainTopLevel.value) {
       //@ts-expect-error Should not error as its inside a guard
       return notebookPath.every((item, index) => item === mainTopLevel.value[index])
@@ -77,6 +83,38 @@ export const useNotebookStore = defineStore('notebook', () => {
 
   const resetSidebarNotebook = () => (sidebarTopLevel.value = null)
 
+  const deleteNotebook = async (notebook: Notebook): Promise<Result<DeleteNotebook>> => {
+    const { apiPath } = getPaths(notebook)
+
+    try {
+      const resp = await $fetch<DeleteNotebook>(`/api/notebook/${apiPath}`, {
+        method: 'DELETE'
+      })
+
+      const success: Result<DeleteNotebook> = {
+        success: true,
+        data: resp
+      }
+
+      if (notebook.notebooks.length === 0) {
+        delete notebooks.value?.notebooks?.[notebook.name]
+      } else {
+        const parentPath = notebook.notebooks
+        const nb = getNotebookByPathArray(parentPath, notebooks.value)
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+        if (nb?.contents?.notebooks?.[notebook.name]) delete nb.contents.notebooks[notebook.name]
+      }
+
+      return success
+    } catch (err) {
+      const error = err as FetchError
+      return {
+        success: false,
+        message: error.data.message
+      }
+    }
+  }
+
   return {
     openNotebook,
     notebooks,
@@ -86,6 +124,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     sidebarTopLevel,
     error,
     currentLevel,
-    resetSidebarNotebook
+    resetSidebarNotebook,
+    deleteNotebook
   }
 })

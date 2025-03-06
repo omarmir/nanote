@@ -29,10 +29,11 @@
 </template>
 <script lang="ts" setup>
 import { useNotebookStore } from '~/stores/notebooks'
+import type { Notebook } from '~/types/notebook'
 
 const store = useNotebookStore()
 
-const { notebook } = defineProps<{ notebook: string }>()
+const { notebook } = defineProps<{ notebook: Notebook }>()
 
 const deleteDialog = ref(false)
 const deletingState = ref(false)

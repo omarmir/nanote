@@ -9,7 +9,6 @@ import type { DeleteNotebook } from '~/types/notebook'
 export default defineEventHandlerWithNotebook(
   async (_event, cleanNotebook, fullPath) => {
     try {
-      console.log(fullPath)
       // Read file contents and stats
       await rm(fullPath, { recursive: true, force: true })
 
