@@ -129,12 +129,18 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
-  const deleteNote = async (notebooks: string[], note: string): Promise<Result<DeleteNote>> => {
-    const { apiPath } = getNotePaths(notebooks, note)
+  const deleteNote = async (notebookPath: string[], note: string): Promise<Result<DeleteNote>> => {
+    const { apiPath } = getNotePaths(notebookPath, note)
     try {
       const resp = await $fetch<DeleteNote>(`/api/note/${apiPath}`, {
         method: 'DELETE'
       })
+
+      const nb = getNotebookByPathArray(notebookPath, notebooks.value)
+      if (nb?.contents) {
+        nb.contents.notes = nb.contents.notes.filter((item) => item.name !== note)
+      }
+
       return {
         success: true,
         data: resp
@@ -144,13 +150,22 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
-  const renameNote = async (notebooks: string[], note: string, newName: string): Promise<Result<RenameNote>> => {
-    const { apiPath } = getNotePaths(notebooks, note)
+  const renameNote = async (notebookPath: string[], note: string, newName: string): Promise<Result<RenameNote>> => {
+    const { apiPath } = getNotePaths(notebookPath, note)
     try {
       const rename = await $fetch<RenameNote>(`/api/note/${apiPath}`, {
         body: { newName },
         method: 'PUT'
       })
+
+      const nb = getNotebookByPathArray(notebookPath, notebooks.value)
+      if (nb?.contents) {
+        const idx = nb.contents.notes.findIndex((item) => item.name === rename.oldName)
+        if (idx >= 0) {
+          nb.contents.notes[idx].name = rename.newName
+        }
+      }
+
       return {
         success: true,
         data: rename
@@ -165,12 +180,17 @@ export const useNotebookStore = defineStore('notebook', () => {
   }
 
   const addNote = async (notebook: Notebook, note: string): Promise<Result<Note>> => {
-    const { apiPath } = getNotePaths([...notebook.notebooks, notebook.name], note)
+    const notebookPath = [...notebook.notebooks, notebook.name]
+    const { apiPath } = getNotePaths(notebookPath, note)
 
     try {
       const resp = await $fetch<Note>(`/api/note/${apiPath}`, {
         method: 'POST'
       })
+
+      const nb = getNotebookByPathArray(notebookPath, notebooks.value)
+      nb?.contents?.notes.push(resp)
+
       return {
         success: true,
         data: resp
