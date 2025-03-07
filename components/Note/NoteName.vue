@@ -104,7 +104,7 @@ const {
   isFocus = false
 } = defineProps<{ name: string; savingState: SavingState; notebooks: string[]; isFocus?: boolean }>()
 
-const notebookStore = useNotebookStore() // TODO: Delete note from notebook store
+const notebookStore = useNotebookStore()
 
 const note = ref(name)
 
