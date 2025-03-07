@@ -72,3 +72,5 @@ export type SearchResult = {
   snippet: string
   score: number
 }
+
+export type NotebookDisplay = 'main' | 'sidebar' | 'other'

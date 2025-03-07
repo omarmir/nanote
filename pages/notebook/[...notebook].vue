@@ -11,26 +11,20 @@
       </svg>
       {{ notebook }}
     </h1>
-    <NoteNotebookNotes
-      v-if="notebook && !error"
-      :notebook="notebook"
-      :notes
-      :on-background="true"
-      @added="addNote"></NoteNotebookNotes>
     <CommonDangerAlert v-if="error" class="mb-4 mt-4">{{ error.data.message }}</CommonDangerAlert>
+    <NotebookContentItems
+      v-if="contents"
+      :notebook-contents="contents"
+      :on-background="false"
+      type="other"></NotebookContentItems>
   </CommonBaseCard>
 </template>
 <script lang="ts" setup>
-import type { Note } from '~/types/notebook'
+import type { NotebookContents } from '~/types/notebook'
 
 const route = useRoute()
-const notebook: string = typeof route.params.notebook === 'string' ? route.params.notebook : route.params.notebook[0]
+const notebook: string[] = typeof route.params.notebook === 'string' ? [route.params.notebook] : route.params.notebook
+const apiPath = notePathArrayJoiner(notebook)
 
-const { data: notes, error } = useFetch<Note[]>(`/api/${notebook}/notes`, { immediate: true })
-
-const addNote = (note: Note) => {
-  if (note.notebook === notebook) {
-    notes.value?.push(note)
-  }
-}
+const { data: contents, error } = useFetch<NotebookContents>(`/api/notebook/${apiPath}`, { immediate: true })
 </script>

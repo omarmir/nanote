@@ -80,7 +80,7 @@
         <NoteNewNote
           v-if="notebookStore.notebooks?.notebooks[notebookStore.sidebarTopLevel[0]]"
           class="mb-4"
-          :notebook="notebookStore.notebooks?.notebooks[notebookStore.sidebarTopLevel[0]].path"></NoteNewNote>
+          :notebook="notebookStore.notebooks?.notebooks[notebookStore.sidebarTopLevel[0]]"></NoteNewNote>
         <NotebookContentItems
           :notebook-contents="notebookStore.notebooks?.notebooks[notebookStore.sidebarTopLevel[0]].contents"
           :on-background="false"

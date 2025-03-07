@@ -24,12 +24,12 @@
   </ul>
 </template>
 <script lang="ts" setup>
-import type { NotebookContents } from '~/types/notebook'
+import type { NotebookContents, NotebookDisplay } from '~/types/notebook'
 const { outsideClick } = useSidebar()
 
 const { notebookContents, onBackground, type } = defineProps<{
   notebookContents: NotebookContents | null | undefined
   onBackground: boolean
-  type: 'main' | 'sidebar'
+  type: NotebookDisplay
 }>()
 </script>

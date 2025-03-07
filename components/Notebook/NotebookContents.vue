@@ -20,7 +20,7 @@
   </div>
 </template>
 <script lang="ts" setup async>
-import type { Notebook } from '~/types/notebook'
+import type { Notebook, NotebookDisplay } from '~/types/notebook'
 
 const {
   notebook,
@@ -30,7 +30,7 @@ const {
 } = defineProps<{
   notebook: Notebook
   onBackground: boolean
-  type: 'main' | 'sidebar'
+  type: NotebookDisplay
   showChildren?: boolean
 }>()
 const notebookStore = useNotebookStore()

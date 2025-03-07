@@ -5,6 +5,7 @@ import type {
   Note,
   Notebook,
   NotebookContents,
+  NotebookDisplay,
   RenameNote,
   RenameNotebook
 } from '~/types/notebook'
@@ -37,7 +38,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     return { apiPath, notePath }
   }
 
-  const openNotebook = async (notebook: Notebook, type: 'main' | 'sidebar'): Promise<Result<NotebookContents>> => {
+  const openNotebook = async (notebook: Notebook, type: NotebookDisplay): Promise<Result<NotebookContents>> => {
     const { apiPath, notebookPath } = getNotebookPaths(notebook)
     try {
       const resp = await $fetch<NotebookContents>(`/api/notebook/${apiPath}`)
@@ -82,7 +83,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
-  const currentLevel = (notebook: Notebook, type: 'main' | 'sidebar'): boolean => {
+  const currentLevel = (notebook: Notebook, type: NotebookDisplay): boolean => {
     const { notebookPath } = getNotebookPaths(notebook)
     if (type === 'main' && mainTopLevel.value) {
       //@ts-expect-error Should not error as its inside a guard
@@ -199,6 +200,20 @@ export const useNotebookStore = defineStore('notebook', () => {
       return { success: false, message: (error as FetchError).data.message }
     }
   }
+
+  // const getNotebookContents = async (
+  //   notebookPath: string[],
+  //   notebookName: string
+  // ): Promise<Result<NotebookContents>> => {
+  //   const apiPath = notePathArrayJoiner([...notebookPath, notebookName])
+
+  //   try {
+  //     const resp = await $fetch<NotebookContents>(`/api/notebook/${apiPath}`)
+  //     return { success: true, data: resp }
+  //   } catch (error) {
+  //     return { success: false, message: (error as FetchError).data.message }
+  //   }
+  // }
 
   return {
     openNotebook,
