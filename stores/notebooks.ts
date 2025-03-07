@@ -1,5 +1,13 @@
 import { defineStore } from 'pinia'
-import type { DeleteNotebook, Notebook, NotebookContents, RenameNotebook } from '~/types/notebook'
+import type {
+  DeleteNote,
+  DeleteNotebook,
+  Note,
+  Notebook,
+  NotebookContents,
+  RenameNote,
+  RenameNotebook
+} from '~/types/notebook'
 import type { Result } from '~/types/result'
 import type { FetchError } from 'ofetch'
 
@@ -16,15 +24,21 @@ export const useNotebookStore = defineStore('notebook', () => {
   const mainTopLevel: Ref<string[] | null> = ref(null)
   const sidebarTopLevel: Ref<string[] | null> = ref(null)
 
-  const getPaths = (notebook: Notebook): { apiPath: string; notebookPath: string[] } => {
+  const getNotebookPaths = (notebook: Notebook): { apiPath: string; notebookPath: string[] } => {
     const apiPath = notebookPathArrayJoiner(notebook)
     const notebookPath = [...notebook.notebooks, notebook.name]
 
     return { apiPath, notebookPath }
   }
 
+  const getNotePaths = (notebooks: string[], note: string): { apiPath: string; notePath: string[] } => {
+    const notePath = [...notebooks, note]
+    const apiPath = notePathArrayJoiner(notePath)
+    return { apiPath, notePath }
+  }
+
   const openNotebook = async (notebook: Notebook, type: 'main' | 'sidebar'): Promise<Result<NotebookContents>> => {
-    const { apiPath, notebookPath } = getPaths(notebook)
+    const { apiPath, notebookPath } = getNotebookPaths(notebook)
     try {
       const resp = await $fetch<NotebookContents>(`/api/notebook/${apiPath}`)
       const nb = getNotebookByPathArray(notebookPath, notebooks.value)
@@ -47,7 +61,7 @@ export const useNotebookStore = defineStore('notebook', () => {
   }
 
   const renameNotebook = async (notebook: Notebook, newNotebookName: string): Promise<Result<RenameNotebook>> => {
-    const { apiPath, notebookPath } = getPaths(notebook)
+    const { apiPath, notebookPath } = getNotebookPaths(notebook)
 
     try {
       const resp = await $fetch<RenameNotebook>(`/api/notebook/${apiPath}`, {
@@ -69,7 +83,7 @@ export const useNotebookStore = defineStore('notebook', () => {
   }
 
   const currentLevel = (notebook: Notebook, type: 'main' | 'sidebar'): boolean => {
-    const { notebookPath } = getPaths(notebook)
+    const { notebookPath } = getNotebookPaths(notebook)
     if (type === 'main' && mainTopLevel.value) {
       //@ts-expect-error Should not error as its inside a guard
       return notebookPath.every((item, index) => item === mainTopLevel.value[index])
@@ -84,7 +98,7 @@ export const useNotebookStore = defineStore('notebook', () => {
   const resetSidebarNotebook = () => (sidebarTopLevel.value = null)
 
   const deleteNotebook = async (notebook: Notebook): Promise<Result<DeleteNotebook>> => {
-    const { apiPath } = getPaths(notebook)
+    const { apiPath } = getNotebookPaths(notebook)
 
     try {
       const resp = await $fetch<DeleteNotebook>(`/api/notebook/${apiPath}`, {
@@ -115,6 +129,57 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
+  const deleteNote = async (notebooks: string[], note: string): Promise<Result<DeleteNote>> => {
+    const { apiPath } = getNotePaths(notebooks, note)
+    try {
+      const resp = await $fetch<DeleteNote>(`/api/note/${apiPath}`, {
+        method: 'DELETE'
+      })
+      return {
+        success: true,
+        data: resp
+      }
+    } catch (error) {
+      return { success: false, message: (error as FetchError).data.message }
+    }
+  }
+
+  const renameNote = async (notebooks: string[], note: string, newName: string): Promise<Result<RenameNote>> => {
+    const { apiPath } = getNotePaths(notebooks, note)
+    try {
+      const rename = await $fetch<RenameNote>(`/api/note/${apiPath}`, {
+        body: { newName },
+        method: 'PUT'
+      })
+      return {
+        success: true,
+        data: rename
+      }
+    } catch (e) {
+      const err = e as FetchError
+      return {
+        success: false,
+        message: err.data?.message ?? err
+      }
+    }
+  }
+
+  const addNote = async (notebook: Notebook, note: string): Promise<Result<Note>> => {
+    const { apiPath } = getNotePaths([...notebook.notebooks, notebook.name], note)
+
+    try {
+      const resp = await $fetch<Note>(`/api/note/${apiPath}`, {
+        method: 'POST'
+      })
+      return {
+        success: true,
+        data: resp
+      }
+    } catch (error) {
+      return { success: false, message: (error as FetchError).data.message }
+    }
+  }
+
   return {
     openNotebook,
     notebooks,
@@ -125,6 +190,10 @@ export const useNotebookStore = defineStore('notebook', () => {
     error,
     currentLevel,
     resetSidebarNotebook,
-    deleteNotebook
+    deleteNotebook,
+    // Note
+    deleteNote,
+    renameNote,
+    addNote
   }
 })

@@ -8,15 +8,10 @@
       </h3>
       <div class="min-w-xs relative my-2 flex w-1/3 min-w-72 flex-wrap items-center">
         <div class="relative my-2 flex w-full flex-wrap items-center">
-          <!-- <NotebookNewNotebook @error="notebookAddedError"></NotebookNewNotebook> -->
+          <!-- TODO: Add Notebook <NotebookNewNotebook @error="notebookAddedError"></NotebookNewNotebook> -->
         </div>
       </div>
     </div>
-    <!-- end card header -->
-    <!-- card body  -->
-    <!-- <CommonDangerAlert v-if="error" class="mb-4 rounded-none">
-      {{ error }}
-    </CommonDangerAlert> -->
     <div class="block flex-auto px-9 py-8 pt-6">
       <div class="overflow-x-auto">
         <table class="text-dark my-0 w-full border-neutral-200 align-middle">

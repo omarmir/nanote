@@ -9,7 +9,7 @@
         {{ openError }}
       </CommonDangerAlert>
       <div v-if="notebookStore.currentLevel(notebook, type)" class="ml-8">
-        <NoteNewNote class="mb-4" :notebook="notebook.name" @added="(note: Note) => emit('added', note)"></NoteNewNote>
+        <NoteNewNote class="mb-4" :notebook="notebook"></NoteNewNote>
         <NotebookContentItems
           v-if="notebook.contents"
           :notebook-contents="notebook.contents"
@@ -20,11 +20,8 @@
   </div>
 </template>
 <script lang="ts" setup async>
-import type { Note, Notebook } from '~/types/notebook'
+import type { Notebook } from '~/types/notebook'
 
-const emit = defineEmits<{
-  (e: 'added', payload: Note): void
-}>()
 const {
   notebook,
   onBackground,

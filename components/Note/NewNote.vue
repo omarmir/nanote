@@ -8,44 +8,31 @@
         </svg>
       </div>
       <CommonBaseInput id="name" v-model="newNote" placeholder="Note name" required class="mt-2"></CommonBaseInput>
-      <!-- <input
-        id="name"
-        v-model="newNote"
-        :class="{ 'border-gray-300 text-gray-900': onBackground, 'border-gray-700 text-gray-400': !onBackground }"
-        type="text"WS
-        name="name"
-        class="my-2 block w-full rounded-md border bg-transparent p-2 pe-16 ps-10 text-sm focus:outline-0 focus:ring-1"
-        placeholder="Note name"
-        required /> -->
       <CommonThemeButton type="submit" class="absolute bottom-[7px] end-2">Add</CommonThemeButton>
     </div>
-    <CommonDangerAlert v-if="error" class="mb-0 mr-4">{{ error }}</CommonDangerAlert>
+    <CommonDangerAlert v-if="error" class="mb-0 mr-4 mt-2">{{ error }}</CommonDangerAlert>
   </form>
 </template>
 <script lang="ts" setup>
-import type { Note } from '~/types/notebook'
-const { notebook } = defineProps<{ notebook: string }>()
+import type { Notebook } from '~/types/notebook'
+const { notebook } = defineProps<{ notebook: Notebook }>()
 
-const store = useNoteStore()
 const noteBookStore = useNotebookStore()
 
 const newNote: Ref<string | null> = ref('')
 const error: Ref<string | null> = ref(null)
-const emit = defineEmits<{
-  (e: 'added', payload: Note): void
-}>()
+
 const addNotebook = async () => {
   if (!newNote.value) {
     error.value = 'Name is required.'
     return
   }
 
-  const resp = await store.addNote(notebook, newNote.value, noteBookStore.currentNotebook)
+  const resp = await noteBookStore.addNote(notebook, newNote.value)
 
   if (resp.success) {
     newNote.value = null
     error.value = null
-    emit('added', resp.data)
   } else {
     error.value = resp.message
   }
