@@ -21,6 +21,7 @@ export type NotebookContents = {
   path: string
   notebooks?: Record<string, Notebook>
   notes: Note[]
+  pathArray: string[]
 }
 
 export type NoteResponse = {

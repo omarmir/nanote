@@ -1,22 +1,87 @@
 <template>
   <CommonBaseCard class="px-9 py-5">
-    <h1 class="mb-2 flex flex-row items-center gap-2 text-xl">
-      <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 1024 1024">
-        <path
-          fill="currentColor"
-          d="M192 128v768h640V128zm-32-64h704a32 32 0 0 1 32 32v832a32 32 0 0 1-32 32H160a32 32 0 0 1-32-32V96a32 32 0 0 1 32-32" />
-        <path
-          fill="currentColor"
-          d="M672 128h64v768h-64zM96 192h128q32 0 32 32t-32 32H96q-32 0-32-32t32-32m0 192h128q32 0 32 32t-32 32H96q-32 0-32-32t32-32m0 192h128q32 0 32 32t-32 32H96q-32 0-32-32t32-32m0 192h128q32 0 32 32t-32 32H96q-32 0-32-32t32-32" />
-      </svg>
-      {{ notebook }}
+    <h1 class="mb-2 flex flex-row items-center text-xl">
+      <ul class="flex flex-row gap-2">
+        <li v-for="(segment, index) in notebook" :key="index" class="flex flex-row gap-2">
+          <span v-if="index > 0">></span>
+          <NuxtLink
+            class="hover:text-gray-400 dark:hover:text-gray-100"
+            :to="`/notebook/${notebook.slice(0, index + 1).join('/')}`">
+            {{ segment }}
+          </NuxtLink>
+        </li>
+      </ul>
     </h1>
     <CommonDangerAlert v-if="error" class="mb-4 mt-4">{{ error.data.message }}</CommonDangerAlert>
-    <NotebookContentItems
-      v-if="contents"
-      :notebook-contents="contents"
-      :on-background="false"
-      type="other"></NotebookContentItems>
+    <table class="mt-2">
+      <thead>
+        <tr>
+          <th class="text-start text-xs font-medium uppercase text-gray-400">Name</th>
+          <th class="text-center text-xs font-medium uppercase text-gray-400">Created</th>
+          <th class="text-center text-xs font-medium uppercase text-gray-400">Updated</th>
+          <th class="text-center text-xs font-medium uppercase text-gray-400">Size</th>
+          <th class="text-center text-xs font-medium uppercase text-gray-400">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="note in contents?.notes" :key="`nt-${note.name}`">
+          <td class="py-2 align-top">
+            <NuxtLink
+              :to="`/note/${contents?.pathArray.join('/')}/${note.name}`"
+              class="flex flex-row items-center gap-2 hover:text-gray-400 dark:hover:text-gray-100">
+              <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M4 22V2h10l6 6v14zm9-13V4H6v16h12V9zM6 4v5zv16z"></path>
+              </svg>
+
+              {{ note.name }}
+            </NuxtLink>
+          </td>
+          <td class="hidden py-2 align-top lg:table-cell">
+            <div class="text-sm font-medium">
+              <CommonDateDisplay :date="note.createdAt"></CommonDateDisplay>
+            </div>
+          </td>
+          <td class="hidden py-2 align-top lg:table-cell">
+            <div class="text-sm font-medium">
+              <CommonDateDisplay :date="note.updatedAt"></CommonDateDisplay>
+            </div>
+          </td>
+          <td class="hidden py-2 text-center align-top lg:table-cell">{{ note.size?.toFixed(2) }}kb</td>
+          <td></td>
+        </tr>
+        <tr v-for="nestedNotebook in contents?.notebooks" :key="`nb-${nestedNotebook.name}`">
+          <td class="py-2 align-top">
+            <NuxtLink
+              class="flex flex-row items-center gap-2 hover:text-gray-400 dark:hover:text-gray-100"
+              :to="`/notebook/${contents?.pathArray.join('/')}/${nestedNotebook.name}`">
+              <svg xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0" viewBox="0 0 1024 1024">
+                <path
+                  fill="currentColor"
+                  d="M192 128v768h640V128zm-32-64h704a32 32 0 0 1 32 32v832a32 32 0 0 1-32 32H160a32 32 0 0 1-32-32V96a32 32 0 0 1 32-32" />
+                <path
+                  fill="currentColor"
+                  d="M672 128h64v768h-64zM96 192h128q32 0 32 32t-32 32H96q-32 0-32-32t32-32m0 192h128q32 0 32 32t-32 32H96q-32 0-32-32t32-32m0 192h128q32 0 32 32t-32 32H96q-32 0-32-32t32-32m0 192h128q32 0 32 32t-32 32H96q-32 0-32-32t32-32" />
+              </svg>
+              {{ nestedNotebook.name }}
+            </NuxtLink>
+          </td>
+          <td class="hidden py-2 align-top lg:table-cell">
+            <div class="text-sm font-medium">
+              <CommonDateDisplay :date="nestedNotebook.createdAt"></CommonDateDisplay>
+            </div>
+          </td>
+          <td class="hidden py-2 align-top lg:table-cell">
+            <div class="text-sm font-medium">
+              <CommonDateDisplay :date="nestedNotebook.updatedAt"></CommonDateDisplay>
+            </div>
+          </td>
+          <td class="hidden py-2 text-center align-top lg:table-cell">
+            {{ nestedNotebook.notebookCount + nestedNotebook.noteCount }}kb
+          </td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
   </CommonBaseCard>
 </template>
 <script lang="ts" setup>

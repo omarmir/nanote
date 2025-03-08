@@ -11,7 +11,8 @@ export default defineEventHandlerWithNotebook(async (_event, notebook, fullPath)
     const files = await readdir(fullPath, { withFileTypes: true })
     const notebookContents: NotebookContents = {
       notes: [] as Note[],
-      path: fullPath
+      path: fullPath,
+      pathArray: notebook
     }
     // Process files concurrently
     await Promise.all(
@@ -24,7 +25,8 @@ export default defineEventHandlerWithNotebook(async (_event, notebook, fullPath)
             name: dirent.name.replace(/\.md$/, ''),
             notebook: notebook,
             createdAt: createdAtTime.toISOString(),
-            updatedAt: stats.mtime.toISOString()
+            updatedAt: stats.mtime.toISOString(),
+            size: stats.size / 1024
           } satisfies Note
           notebookContents.notes.push(note)
         } else if (dirent.isDirectory()) {
