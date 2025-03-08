@@ -26,9 +26,10 @@ export default defineEventHandler(async (event): Promise<SearchResult[]> => {
   const folders = await readdir(fullPath, { withFileTypes: true })
   for (const folder of folders.filter((d) => d.isDirectory())) {
     if (folder.name.toLowerCase().includes(rawQuery.toLowerCase())) {
+      const relativePath = folder.parentPath.replace(fullPath, '').split(/[/\\]/).filter(Boolean)
       results.push({
-        notebook: folder.name,
-        note: null,
+        notebook: relativePath,
+        name: folder.name,
         matchType: 'folder',
         snippet: `Notebook name contains "${rawQuery}"`,
         score: 1
@@ -42,9 +43,10 @@ export default defineEventHandler(async (event): Promise<SearchResult[]> => {
     for (const note of notes.filter((f) => f.isFile() && f.name.endsWith('.md'))) {
       const noteName = note.name.replace(/\.md$/, '')
       if (noteName.toLowerCase().includes(rawQuery.toLowerCase())) {
+        const relativePath = note.parentPath.replace(fullPath, '').split(/[/\\]/).filter(Boolean)
         results.push({
-          notebook: folder.name,
-          note: noteName,
+          notebook: relativePath,
+          name: noteName,
           matchType: 'note',
           snippet: `Note name contains "${rawQuery}"`,
           score: 2
@@ -104,8 +106,8 @@ export default defineEventHandler(async (event): Promise<SearchResult[]> => {
         const relativePath = filePath.replace(fullPath, '').split(/[/\\]/).filter(Boolean)
 
         return {
-          notebook: relativePath[0],
-          note: relativePath[1]?.replace(/\.md$/, ''),
+          notebook: relativePath.slice(0, relativePath.length - 1),
+          name: relativePath[1]?.replace(/\.md$/, ''),
           snippet: snippet.trim().slice(0, CONTEXT_CHARS * 2),
           score: 3,
           matchType: 'content'

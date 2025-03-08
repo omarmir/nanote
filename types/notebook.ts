@@ -68,7 +68,7 @@ export type SavingState = 'pending' | 'saving' | 'success' | 'error'
 
 export type SearchResult = {
   notebook: string[]
-  note: string | null
+  name: string | null
   matchType: 'folder' | 'note' | 'content'
   snippet: string
   score: number
