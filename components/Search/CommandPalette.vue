@@ -101,7 +101,10 @@ watch(isShown, async () => {
 })
 
 const navigate = (result: SearchResult) => {
-  const route = result.matchType === 'folder' ? `/${result.notebook}` : `/${result.notebook}/${result.note}`
+  const route =
+    result.matchType === 'folder'
+      ? `/notebook/${result.notebook.join('/')}`
+      : `/note/${result.notebook.join('/')}/${result.name}`
   router.push(route)
   isShown.value = false
 }
