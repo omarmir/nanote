@@ -19,7 +19,7 @@
           <th class="text-start text-xs font-medium uppercase text-gray-400">Name</th>
           <th class="text-center text-xs font-medium uppercase text-gray-400">Created</th>
           <th class="text-center text-xs font-medium uppercase text-gray-400">Updated</th>
-          <th class="text-center text-xs font-medium uppercase text-gray-400">Size</th>
+          <th class="text-center text-xs font-medium uppercase text-gray-400">Contents</th>
           <th class="text-center text-xs font-medium uppercase text-gray-400">Actions</th>
         </tr>
       </thead>
@@ -76,7 +76,7 @@
             </div>
           </td>
           <td class="hidden py-2 text-center align-top lg:table-cell">
-            {{ nestedNotebook.notebookCount + nestedNotebook.noteCount }}kb
+            {{ nestedNotebook.notebookCount + nestedNotebook.noteCount }}
           </td>
           <td></td>
         </tr>
