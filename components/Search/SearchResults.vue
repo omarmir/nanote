@@ -5,18 +5,7 @@
         :title="result.matchType === 'content' ? `Content of note includes: ${result.snippet}` : result.snippet"
         class="flex w-full cursor-pointer flex-row gap-2 px-4 py-2 text-left text-xs text-gray-900 hover:bg-accent hover:text-white focus-visible:bg-accent focus-visible:text-white focus-visible:outline-none dark:text-gray-200"
         @click="navigate(result)">
-        <svg
-          v-if="result.matchType === 'folder'"
-          xmlns="http://www.w3.org/2000/svg"
-          class="size-4 shrink-0"
-          viewBox="0 0 1024 1024">
-          <path
-            fill="currentColor"
-            d="M192 128v768h640V128zm-32-64h704a32 32 0 0 1 32 32v832a32 32 0 0 1-32 32H160a32 32 0 0 1-32-32V96a32 32 0 0 1 32-32" />
-          <path
-            fill="currentColor"
-            d="M672 128h64v768h-64zM96 192h128q32 0 32 32t-32 32H96q-32 0-32-32t32-32m0 192h128q32 0 32 32t-32 32H96q-32 0-32-32t32-32m0 192h128q32 0 32 32t-32 32H96q-32 0-32-32t32-32m0 192h128q32 0 32 32t-32 32H96q-32 0-32-32t32-32" />
-        </svg>
+        <IconsNotebook v-if="result.matchType === 'folder'" class="size-5 grow-0"></IconsNotebook>
         <svg
           v-else-if="result.matchType === 'note'"
           xmlns="http://www.w3.org/2000/svg"

@@ -18,8 +18,15 @@
         </div>
       </NuxtLink>
     </li>
-    <li v-for="nestedNotebook in notebookContents.notebooks" :key="nestedNotebook.path">
-      <NotebookContents :on-background :notebook="nestedNotebook" :show-childre="true" :type></NotebookContents>
+    <li
+      v-for="nestedNotebook in notebookContents.notebooks"
+      :key="nestedNotebook.path"
+      class="flex flex-row items-center">
+      <NotebookContents :on-background :notebook="nestedNotebook" :show-childre="true" :type>
+        <template #manage>
+          <NotebookManage :notebook="nestedNotebook"></NotebookManage>
+        </template>
+      </NotebookContents>
     </li>
   </ul>
 </template>

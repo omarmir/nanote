@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex flex-row items-center">
     <button class="text-red-500 hover:text-red-700" @click="deleteDialog = true">
       <svg xmlns="http://www.w3.org/2000/svg" class="size-6" viewBox="0 0 24 24">
         <path

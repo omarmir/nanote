@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-2">
     <div class="flex flex-row items-center gap-2">
-      <button v-if="!onSidebar" class="text-accent hover:text-accent-hover" @click="isRenaming = !isRenaming">
+      <button v-if="!onSidebar" class="text-teal-600 hover:text-teal-800" @click="isRenaming = !isRenaming">
         <svg xmlns="http://www.w3.org/2000/svg" class="size-6" viewBox="0 0 24 24" title="Rename notebook">
           <g fill="currentColor">
             <path
@@ -16,14 +16,7 @@
         :class="{ 'text-gray-400': onSidebar, 'hover:text-gray-100': onSidebar, 'hover:text-gray-500': !onSidebar }"
         class="flex flex-row items-center gap-2 dark:hover:text-gray-100"
         @click="toggleNotebook()">
-        <svg xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0" viewBox="0 0 1024 1024">
-          <path
-            fill="currentColor"
-            d="M192 128v768h640V128zm-32-64h704a32 32 0 0 1 32 32v832a32 32 0 0 1-32 32H160a32 32 0 0 1-32-32V96a32 32 0 0 1 32-32" />
-          <path
-            fill="currentColor"
-            d="M672 128h64v768h-64zM96 192h128q32 0 32 32t-32 32H96q-32 0-32-32t32-32m0 192h128q32 0 32 32t-32 32H96q-32 0-32-32t32-32m0 192h128q32 0 32 32t-32 32H96q-32 0-32-32t32-32m0 192h128q32 0 32 32t-32 32H96q-32 0-32-32t32-32" />
-        </svg>
+        <IconsNotebook class="size-5 grow-0"></IconsNotebook>
         <div class="flex flex-col justify-start text-left text-sm font-semibold">
           <span v-show="!isRenaming" class="w-full py-2">
             {{ localNotebook.name }}
@@ -50,6 +43,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { IconsNotebook } from '#components'
 import { onClickOutside } from '@vueuse/core'
 import type { Notebook } from '~/types/notebook'
 

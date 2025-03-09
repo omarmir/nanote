@@ -1,9 +1,12 @@
 <template>
   <div class="flex flex-col">
-    <NotebookRenameNotebook
-      :notebook="notebook"
-      :hide-rename="!onBackground"
-      @toggle="openNotebook"></NotebookRenameNotebook>
+    <div class="flex flex-row items-center gap-2">
+      <slot name="manage"></slot>
+      <NotebookRenameNotebook
+        :notebook="notebook"
+        :hide-rename="!onBackground"
+        @toggle="openNotebook"></NotebookRenameNotebook>
+    </div>
     <div v-if="showChildren">
       <CommonDangerAlert v-if="openError">
         {{ openError }}
