@@ -111,7 +111,8 @@ const saveFile = async (markdownText: string) => {
   formData.append('filename', `${note}.md`) // The filename to use when saving
 
   try {
-    await $fetch(`/api/${notebookPath}/${note}`, { method: 'PATCH', body: formData })
+    //@ts-expect-error PATH is available but likely mismatched due to dynamic URL
+    await $fetch(`/api/note/${notebookPath}/${note}`, { method: 'PATCH', body: formData })
     savingState.value = 'success'
   } catch (err) {
     error.value = `Unable to save: ${(err as FetchError).data.message}`

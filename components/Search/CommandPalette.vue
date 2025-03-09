@@ -5,7 +5,7 @@
     :hide-title-desc="true"
     position="top"
     theme="primary"
-    title="Command prompt"
+    title="Search results"
     desc="Quick shortcuts and search">
     <div class="flex flex-col gap-4">
       <label for="command" class="hidden">Search</label>

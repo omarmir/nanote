@@ -1,16 +1,16 @@
-import { readdir } from 'node:fs/promises'
-import { join, resolve } from 'node:path'
+import { resolve } from 'node:path'
 import { platform } from 'node:os'
 import type { ExecSyncOptionsWithStringEncoding } from 'node:child_process'
 import { execSync } from 'node:child_process'
 import escape from 'shell-escape'
 import type { SearchResult } from '~/types/notebook'
 import basePath from '~/server/folder'
+import { defineEventHandlerWithSearch } from '~/server/wrappers/search'
 
 const CONTEXT_CHARS = 50
 const MAX_RESULTS = 5
 
-export default defineEventHandler(async (event): Promise<SearchResult[]> => {
+export default defineEventHandlerWithSearch(async (event, searchResults) => {
   const fullPath = resolve(basePath)
   const { q: rawQuery } = getQuery(event)
 
@@ -21,39 +21,6 @@ export default defineEventHandler(async (event): Promise<SearchResult[]> => {
   const results: SearchResult[] = []
   const query = escape([rawQuery.replace(/[^\w\- ]/g, '')])
   const osPlatform = platform()
-
-  // 1. Search folder names
-  const folders = await readdir(fullPath, { withFileTypes: true })
-  for (const folder of folders.filter((d) => d.isDirectory())) {
-    if (folder.name.toLowerCase().includes(rawQuery.toLowerCase())) {
-      const relativePath = folder.parentPath.replace(fullPath, '').split(/[/\\]/).filter(Boolean)
-      results.push({
-        notebook: relativePath,
-        name: folder.name,
-        matchType: 'folder',
-        snippet: `Notebook name contains "${rawQuery}"`,
-        score: 1
-      })
-    }
-  }
-
-  // 2. Search note names across all notebooks
-  for (const folder of folders.filter((d) => d.isDirectory())) {
-    const notes = await readdir(join(fullPath, folder.name), { withFileTypes: true })
-    for (const note of notes.filter((f) => f.isFile() && f.name.endsWith('.md'))) {
-      const noteName = note.name.replace(/\.md$/, '')
-      if (noteName.toLowerCase().includes(rawQuery.toLowerCase())) {
-        const relativePath = note.parentPath.replace(fullPath, '').split(/[/\\]/).filter(Boolean)
-        results.push({
-          notebook: relativePath,
-          name: noteName,
-          matchType: 'note',
-          snippet: `Note name contains "${rawQuery}"`,
-          score: 2
-        })
-      }
-    }
-  }
 
   // 3. Optimized content search
   try {
@@ -126,8 +93,11 @@ export default defineEventHandler(async (event): Promise<SearchResult[]> => {
   }
 
   // Deduplicate and sort
-  return Array.from(new Set(results.map((r) => JSON.stringify(r))))
+  const contentResults = Array.from(new Set(results.map((r) => JSON.stringify(r))))
     .map((r) => JSON.parse(r) as SearchResult)
     .sort((a, b) => b.score - a.score)
     .slice(0, MAX_RESULTS)
+
+  contentResults.push(...searchResults)
+  return contentResults
 })
