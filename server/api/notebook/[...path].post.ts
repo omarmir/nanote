@@ -34,7 +34,9 @@ export default defineEventHandlerWithNotebook(
         name: notebookName,
         createdAt: new Date().toISOString(),
         updatedAt: null,
-        fileCount: 0
+        notebookCount: 0,
+        noteCount: 0,
+        path: fullPath
       } satisfies Notebook
     } catch (error) {
       console.error('Error creating notebook:', error)

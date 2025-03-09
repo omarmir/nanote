@@ -201,19 +201,27 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
-  // const getNotebookContents = async (
-  //   notebookPath: string[],
-  //   notebookName: string
-  // ): Promise<Result<NotebookContents>> => {
-  //   const apiPath = notePathArrayJoiner([...notebookPath, notebookName])
+  const addNotebook = async (notebook: Notebook, name: string): Promise<Result<Notebook>> => {
+    const notebookPath = [...notebook.notebooks, notebook.name]
+    const { apiPath } = getNotePaths(notebookPath, name)
 
-  //   try {
-  //     const resp = await $fetch<NotebookContents>(`/api/notebook/${apiPath}`)
-  //     return { success: true, data: resp }
-  //   } catch (error) {
-  //     return { success: false, message: (error as FetchError).data.message }
-  //   }
-  // }
+    try {
+      const resp = await $fetch<Notebook>(`/api/notebook/${apiPath}`, {
+        method: 'POST'
+      })
+
+      const nb = getNotebookByPathArray(notebookPath, notebooks.value)
+      if (nb?.contents?.notebooks) {
+        nb.contents.notebooks[name] = resp
+      }
+      return {
+        success: true,
+        data: resp
+      }
+    } catch (error) {
+      return { success: false, message: (error as FetchError).data.message }
+    }
+  }
 
   return {
     openNotebook,
@@ -226,6 +234,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     currentLevel,
     resetSidebarNotebook,
     deleteNotebook,
+    addNotebook,
     // Note
     deleteNote,
     renameNote,
