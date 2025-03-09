@@ -13,11 +13,7 @@
           <span class="hidden">Notebook?</span>
         </template>
         <template #icon>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-            <path
-              fill="currentColor"
-              d="M11 13H6q-.425 0-.712-.288T5 12t.288-.712T6 11h5V6q0-.425.288-.712T12 5t.713.288T13 6v5h5q.425 0 .713.288T19 12t-.288.713T18 13h-5v5q0 .425-.288.713T12 19t-.712-.288T11 18z" />
-          </svg>
+          <IconsAdd></IconsAdd>
         </template>
       </CommonToggleInput>
     </div>
@@ -42,11 +38,12 @@ const addItem = async () => {
   }
 
   const resp = isNotebook.value
-    ? await noteBookStore.addNotebook(notebook, newItem.value)
+    ? await noteBookStore.addNotebook(newItem.value, notebook)
     : await noteBookStore.addNote(notebook, newItem.value)
 
   if (resp.success) {
     newItem.value = null
+    isNotebook.value = false
     error.value = null
   } else {
     error.value = resp.message

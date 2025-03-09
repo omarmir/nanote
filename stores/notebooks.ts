@@ -201,8 +201,8 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
-  const addNotebook = async (notebook: Notebook, name: string): Promise<Result<Notebook>> => {
-    const notebookPath = [...notebook.notebooks, notebook.name]
+  const addNotebook = async (name: string, notebook?: Notebook): Promise<Result<Notebook>> => {
+    const notebookPath = notebook ? [...(notebook?.notebooks ?? []), notebook?.name ?? ''] : []
     const { apiPath } = getNotePaths(notebookPath, name)
 
     try {
@@ -211,8 +211,13 @@ export const useNotebookStore = defineStore('notebook', () => {
       })
 
       const nb = getNotebookByPathArray(notebookPath, notebooks.value)
-      if (nb?.contents?.notebooks) {
-        nb.contents.notebooks[name] = resp
+      if (notebookPath.length === 0 && notebooks.value) {
+        if (!notebooks.value.notebooks) notebooks.value.notebooks = {}
+        notebooks.value.notebooks[name] = resp
+      } else {
+        if (nb?.contents?.notebooks) {
+          nb.contents.notebooks[name] = resp
+        }
       }
       return {
         success: true,

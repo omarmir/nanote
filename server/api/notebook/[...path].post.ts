@@ -6,7 +6,7 @@ import { defineEventHandlerWithNotebook } from '~/server/wrappers/notebook'
  * Create notebook
  */
 export default defineEventHandlerWithNotebook(
-  async (event, notebook, fullPath) => {
+  async (_event, notebook, fullPath, _parentFolder, name) => {
     try {
       // Check if folder already exists and read/write-able
       await access(fullPath, constants.R_OK | constants.W_OK)
@@ -26,12 +26,10 @@ export default defineEventHandlerWithNotebook(
       // Create the directory
       await mkdir(fullPath)
 
-      const notebookName = notebook.at(-1) ?? ''
-
       // Return the new notebook structure matching your type
       return {
         notebooks: notebook,
-        name: notebookName,
+        name: name ?? '',
         createdAt: new Date().toISOString(),
         updatedAt: null,
         notebookCount: 0,
