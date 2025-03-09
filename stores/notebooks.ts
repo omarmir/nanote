@@ -211,12 +211,15 @@ export const useNotebookStore = defineStore('notebook', () => {
       })
 
       const nb = getNotebookByPathArray(notebookPath, notebooks.value)
+
+      //if the notebook is entered at the top level
       if (notebookPath.length === 0 && notebooks.value) {
         if (!notebooks.value.notebooks) notebooks.value.notebooks = {}
-        notebooks.value.notebooks[name] = resp
+        notebooks.value.notebooks[resp.name] = resp
       } else {
-        if (nb?.contents?.notebooks) {
-          nb.contents.notebooks[name] = resp
+        if (nb?.contents) {
+          if (!nb.contents.notebooks) nb.contents.notebooks = {}
+          nb.contents.notebooks[resp.name] = resp
         }
       }
       return {

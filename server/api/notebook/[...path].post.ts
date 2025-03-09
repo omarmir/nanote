@@ -28,7 +28,7 @@ export default defineEventHandlerWithNotebook(
 
       // Return the new notebook structure matching your type
       return {
-        notebooks: notebook,
+        notebooks: notebook.slice(0, -1) ?? [],
         name: name ?? '',
         createdAt: new Date().toISOString(),
         updatedAt: null,

@@ -43,7 +43,7 @@ export function defineEventHandlerWithNotebook<T extends EventHandlerRequest, D>
     const parentFolder = join(basePath, ...parentFolderArray)
     const name = notebooks.at(-1)
     // This is for a new notebook, we can bail early
-    if (options?.notebookCheck === false) return await handler(event, parentFolderArray, fullPath, parentFolder, name)
+    if (options?.notebookCheck === false) return await handler(event, notebooks, fullPath, parentFolder, name)
 
     // Security checks
     if (!targetFolder.startsWith(resolve(basePath))) {
@@ -64,6 +64,6 @@ export function defineEventHandlerWithNotebook<T extends EventHandlerRequest, D>
       })
     }
 
-    return await handler(event, parentFolderArray, fullPath, parentFolder, name)
+    return await handler(event, notebooks, fullPath, parentFolder, name)
   })
 }
