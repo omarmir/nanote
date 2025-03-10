@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import { defineEventHandlerWithNotebook } from '~/server/wrappers/notebook'
 import type { Note, Notebook, NotebookContents } from '~/types/notebook'
 /**
- * Returns list of notes for a specific notebook
+ * Returns contents for a specific notebook
  */
 export default defineEventHandlerWithNotebook(async (_event, notebook, fullPath) => {
   try {
