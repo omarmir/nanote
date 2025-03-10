@@ -4,7 +4,7 @@ import { setup, $fetch } from '@nuxt/test-utils'
 import type { DeleteNotebook, Notebook, NotebookContents, RenameNotebook } from '~/types/notebook'
 import { join } from 'node:path'
 import basePath from '~/server/folder'
-import { getAuthCookie } from '~/tests/setup'
+import { emptyFolder, getAuthCookie } from '~/tests/setup'
 import { access } from 'node:fs/promises'
 
 let authCookie = ''
@@ -15,6 +15,7 @@ describe('Notebook check', async () => {
   })
 
   beforeAll(async () => {
+    await emptyFolder(basePath)
     authCookie = await getAuthCookie()
   })
 

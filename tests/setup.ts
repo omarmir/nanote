@@ -15,7 +15,7 @@ export async function getAuthCookie() {
   return authCookie
 }
 
-async function emptyFolder(folderPath: string) {
+export async function emptyFolder(folderPath: string) {
   try {
     const files = await readdir(folderPath)
     for (const file of files) {
