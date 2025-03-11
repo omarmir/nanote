@@ -3,7 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest'
 import { setup, $fetch } from '@nuxt/test-utils'
 import { join } from 'node:path'
 import basePath from '~/server/folder'
-import { emptyFolder, getAuthCookie } from '~/tests/setup'
+import { getAuthCookie } from '~/tests/setup'
 import { access, mkdir } from 'node:fs/promises'
 import type { DeleteNote, Note, NoteResponse, RenameNote } from '~/types/notebook'
 
@@ -15,7 +15,6 @@ describe('Note check', async () => {
   })
 
   beforeAll(async () => {
-    await emptyFolder(basePath)
     authCookie = await getAuthCookie()
     const fullPath = join(basePath, 'NoteTest')
     await mkdir(fullPath)
