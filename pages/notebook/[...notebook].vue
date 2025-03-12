@@ -17,10 +17,10 @@
       <thead>
         <tr>
           <th class="text-start text-xs font-medium uppercase text-gray-400">Name</th>
-          <th class="text-center text-xs font-medium uppercase text-gray-400">Created</th>
-          <th class="text-center text-xs font-medium uppercase text-gray-400">Updated</th>
-          <th class="text-center text-xs font-medium uppercase text-gray-400">Contents</th>
-          <th class="text-center text-xs font-medium uppercase text-gray-400">Actions</th>
+          <th class="hidden text-center text-xs font-medium uppercase text-gray-400 lg:table-cell">Created</th>
+          <th class="hidden text-center text-xs font-medium uppercase text-gray-400 lg:table-cell">Updated</th>
+          <th class="hidden text-center text-xs font-medium uppercase text-gray-400 lg:table-cell">Contents</th>
+          <th class="hidden text-center text-xs font-medium uppercase text-gray-400 lg:table-cell">Actions</th>
         </tr>
       </thead>
       <tbody>
