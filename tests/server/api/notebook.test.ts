@@ -5,7 +5,7 @@ import type { DeleteNotebook, Notebook, NotebookContents, RenameNotebook } from 
 import { join } from 'node:path'
 import basePath from '~/server/folder'
 import { getAuthCookie } from '~/tests/setup'
-import { access, mkdir } from 'node:fs/promises'
+import { access, mkdir, writeFile } from 'node:fs/promises'
 
 let authCookie = ''
 describe('Notebook check', async () => {
@@ -17,13 +17,49 @@ describe('Notebook check', async () => {
   beforeAll(async () => {
     const fullPath = join(basePath, 'Test')
     await mkdir(fullPath)
+
+    const notePath = join(fullPath, 'Content.md')
+    await writeFile(notePath, ['Content Test'])
+    const notebookPath = join(fullPath, 'Initial Notebook')
+    await mkdir(notebookPath)
     authCookie = await getAuthCookie()
+  })
+
+  /**
+   * Notebook contents shows note created inside notebook
+   */
+  it('Reponse shows notebook content including the created note', async () => {
+    const response = await $fetch('api/notebook/Test', { method: 'GET', headers: { Cookie: authCookie } })
+    const resp: NotebookContents = {
+      path: join(basePath, 'Test'),
+      notes: [
+        {
+          createdAt: expect.any(String),
+          name: 'Content',
+          notebook: ['Test'],
+          size: 0.01171875,
+          updatedAt: expect.any(String)
+        }
+      ],
+      notebooks: {
+        'Initial Notebook': {
+          name: 'Initial Notebook',
+          createdAt: expect.any(String),
+          noteCount: 0,
+          notebookCount: 0,
+          notebooks: ['Test'],
+          updatedAt: expect.any(String),
+          path: join(basePath, 'Test', 'Initial Notebook')
+        }
+      },
+      pathArray: ['Test']
+    }
+    expect(response).toEqual(expect.objectContaining(resp))
   })
 
   /**
    * Create Notebook
    */
-
   it('Response matches new nested notebook created', async () => {
     const response = await $fetch('/api/notebook/Test/Nested', { method: 'POST', headers: { Cookie: authCookie } })
     const resp: Notebook = {
