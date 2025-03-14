@@ -1,6 +1,17 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { uploadPath } from './server/folder'
+import { resolve } from 'node:path'
+const persistentUploadPath = resolve(__dirname, 'uploads')
 
 export default defineNuxtConfig({
+  nitro: {
+    storage: {
+      content: {
+        driver: 'fs',
+        base: persistentUploadPath
+      }
+    }
+  },
   compatibilityDate: '2024-11-01',
   ssr: false,
   devtools: { enabled: true },

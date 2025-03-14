@@ -20,9 +20,6 @@ export default defineEventHandler(async (event): Promise<string> => {
 
     // await waitforme(5000)
 
-    // Find file in form data
-    // const fileEntry = formData.find((entry) => entry.name === 'file')
-    // const pathEntry = formData.find((entry) => entry.name === 'path')
     const { fileEntry, pathEntry } = formData.reduce(
       (acc, entry) => {
         if (entry.name === 'file') acc.fileEntry = entry
@@ -79,6 +76,13 @@ export default defineEventHandler(async (event): Promise<string> => {
         message: 'Attachment file path is going to exceed maximum path length for your operating system.'
       })
     }
+
+    const r = await useStorage().getItem('data')
+    console.log('r', r)
+
+    // await useStorage().setItem('data', fileName)
+    const k = await useStorage().getItem('data')
+    console.log('k', k)
 
     await writeFile(attachPath, fileEntry.data)
     return `/api/attachment/${fileName}`
