@@ -7,7 +7,7 @@ import type { DeleteNotebook } from '~/types/notebook'
  * Dekete notebook
  */
 export default defineEventHandlerWithNotebook(
-  async (_event, cleanNotebook, fullPath) => {
+  async (_event, cleanNotebook, fullPath): Promise<DeleteNotebook> => {
     try {
       // Read file contents and stats
       await rm(fullPath, { recursive: true, force: true })

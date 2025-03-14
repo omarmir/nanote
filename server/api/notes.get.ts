@@ -5,7 +5,7 @@ import type { Note } from '~/types/notebook'
 import basePath from '~/server/folder'
 import fg from 'fast-glob'
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<Note[]> => {
   const query = getQuery<{ display: number }>(event)
   const displayCount = Math.min(Math.max(Number(query.display) || 5, 1), 100) // Clamp between 1-100
 

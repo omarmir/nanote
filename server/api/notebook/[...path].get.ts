@@ -5,7 +5,7 @@ import type { Note, Notebook, NotebookContents } from '~/types/notebook'
 /**
  * Returns contents for a specific notebook
  */
-export default defineEventHandlerWithNotebook(async (_event, notebook, fullPath) => {
+export default defineEventHandlerWithNotebook(async (_event, notebook, fullPath): Promise<NotebookContents> => {
   try {
     // Read directory contents
     const files = await readdir(fullPath, { withFileTypes: true })

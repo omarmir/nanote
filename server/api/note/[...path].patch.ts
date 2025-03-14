@@ -7,7 +7,7 @@ import type { NoteResponse } from '~/types/notebook'
 /**
  * Update note
  */
-export default defineEventHandlerWithNotebookAndNote(async (event, notebook, note, fullPath) => {
+export default defineEventHandlerWithNotebookAndNote(async (event, notebook, note, fullPath): Promise<NoteResponse> => {
   // Parse form data
   const formData = await readMultipartFormData(event)
   if (!formData) {

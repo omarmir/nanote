@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import SECRET_KEY from '~/server/key'
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<{ token: string }> => {
   const body = await readBody(event)
   const { key } = body
 

@@ -6,7 +6,7 @@ import type { DeleteNote } from '~/types/notebook'
 /**
  * Delete note
  */
-export default defineEventHandlerWithNotebookAndNote(async (_event, notebook, note, fullPath) => {
+export default defineEventHandlerWithNotebookAndNote(async (_event, notebook, note, fullPath): Promise<DeleteNote> => {
   try {
     // Read file contents and stats
     await unlink(fullPath)

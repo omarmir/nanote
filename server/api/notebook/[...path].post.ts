@@ -6,7 +6,7 @@ import { defineEventHandlerWithNotebook } from '~/server/wrappers/notebook'
  * Create notebook
  */
 export default defineEventHandlerWithNotebook(
-  async (_event, notebook, fullPath, _parentFolder, name) => {
+  async (_event, notebook, fullPath, _parentFolder, name): Promise<Notebook> => {
     try {
       // Check if folder already exists and read/write-able
       await access(fullPath, constants.R_OK | constants.W_OK)

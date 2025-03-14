@@ -7,7 +7,7 @@ import type { RenameNotebook } from '~/types/notebook'
  * Rename notebook
  */
 export default defineEventHandlerWithNotebook(
-  async (event, notebook, fullPath, parentFolder) => {
+  async (event, notebook, fullPath, parentFolder): Promise<RenameNotebook> => {
     const body = await readBody(event)
     try {
       // Validate input

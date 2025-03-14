@@ -9,7 +9,7 @@ import type { Note } from '~/types/notebook'
  * Add note
  */
 export default defineEventHandlerWithNotebookAndNote(
-  async (event, notebook, note, fullPath) => {
+  async (event, notebook, note, fullPath): Promise<Note> => {
     let fileContent = Buffer.from('')
 
     // Parse form data if available

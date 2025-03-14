@@ -10,7 +10,7 @@ import { defineEventHandlerWithSearch } from '~/server/wrappers/search'
 const CONTEXT_CHARS = 50
 const MAX_RESULTS = 5
 
-export default defineEventHandlerWithSearch(async (event, searchResults) => {
+export default defineEventHandlerWithSearch(async (event, searchResults): Promise<SearchResult[]> => {
   const fullPath = resolve(basePath)
   const { q: rawQuery } = getQuery(event)
 
