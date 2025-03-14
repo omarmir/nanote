@@ -2,7 +2,7 @@
 import { defineEventHandler } from 'h3'
 import path from 'node:path'
 import type { Note } from '~/types/notebook'
-import basePath from '~/server/folder'
+import { notesPath } from '~/server/folder'
 import fg from 'fast-glob'
 
 export default defineEventHandler(async (event): Promise<Note[]> => {
@@ -11,7 +11,7 @@ export default defineEventHandler(async (event): Promise<Note[]> => {
 
   try {
     const files = await fg('**/*.md', {
-      cwd: basePath,
+      cwd: notesPath,
       absolute: true,
       stats: true,
       onlyFiles: true,
@@ -22,7 +22,7 @@ export default defineEventHandler(async (event): Promise<Note[]> => {
     const recentFiles = files.sort((a, b) => b.stats!.mtimeMs - a.stats!.mtimeMs).slice(0, displayCount)
 
     const notes: Note[] = recentFiles.map((file) => {
-      const relativePath = path.relative(basePath, file.path)
+      const relativePath = path.relative(notesPath, file.path)
       const notebook =
         path.dirname(relativePath) !== '.' ? path.dirname(relativePath).split(path.sep).filter(Boolean) : []
 

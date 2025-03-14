@@ -1,7 +1,7 @@
 import type { EventHandlerRequest, H3Event } from 'h3'
 import { access, constants } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
-import basePath from '~/server/folder'
+import { notesPath } from '~/server/folder'
 
 type EventHandlerWithNotebook<T extends EventHandlerRequest, D> = (
   event: H3Event<T>,
@@ -24,7 +24,7 @@ export function defineEventHandlerWithNotebook<T extends EventHandlerRequest, D>
       .filter(Boolean) // Removes empty strings
 
     // Construct paths
-    const fullPath = join(basePath, ...notebooks)
+    const fullPath = join(notesPath, ...notebooks)
     const targetFolder = resolve(fullPath)
 
     // Check OS path length limitations
@@ -40,13 +40,13 @@ export function defineEventHandlerWithNotebook<T extends EventHandlerRequest, D>
     }
 
     const parentFolderArray = notebooks.slice(0, -1) ?? []
-    const parentFolder = join(basePath, ...parentFolderArray)
+    const parentFolder = join(notesPath, ...parentFolderArray)
     const name = notebooks.at(-1)
     // This is for a new notebook, we can bail early
     if (options?.notebookCheck === false) return await handler(event, notebooks, fullPath, parentFolder, name)
 
     // Security checks
-    if (!targetFolder.startsWith(resolve(basePath))) {
+    if (!targetFolder.startsWith(resolve(notesPath))) {
       throw createError({
         statusCode: 400,
         statusMessage: 'Bad Request',

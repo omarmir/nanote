@@ -1,5 +1,5 @@
 import SECRET_KEY from '~/server/key'
-import { envNotesPath } from '~/server/folder'
+import { envNotesPath, envUploadsPath } from '~/server/folder'
 
 type Health = {
   status: 'OK'
@@ -13,6 +13,8 @@ export default defineEventHandler(async (_event): Promise<Health> => {
   if (SECRET_KEY === 'nanote') warnings.push('Secret key should be changed from the default.')
   if (!envNotesPath)
     if (!envNotesPath) warnings.push('Storage location is not set, this could result in loss of notes.')
+  if (!envUploadsPath)
+    if (!envUploadsPath) warnings.push('Uploads location is not set, this could result in loss of uploads.')
 
   return {
     status: 'OK',

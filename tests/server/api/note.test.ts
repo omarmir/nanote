@@ -2,7 +2,7 @@ import { fileURLToPath } from 'node:url'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { setup, $fetch } from '@nuxt/test-utils'
 import { join } from 'node:path'
-import basePath from '~/server/folder'
+import { notesPath } from '~/server/folder'
 import { getAuthCookie } from '~/tests/setup'
 import { access, mkdir } from 'node:fs/promises'
 import type { DeleteNote, Note, NoteResponse, RenameNote } from '~/types/notebook'
@@ -16,9 +16,9 @@ describe('Note check', async () => {
 
   beforeAll(async () => {
     authCookie = await getAuthCookie()
-    const fullPath = join(basePath, 'NoteTest')
+    const fullPath = join(notesPath, 'NoteTest')
     await mkdir(fullPath)
-    const nestedPath = join(basePath, 'NoteTest', 'Nested')
+    const nestedPath = join(notesPath, 'NoteTest', 'Nested')
     await mkdir(nestedPath)
   })
 
@@ -49,7 +49,7 @@ describe('Note check', async () => {
   })
 
   it('Checks if note was created', async () => {
-    await expect(access(join(basePath, 'NoteTest', 'Test.md'))).resolves.not.toThrow()
+    await expect(access(join(notesPath, 'NoteTest', 'Test.md'))).resolves.not.toThrow()
   })
 
   it('Response matches new nested note created', async () => {
@@ -75,7 +75,7 @@ describe('Note check', async () => {
   })
 
   it('Checks if nested note was created', async () => {
-    await expect(access(join(basePath, 'NoteTest', 'Nested', 'Test.md'))).resolves.not.toThrow()
+    await expect(access(join(notesPath, 'NoteTest', 'Nested', 'Test.md'))).resolves.not.toThrow()
   })
 
   /**
@@ -137,7 +137,7 @@ describe('Note check', async () => {
     const resp: NoteResponse = {
       notebook: ['NoteTest', 'Nested'],
       note: 'Test',
-      path: join(basePath, 'NoteTest', 'Nested', 'Test.md'),
+      path: join(notesPath, 'NoteTest', 'Nested', 'Test.md'),
       createdAt: expect.any(String),
       updatedAt: expect.any(String),
       size: expect.any(Number),
@@ -167,11 +167,11 @@ describe('Note check', async () => {
   })
 
   it('Checks if renamed folder is gone', async () => {
-    await expect(access(join(basePath, 'NoteTest', 'Test.md'))).rejects.toThrow()
+    await expect(access(join(notesPath, 'NoteTest', 'Test.md'))).rejects.toThrow()
   })
 
   it('Checks if note was renamed', async () => {
-    await expect(access(join(basePath, 'NoteTest', 'TestRenamed.md'))).resolves.not.toThrow()
+    await expect(access(join(notesPath, 'NoteTest', 'TestRenamed.md'))).resolves.not.toThrow()
   })
 
   /**
@@ -193,6 +193,6 @@ describe('Note check', async () => {
   })
 
   it('Checks if note is deleted', async () => {
-    await expect(access(join(basePath, 'NoteTest', 'Nested', 'Test.md'))).rejects.toThrow()
+    await expect(access(join(notesPath, 'NoteTest', 'Nested', 'Test.md'))).rejects.toThrow()
   })
 })

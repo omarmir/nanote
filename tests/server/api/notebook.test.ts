@@ -3,7 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest'
 import { setup, $fetch } from '@nuxt/test-utils'
 import type { DeleteNotebook, Notebook, NotebookContents, RenameNotebook } from '~/types/notebook'
 import { join } from 'node:path'
-import basePath from '~/server/folder'
+import { notesPath } from '~/server/folder'
 import { getAuthCookie } from '~/tests/setup'
 import { access, mkdir, writeFile } from 'node:fs/promises'
 
@@ -15,7 +15,7 @@ describe('Notebook check', async () => {
   })
 
   beforeAll(async () => {
-    const fullPath = join(basePath, 'Test')
+    const fullPath = join(notesPath, 'Test')
     await mkdir(fullPath)
 
     const notePath = join(fullPath, 'Content.md')
@@ -31,7 +31,7 @@ describe('Notebook check', async () => {
   it('Reponse shows notebook content including the created note', async () => {
     const response = await $fetch('api/notebook/Test', { method: 'GET', headers: { Cookie: authCookie } })
     const resp: NotebookContents = {
-      path: join(basePath, 'Test'),
+      path: join(notesPath, 'Test'),
       notes: [
         {
           createdAt: expect.any(String),
@@ -49,7 +49,7 @@ describe('Notebook check', async () => {
           notebookCount: 0,
           notebooks: ['Test'],
           updatedAt: expect.any(String),
-          path: join(basePath, 'Test', 'Initial Notebook')
+          path: join(notesPath, 'Test', 'Initial Notebook')
         }
       },
       pathArray: ['Test']
@@ -69,13 +69,13 @@ describe('Notebook check', async () => {
       updatedAt: null,
       notebookCount: 0,
       noteCount: 0,
-      path: join(basePath, 'Test', 'Nested')
+      path: join(notesPath, 'Test', 'Nested')
     }
     expect(response).toEqual(expect.objectContaining(resp))
   })
 
   it('Checks if nested folder was created', async () => {
-    await expect(access(join(basePath, 'Test', 'Nested'))).resolves.not.toThrow()
+    await expect(access(join(notesPath, 'Test', 'Nested'))).resolves.not.toThrow()
   })
 
   it('Response matches new nested notebook created', async () => {
@@ -90,13 +90,13 @@ describe('Notebook check', async () => {
       updatedAt: null,
       notebookCount: 0,
       noteCount: 0,
-      path: join(basePath, 'Test', 'Nested', 'Deeply')
+      path: join(notesPath, 'Test', 'Nested', 'Deeply')
     }
     expect(response).toEqual(expect.objectContaining(resp))
   })
 
   it('Checks if nested folder was created', async () => {
-    await expect(access(join(basePath, 'Test', 'Nested', 'Deeply'))).resolves.not.toThrow()
+    await expect(access(join(notesPath, 'Test', 'Nested', 'Deeply'))).resolves.not.toThrow()
   })
 
   /**
@@ -114,18 +114,18 @@ describe('Notebook check', async () => {
       oldName: 'Nested',
       newName: 'NestedTested',
       createdAt: expect.any(String),
-      path: join(basePath, 'Test', 'NestedTested'),
+      path: join(notesPath, 'Test', 'NestedTested'),
       updatedAt: expect.any(String)
     }
     expect(response).toEqual(expect.objectContaining(resp))
   })
 
   it('Checks if renamed folder is gone', async () => {
-    await expect(access(join(basePath, 'Test', 'Nested'))).rejects.toThrow()
+    await expect(access(join(notesPath, 'Test', 'Nested'))).rejects.toThrow()
   })
 
   it('Checks if renamed folder is present', async () => {
-    await expect(access(join(basePath, 'Test', 'NestedTested'))).resolves.not.toThrow()
+    await expect(access(join(notesPath, 'Test', 'NestedTested'))).resolves.not.toThrow()
   })
 
   /**
@@ -140,7 +140,7 @@ describe('Notebook check', async () => {
     const resp: NotebookContents = {
       pathArray: ['Test', 'NestedTested'],
       notes: [],
-      path: join(basePath, 'Test', 'NestedTested'),
+      path: join(notesPath, 'Test', 'NestedTested'),
       notebooks: {
         Deeply: {
           notebooks: ['Test', 'NestedTested'],
@@ -149,7 +149,7 @@ describe('Notebook check', async () => {
           updatedAt: expect.any(String),
           notebookCount: 0,
           noteCount: 0,
-          path: join(basePath, 'Test', 'NestedTested', 'Deeply')
+          path: join(notesPath, 'Test', 'NestedTested', 'Deeply')
         }
       }
     }
@@ -173,6 +173,6 @@ describe('Notebook check', async () => {
   })
 
   it('Checks if deleted nested folder is gone', async () => {
-    await expect(access(join(basePath, 'Test', 'NestedTested'))).rejects.toThrow()
+    await expect(access(join(notesPath, 'Test', 'NestedTested'))).rejects.toThrow()
   })
 })

@@ -14,7 +14,8 @@ describe('Health check', async () => {
       message: 'Service is running',
       warnings: [
         'Secret key should be changed from the default.',
-        'Storage location is not set, this could result in loss of notes.'
+        'Storage location is not set, this could result in loss of notes.',
+        'Uploads location is not set, this could result in loss of uploads.'
       ]
     }
 

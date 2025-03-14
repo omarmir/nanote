@@ -1,7 +1,7 @@
 import type { EventHandlerRequest, H3Event } from 'h3'
 import { access, constants } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
-import basePath from '~/server/folder'
+import { notesPath } from '~/server/folder'
 
 type EventHandlerWithNotebookAndNote<T extends EventHandlerRequest, D> = (
   event: H3Event<T>,
@@ -31,7 +31,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
     }
 
     // Construct paths
-    const targetFolder = resolve(join(basePath, ...notebooks))
+    const targetFolder = resolve(join(notesPath, ...notebooks))
     const filename = `${note}.md`
     const fullPath = join(targetFolder, filename)
 
@@ -57,7 +57,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
     }
 
     // Security checks
-    if (!targetFolder.startsWith(resolve(basePath))) {
+    if (!targetFolder.startsWith(resolve(notesPath))) {
       throw createError({
         statusCode: 400,
         statusMessage: 'Bad Request',

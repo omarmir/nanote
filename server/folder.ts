@@ -2,15 +2,16 @@ import { join } from 'node:path'
 import { existsSync } from 'node:fs'
 
 // Define the default path (e.g., a "notes" folder in your project directory)
-const defaultPath = join(process.cwd(), 'notes')
+const defaultNotesPath = join(process.cwd(), 'notes')
+const defaultUploadsPath = join(process.cwd(), 'uploads')
 
 // Get the environment variable value (if any)
 const envNotesPath = process.env.NOTES_PATH
+const envUploadsPath = process.env.UPLOAD_PATH
 
 // Use the env variable if it's provided and the directory exists,
 // otherwise fall back to the default path.
-const basePath = envNotesPath && existsSync(envNotesPath) ? envNotesPath : defaultPath
+const notesPath = envNotesPath && existsSync(envNotesPath) ? envNotesPath : defaultNotesPath
+const uploadPath = envUploadsPath && existsSync(envUploadsPath) ? envUploadsPath : defaultUploadsPath
 
-export default basePath
-
-export { envNotesPath }
+export { notesPath, uploadPath, envNotesPath, envUploadsPath }

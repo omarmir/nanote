@@ -4,14 +4,14 @@ import type { ExecSyncOptionsWithStringEncoding } from 'node:child_process'
 import { execSync } from 'node:child_process'
 import escape from 'shell-escape'
 import type { SearchResult } from '~/types/notebook'
-import basePath from '~/server/folder'
+import { notesPath } from '~/server/folder'
 import { defineEventHandlerWithSearch } from '~/server/wrappers/search'
 
 const CONTEXT_CHARS = 50
 const MAX_RESULTS = 5
 
 export default defineEventHandlerWithSearch(async (event, searchResults): Promise<SearchResult[]> => {
-  const fullPath = resolve(basePath)
+  const fullPath = resolve(notesPath)
   const { q: rawQuery } = getQuery(event)
 
   if (!rawQuery || typeof rawQuery !== 'string') {

@@ -5,7 +5,7 @@ import { resolve } from 'node:path'
 import { platform } from 'node:os'
 import escape from 'shell-escape'
 import type { SearchResult } from '~/types/notebook'
-import basePath from '~/server/folder'
+import { notesPath } from '~/server/folder'
 
 type EventHandlerWithSearch<T extends EventHandlerRequest, D> = (
   event: H3Event<T>,
@@ -14,7 +14,7 @@ type EventHandlerWithSearch<T extends EventHandlerRequest, D> = (
 
 export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(handler: EventHandlerWithSearch<T, D>) {
   return defineEventHandler(async (event) => {
-    const fullPath = resolve(basePath)
+    const fullPath = resolve(notesPath)
     const { q: rawQuery } = getQuery(event)
 
     if (!rawQuery || typeof rawQuery !== 'string') {
