@@ -5,6 +5,9 @@ import { getAuthCookie } from '~/tests/setup'
 import { access } from 'node:fs/promises'
 import { join } from 'node:path'
 import { uploadPath } from '~/server/folder'
+import { createStorage } from 'unstorage'
+import fsDriver from 'unstorage/drivers/fs'
+import type { UploadItem } from '~/types/upload'
 
 let authCookie = ''
 let apiFilePath = ''
@@ -50,5 +53,19 @@ describe('Attachments upload and view', async () => {
     })
 
     expect(response).toEqual('Test Upload')
+  })
+
+  it('Adds entry to the kv store', async () => {
+    const storage = createStorage({
+      driver: fsDriver({ base: uploadPath })
+    })
+
+    let uploads = await storage.getItem<UploadItem[]>('uploads')
+    if (!uploads || uploads === null) uploads = []
+    const fileName = apiFilePath.split('/').at(-1) ?? ''
+
+    const resp: UploadItem = { path: '/notes/test', fileName }
+
+    expect(uploads).toEqual(expect.arrayContaining([resp]))
   })
 })
