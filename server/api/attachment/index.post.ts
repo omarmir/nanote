@@ -4,9 +4,8 @@ import path from 'node:path'
 import { access, existsSync } from 'node:fs'
 import { uploadPath } from '~/server/folder'
 import { defineEventHandlerWithStorage } from '~/server/wrappers/storage'
+import type { MultiPartData, UploadItem } from '~/types/upload'
 // import { waitforme } from '~/server/utils'
-
-type MultiPartData = { name?: string; data: Buffer<ArrayBufferLike> | string; filename?: string }
 
 export default defineEventHandlerWithStorage(async (event, storage) => {
   try {
@@ -78,7 +77,7 @@ export default defineEventHandlerWithStorage(async (event, storage) => {
       })
     }
 
-    let uploads = await storage.getItem<{ path: string; fileName: string }[]>('uploads')
+    let uploads = await storage.getItem<UploadItem[]>('uploads')
     if (!uploads || uploads === null) uploads = []
     await writeFile(attachPath, fileEntry.data)
     uploads.push({ path: pathEntry.data.toString(), fileName })

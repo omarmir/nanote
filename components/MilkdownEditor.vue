@@ -26,7 +26,8 @@ const { disabled, isFocus, note, notebooks } = defineProps<{
   notebooks: string[]
 }>()
 
-const customUploader = createUploader(notebooks, note)
+const customUploader = createUploader()
+const path = notePathArrayJoiner([...notebooks, note])
 
 useEditor((root) => {
   const crepe = new Crepe({
@@ -79,12 +80,12 @@ useEditor((root) => {
 
       ctx.update(imageBlockConfig.key, (defaultConfig) => ({
         ...defaultConfig,
-        onUpload: async (file: File) => onUpload(file, notebooks, note)
+        onUpload: async (file: File) => onUpload(file, path)
       }))
 
       ctx.update(inlineImageConfig.key, (prev) => ({
         ...prev,
-        onUpload: async (file: File) => onUpload(file, notebooks, note)
+        onUpload: async (file: File) => onUpload(file, path)
       }))
 
       ctx.update(uploadConfig.key, (prev) => ({
@@ -94,7 +95,7 @@ useEditor((root) => {
 
       ctx.update(filePickerConfig.key, (prev) => ({
         ...prev,
-        onUpload: async (file: File) => onUpload(file, notebooks, note)
+        onUpload: async (file: File) => onUpload(file, path)
       }))
 
       ctx.update(editorViewOptionsCtx, (prev) => ({
