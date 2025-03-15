@@ -1,5 +1,5 @@
 import path from 'node:path'
-import { notesPath } from '~/server/folder'
+import { notesPath, uploadPath } from '~/server/folder'
 import { readdir, rm, unlink, lstat } from 'node:fs/promises'
 import { $fetch } from '@nuxt/test-utils'
 
@@ -35,3 +35,4 @@ export async function emptyFolder(folderPath: string) {
 
 // Example usage:
 emptyFolder(notesPath)
+emptyFolder(uploadPath)

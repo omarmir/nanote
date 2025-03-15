@@ -3,11 +3,12 @@ import { writeFile, mkdir, constants } from 'node:fs/promises'
 import path from 'node:path'
 import { access, existsSync } from 'node:fs'
 import { uploadPath } from '~/server/folder'
+import { defineEventHandlerWithStorage } from '~/server/wrappers/storage'
 // import { waitforme } from '~/server/utils'
 
 type MultiPartData = { name?: string; data: Buffer<ArrayBufferLike> | string; filename?: string }
 
-export default defineEventHandler(async (event): Promise<string> => {
+export default defineEventHandlerWithStorage(async (event, storage) => {
   try {
     const formData = await readMultipartFormData(event)
     if (!formData) {
@@ -77,14 +78,11 @@ export default defineEventHandler(async (event): Promise<string> => {
       })
     }
 
-    const r = await useStorage().getItem('data')
-    console.log('r', r)
-
-    // await useStorage().setItem('data', fileName)
-    const k = await useStorage().getItem('data')
-    console.log('k', k)
-
+    let uploads = await storage.getItem<{ path: string; fileName: string }[]>('uploads')
+    if (!uploads || uploads === null) uploads = []
     await writeFile(attachPath, fileEntry.data)
+    uploads.push({ path: pathEntry.data.toString(), fileName })
+    await storage.setItem('uploads', uploads)
     return `/api/attachment/${fileName}`
   } catch (error) {
     console.error('Error serving file:', error)

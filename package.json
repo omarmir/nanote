@@ -47,6 +47,7 @@
     "pinia": "^2.3.1",
     "remark-directive": "^3.0.1",
     "shell-escape": "^0.2.0",
+    "unstorage": "^1.15.0",
     "view": "link:@milkdown/prose/view",
     "vue": "latest",
     "vue-router": "latest"
