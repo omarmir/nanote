@@ -4,6 +4,23 @@ import { defineEventHandlerWithNotebookAndNote } from '~/server/wrappers/note'
 import type { NoteResponse } from '~/types/notebook'
 import { defineEventHandlerWithStorage } from '~/server/wrappers/storage'
 import type { UploadItem } from '~/types/upload'
+import type { StorageValue, Storage } from 'unstorage'
+
+const fileRegex = /::(file|fileBlock)\{href="(?<href>[^"]+)?"? title="(?<title>[^"]+)?"?\}/g
+
+// const matches = [...x.matchAll(reg)].map(match => match.groups);
+
+// console.log(matches);
+
+const markAttachmentForDeletionIfNeeded = async (
+  notebook: string[],
+  note: string,
+  storage: Storage<StorageValue>,
+  fileData: Buffer<ArrayBufferLike>
+) => {
+  const uploads = await storage.getItem<UploadItem[]>('uploads')
+  console.log(uploads)
+}
 
 /**
  * Update note
@@ -41,8 +58,8 @@ export default defineEventHandlerWithStorage(async (event, storage): Promise<Not
       // Get new stats after update
       const newStats = await stat(fullPath)
 
-      const uploads = await storage.getItem<UploadItem[]>('uploads')
-      console.log(uploads)
+      // Let the notes get marked for deletion
+      event.waitUntil(markAttachmentForDeletionIfNeeded(notebook, note, storage))
 
       return {
         notebook,
