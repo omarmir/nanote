@@ -116,6 +116,10 @@ useEditor((root) => {
   display: none;
 }
 
+.milkdown-editor div.milkdown milkdown-block-handle {
+  @apply hidden lg:flex;
+}
+
 milkdown-toolbar,
 milkdown-link-preview {
   z-index: 999 !important;
