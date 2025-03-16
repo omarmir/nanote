@@ -80,7 +80,7 @@ export default defineEventHandlerWithStorage(async (event, storage) => {
     let uploads = await storage.getItem<UploadItem[]>('uploads')
     if (!uploads || uploads === null) uploads = []
     await writeFile(attachPath, fileEntry.data)
-    uploads.push({ path: pathEntry.data.toString(), fileName })
+    uploads.push({ path: pathEntry.data.toString(), fileName, deleted: false })
     await storage.setItem('uploads', uploads)
     return `/api/attachment/${fileName}`
   } catch (error) {
