@@ -64,7 +64,7 @@ describe('Attachments upload and view', async () => {
     if (!uploads || uploads === null) uploads = []
     const fileName = apiFilePath.split('/').at(-1) ?? ''
 
-    const resp: UploadItem = { path: '/notes/test', fileName }
+    const resp: UploadItem = { path: '/notes/test', fileName, deleted: false }
 
     expect(uploads).toEqual(expect.arrayContaining([resp]))
   })
