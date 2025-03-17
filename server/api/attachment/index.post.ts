@@ -3,11 +3,18 @@ import { writeFile, mkdir, constants } from 'node:fs/promises'
 import path from 'node:path'
 import { access, existsSync } from 'node:fs'
 import { uploadPath } from '~/server/folder'
-import { defineEventHandlerWithStorage } from '~/server/wrappers/storage'
 import type { MultiPartData, UploadItem } from '~/types/upload'
 // import { waitforme } from '~/server/utils'
 
-export default defineEventHandlerWithStorage(async (event, storage) => {
+export default defineEventHandler(async (event) => {
+  const storage = event.context.$attachment.storage
+  if (!storage) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Internal Server Error',
+      message: 'Upload storage not initialized'
+    })
+  }
   try {
     const formData = await readMultipartFormData(event)
     if (!formData) {
