@@ -46,7 +46,6 @@ const markAttachmentForDeletionIfNeeded = async (params: AttachmentParams) => {
     .map((match) => match.groups?.href.split('/').at(-1))
     .filter((item) => item !== undefined)
 
-  // const unmatchedItems = uploads.filter((upload) => upload.path)
   uploads.forEach((upload) => {
     if (upload.path === path && !matches.includes(upload.path)) {
       upload.deleted = true

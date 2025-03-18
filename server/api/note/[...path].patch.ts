@@ -2,6 +2,7 @@ import { writeFile, stat } from 'node:fs/promises'
 import { readMultipartFormData } from 'h3'
 import { defineEventHandlerWithNotebookAndNote } from '~/server/wrappers/note'
 import type { NoteResponse } from '~/types/notebook'
+import type { APIError } from '~/types/result'
 
 /**
  * Update note
@@ -40,7 +41,7 @@ export default defineEventHandlerWithNotebookAndNote(async (event, notebook, not
     const newStats = await stat(fullPath)
 
     // Let the notes get marked for deletion
-    const storage = event.context.$attachmentStorage
+    const storage = event.context.$attachment.storage
     if (!storage) {
       throw createError({
         statusCode: 500,
@@ -48,9 +49,7 @@ export default defineEventHandlerWithNotebookAndNote(async (event, notebook, not
         message: 'Upload storage not initialized'
       })
     } else {
-      event.waitUntil(
-        event.context.$attachment.addToQueueForAttachmentMarking({ notebook, note, fileData: fileEntry.data })
-      )
+      event.context.$attachment.addToQueueForAttachmentMarking({ notebook, note, fileData: fileEntry.data })
     }
 
     return {
@@ -64,10 +63,11 @@ export default defineEventHandlerWithNotebookAndNote(async (event, notebook, not
     } satisfies NoteResponse
   } catch (error) {
     console.error('Error updating note:', error)
+    const err = error as APIError
     throw createError({
       statusCode: 500,
       statusMessage: 'Internal Server Error',
-      message: 'Failed to update note'
+      message: err.message ?? 'Failed to update note'
     })
   }
 })
