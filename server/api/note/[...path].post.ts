@@ -4,6 +4,7 @@ import { Buffer } from 'node:buffer'
 
 import { defineEventHandlerWithNotebookAndNote } from '~/server/wrappers/note'
 import type { Note } from '~/types/notebook'
+import type { APIError } from '~/types/result'
 
 /**
  * Add note
@@ -46,10 +47,12 @@ export default defineEventHandlerWithNotebookAndNote(
       } satisfies Note
     } catch (error) {
       console.error('Error creating note:', error)
+      const err = error as APIError
+
       throw createError({
-        statusCode: 500,
-        statusMessage: 'Internal Server Error',
-        message: 'Failed to create note'
+        statusCode: err.statusCode ?? 500,
+        statusMessage: err.statusMessage ?? 'Internal Server Error',
+        message: err.message ?? 'Failed to create note'
       })
     }
   },

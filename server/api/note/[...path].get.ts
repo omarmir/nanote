@@ -2,6 +2,7 @@ import { stat } from 'node:fs/promises'
 
 import { defineEventHandlerWithNotebookAndNote } from '~/server/wrappers/note'
 import type { Note } from '~/types/notebook'
+import type { APIError } from '~/types/result'
 
 /**
  * Get note info
@@ -21,10 +22,11 @@ export default defineEventHandlerWithNotebookAndNote(async (_event, notebooks, n
     } satisfies Note
   } catch (error) {
     console.error('Error reading note:', error)
+    const err = error as APIError
     throw createError({
-      statusCode: 500,
-      statusMessage: 'Internal Server Error',
-      message: 'Failed to retrieve note'
+      statusCode: err.statusCode ?? 500,
+      statusMessage: err.statusMessage ?? 'Internal Server Error',
+      message: err.message ?? 'Failed to retrieve note'
     })
   }
 })

@@ -2,6 +2,7 @@ import { unlink } from 'node:fs/promises'
 
 import { defineEventHandlerWithNotebookAndNote } from '~/server/wrappers/note'
 import type { DeleteNote } from '~/types/notebook'
+import type { APIError } from '~/types/result'
 
 /**
  * Delete note
@@ -25,11 +26,11 @@ export default defineEventHandlerWithNotebookAndNote(async (_event, notebook, no
         message: 'Note or notebook does not exist'
       })
     }
-
+    const err = error as APIError
     throw createError({
-      statusCode: 500,
-      statusMessage: 'Internal Server Error',
-      message: 'Failed to delete note'
+      statusCode: err.statusCode ?? 500,
+      statusMessage: err.statusMessage ?? 'Internal Server Error',
+      message: err.message ?? 'Failed to delete note'
     })
   }
 })

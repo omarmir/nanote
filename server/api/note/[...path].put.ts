@@ -2,6 +2,7 @@ import { rename, access, constants, stat } from 'node:fs/promises'
 import { join } from 'node:path'
 import { defineEventHandlerWithNotebookAndNote } from '~/server/wrappers/note'
 import type { RenameNote } from '~/types/notebook'
+import type { APIError } from '~/types/result'
 // import { waitforme } from '~/server/utils'
 
 /**
@@ -60,11 +61,11 @@ export default defineEventHandlerWithNotebookAndNote(
 
       const httpError = error as { statusCode?: number }
       if (httpError.statusCode) throw error
-
+      const err = error as APIError
       throw createError({
-        statusCode: 500,
-        statusMessage: 'Internal Server Error',
-        message: 'Failed to rename note.'
+        statusCode: err.statusCode ?? 500,
+        statusMessage: err.statusMessage ?? 'Internal Server Error',
+        message: err.message ?? 'Failed to rename note.'
       })
     }
   }

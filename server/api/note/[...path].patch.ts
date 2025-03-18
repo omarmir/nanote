@@ -65,8 +65,8 @@ export default defineEventHandlerWithNotebookAndNote(async (event, notebook, not
     console.error('Error updating note:', error)
     const err = error as APIError
     throw createError({
-      statusCode: 500,
-      statusMessage: 'Internal Server Error',
+      statusCode: err.statusCode ?? 500,
+      statusMessage: err.statusMessage ?? 'Internal Server Error',
       message: err.message ?? 'Failed to update note'
     })
   }
