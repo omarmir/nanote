@@ -3,8 +3,9 @@ import { createReadStream, existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { uploadPath } from '~/server/folder'
 import mime from 'mime'
+import { defineEventHandlerWithError } from '~/server/wrappers/error'
 
-export default defineEventHandler(async (event): Promise<ReadStream> => {
+export default defineEventHandlerWithError(async (event): Promise<ReadStream> => {
   const file = event.context.params?.file
 
   if (!file) {
