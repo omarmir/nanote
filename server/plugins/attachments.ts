@@ -54,11 +54,24 @@ const markAttachmentForDeletionIfNeeded = async (params: AttachmentParams) => {
   await storage.setItem('uploads', uploads)
 }
 
+const markAllAttachmentsForNoteForDeletion = async (params: AttachmentParams) => {
+  const uploads = (await storage.getItem<UploadItem[]>('uploads')) ?? []
+  const path = notePathArrayJoiner([...params.notebook, params.note])
+
+  uploads.forEach((upload) => {
+    if (upload.path === path) {
+      upload.deleted = true
+    }
+  })
+  await storage.setItem('uploads', uploads)
+}
+
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('request', (event) => {
     event.context.$attachment = {
       storage,
-      addToQueueForAttachmentMarking
+      addToQueueForAttachmentMarking,
+      markAllAttachmentsForNoteForDeletion
     }
   })
 })

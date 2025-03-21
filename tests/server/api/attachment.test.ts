@@ -118,4 +118,53 @@ describe('Attachments upload and view', async () => {
     )
     expect(arrayItem).not.toBeUndefined()
   })
+
+  it('Marks all attachments for deletion', async () => {
+    const fileName = 'upload.txt'
+    //Create notebook
+    const fullPath = join(notesPath, 'TestUploadAll')
+    await mkdir(fullPath)
+
+    //Create note
+    const notePath = join(fullPath, 'TestUploadAll.md')
+    await writeFile(notePath, [`# Test Note`])
+
+    // create attachments
+    const attachmentBlob = new Blob([`Test Upload`], { type: 'text' })
+    const attachmentFormData = new FormData()
+    attachmentFormData.append('file', attachmentBlob, fileName) // The file to upload
+    attachmentFormData.append('path', 'TestUploadAll/TestUploadAll') // The filename to use when saving
+
+    await $fetch<string>('/api/attachment', {
+      method: 'POST',
+      body: attachmentFormData,
+      headers: { Cookie: authCookie }
+    })
+
+    await $fetch<string>('/api/attachment', {
+      method: 'POST',
+      body: attachmentFormData,
+      headers: { Cookie: authCookie }
+    })
+
+    //Send note update
+    const blob = new Blob(['# Updated'], { type: 'text/markdown' })
+    const formData = new FormData()
+    formData.append('file', blob, `TestUploadAll.md`) // The file to upload
+    formData.append('filename', `TestUploadAll.md`) // The filename to use when saving
+
+    await $fetch('/api/note/TestUploadAll/TestUploadAll', {
+      method: 'DELETE',
+      headers: { Cookie: authCookie }
+    })
+
+    let uploads = await storage.getItem<UploadItem[]>('uploads')
+    if (!uploads || uploads === null) uploads = []
+
+    // Delay for 2 seconds - just to make sure its cleared the queue
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+
+    const arrayItem = uploads.filter((item) => item.path === 'TestUploadAll/TestUploadAll' && item.deleted === true)
+    expect(arrayItem.length).toEqual(2)
+  })
 })

@@ -6,6 +6,7 @@ declare module 'h3' {
     $attachment: {
       storage?: Storage<StorageValue>
       addToQueueForAttachmentMarking: (params: AttachmentParams) => string
+      markAllAttachmentsForNoteForDeletion: (params: AttachmentParams) => void
     }
   }
 }
