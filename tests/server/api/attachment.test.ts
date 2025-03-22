@@ -2,7 +2,7 @@ import { fileURLToPath } from 'node:url'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { setup, $fetch } from '@nuxt/test-utils'
 import { getAuthCookie } from '~/tests/setup'
-import { access, mkdir, writeFile } from 'node:fs/promises'
+import { access, mkdir, readdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { notesPath, uploadPath } from '~/server/folder'
 import { createStorage } from 'unstorage'
@@ -167,4 +167,34 @@ describe('Attachments upload and view', async () => {
     const arrayItem = uploads.filter((item) => item.path === 'TestUploadAll/TestUploadAll' && item.deleted === true)
     expect(arrayItem.length).toEqual(2)
   })
+
+  // it('Deletes all attachments marked for deletion', async () => {
+
+  //   const uploads = await storage.getItem<UploadItem[]>('uploads')
+
+  //   const directoryPath = join(uploadPath, 'attachments')
+  //   const files = await readdir(directoryPath)
+
+  //   const toBeDeleted = uploads?.filter((item) => item.deleted) ?? []
+
+  //   expect(toBeDeleted?.length).toBeGreaterThan(0)
+
+  //   const filesToBeDeleted = files.filter((file) => toBeDeleted.find((manifest) => manifest.fileName === file) ? true : false)
+
+  //   expect(filesToBeDeleted.length).toBeGreaterThan(0)
+
+  //   await $fetch('/api/attachment/clean', {
+  //     method: 'GET',
+  //     headers: { Cookie: authCookie }
+  //   })
+
+  //   // Delay for 5 seconds - just to make sure IO operations are done
+  //   await new Promise((resolve) => setTimeout(resolve, 2000))
+
+  //   const afterDeletionFiles = await readdir(directoryPath)
+
+  //   const anyFilesLeftOver = filesToBeDeleted.some((manifest) => afterDeletionFiles.includes(manifest))
+
+  //   expect(anyFilesLeftOver).toBe(false)
+  // })
 })
