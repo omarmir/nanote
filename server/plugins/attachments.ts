@@ -37,16 +37,23 @@ const unbouncedDeleteMarkedFiles = async () => {
   const deletionFiles = uploads.filter((item) => item.deleted === true)
   deletionFiles.forEach(async (upload) => {
     const filePath = join(uploadPath, 'attachments', upload.fileName)
+    const updatedManifest = uploads.filter((item) => item.fileName !== upload.fileName)
     try {
       await unlink(filePath)
-      const updatedManifest = uploads.filter((item) => item.fileName === upload.fileName)
       await storage.setItem('uploads', updatedManifest)
     } catch (err) {
-      console.log(err)
+      if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
+        // File doesn't exist - remove it
+        console.log(updatedManifest)
+        await storage.setItem('uploads', updatedManifest)
+        console.log('File missing', upload.fileName)
+      } else {
+        console.log(err)
+      }
     }
   })
 
-  console.log('deleting files')
+  console.log('Deleting files', new Date())
 }
 
 const deleteMarkedFilesDebounced = debounce(async () => await unbouncedDeleteMarkedFiles(), 6 * 60 * 60 * 1000)
