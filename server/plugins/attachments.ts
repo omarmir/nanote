@@ -1,4 +1,6 @@
 import { nanoid } from 'nanoid'
+import { unlink } from 'node:fs/promises'
+import { join } from 'node:path'
 import { createStorage } from 'unstorage'
 import fsDriver from 'unstorage/drivers/fs'
 import { uploadPath } from '~/server/folder'
@@ -19,6 +21,36 @@ const fileRegex = /::(file|fileBlock)\{href="(?<href>[^"]+)?"? title="(?<title>[
 
 const queue: Array<{ id: string; data: AttachmentParams }> = []
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function debounce<T extends (...args: any[]) => void>(fn: T, delay: number): (...args: Parameters<T>) => void {
+  let timer: ReturnType<typeof setTimeout>
+
+  return (...args: Parameters<T>) => {
+    clearTimeout(timer)
+    timer = setTimeout(() => fn(...args), delay)
+  }
+}
+
+const unbouncedDeleteMarkedFiles = async () => {
+  const uploads = (await storage.getItem<UploadItem[]>('uploads')) ?? []
+
+  const deletionFiles = uploads.filter((item) => item.deleted === true)
+  deletionFiles.forEach(async (upload) => {
+    const filePath = join(uploadPath, 'attachments', upload.fileName)
+    try {
+      await unlink(filePath)
+      const updatedManifest = uploads.filter((item) => item.fileName === upload.fileName)
+      await storage.setItem('uploads', updatedManifest)
+    } catch (err) {
+      console.log(err)
+    }
+  })
+
+  console.log('deleting files')
+}
+
+const deleteMarkedFilesDebounced = debounce(async () => await unbouncedDeleteMarkedFiles(), 6 * 60 * 60 * 1000)
+
 const processQueue = async (): Promise<void> => {
   if (queue.length === 0) return
 
@@ -26,6 +58,7 @@ const processQueue = async (): Promise<void> => {
   if (job) {
     await markAttachmentForDeletionIfNeeded(job.data)
     processQueue() // Process the next job
+    deleteMarkedFilesDebounced()
   }
 }
 
@@ -71,7 +104,8 @@ export default defineNitroPlugin((nitroApp) => {
     event.context.$attachment = {
       storage,
       addToQueueForAttachmentMarking,
-      markAllAttachmentsForNoteForDeletion
+      markAllAttachmentsForNoteForDeletion,
+      deleteMarkedFiles: unbouncedDeleteMarkedFiles
     }
   })
 })

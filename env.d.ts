@@ -7,6 +7,7 @@ declare module 'h3' {
       storage?: Storage<StorageValue>
       addToQueueForAttachmentMarking: (params: AttachmentParams) => string
       markAllAttachmentsForNoteForDeletion: (params: AttachmentParams) => void
+      deleteMarkedFiles: () => void
     }
   }
 }
