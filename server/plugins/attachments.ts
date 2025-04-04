@@ -35,9 +35,10 @@ const unbouncedDeleteMarkedFiles = async () => {
   const uploads = (await storage.getItem<UploadItem[]>('uploads')) ?? []
 
   const deletionFiles = uploads.filter((item) => item.deleted === true)
-  deletionFiles.forEach(async (upload) => {
+  for (const upload of deletionFiles) {
     const filePath = join(uploadPath, 'attachments', upload.fileName)
     const updatedManifest = uploads.filter((item) => item.fileName !== upload.fileName)
+
     try {
       await unlink(filePath)
       await storage.setItem('uploads', updatedManifest)
@@ -51,12 +52,12 @@ const unbouncedDeleteMarkedFiles = async () => {
         console.log(err)
       }
     }
-  })
+  }
 
   console.log('Deleting files', new Date())
 }
 
-const deleteMarkedFilesDebounced = debounce(async () => await unbouncedDeleteMarkedFiles(), 6 * 60 * 60 * 1000)
+const deleteMarkedFilesDebounced = debounce(async () => await unbouncedDeleteMarkedFiles(), 1)
 
 const processQueue = async (): Promise<void> => {
   if (queue.length === 0) return
