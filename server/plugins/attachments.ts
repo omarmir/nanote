@@ -33,31 +33,34 @@ function debounce<T extends (...args: any[]) => void>(fn: T, delay: number): (..
 
 const unbouncedDeleteMarkedFiles = async () => {
   const uploads = (await storage.getItem<UploadItem[]>('uploads')) ?? []
+  const deletedItems: string[] = []
 
   const deletionFiles = uploads.filter((item) => item.deleted === true)
-  for (const upload of deletionFiles) {
-    const filePath = join(uploadPath, 'attachments', upload.fileName)
-    const updatedManifest = uploads.filter((item) => item.fileName !== upload.fileName)
+  for (let i = 0; i < deletionFiles.length; i++) {
+    const filePath = join(uploadPath, 'attachments', uploads[i].fileName)
 
     try {
       await unlink(filePath)
-      await storage.setItem('uploads', updatedManifest)
+      // await storage.setItem('uploads', updatedManifest)
+      deletedItems.push(uploads[i].fileName)
     } catch (err) {
       if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
         // File doesn't exist - remove it
-        console.log(updatedManifest)
-        await storage.setItem('uploads', updatedManifest)
-        console.log('File missing', upload.fileName)
+        console.log('File missing', uploads[i].fileName)
+        deletedItems.push(uploads[i].fileName)
       } else {
         console.log(err)
       }
     }
   }
 
+  const updatedArray = uploads.filter((item) => !deletedItems.includes(item.fileName))
+  await storage.setItem('uploads', updatedArray)
+
   console.log('Deleting files', new Date())
 }
 
-const deleteMarkedFilesDebounced = debounce(async () => await unbouncedDeleteMarkedFiles(), 1)
+const deleteMarkedFilesDebounced = debounce(async () => await unbouncedDeleteMarkedFiles(), 6 * 60 * 60 * 1000)
 
 const processQueue = async (): Promise<void> => {
   if (queue.length === 0) return
