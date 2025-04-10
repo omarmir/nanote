@@ -14,6 +14,15 @@ const onUpload = async (file: File, path: string): Promise<string> => {
   return url
 }
 
+const toCheckUploader = async (fileURL: string) => {
+  const resp = await $fetch<string>('/api/attachment/check', {
+    method: 'GET',
+    query: { url: fileURL }
+  })
+
+  return resp
+}
+
 const createUploader = () => {
   const uploader: Uploader = async (files, schema) => {
     const nodes: Node[] = await Promise.all(
@@ -41,4 +50,4 @@ const createUploader = () => {
   return uploader
 }
 
-export { createUploader, onUpload }
+export { createUploader, onUpload, toCheckUploader }

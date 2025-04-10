@@ -11,11 +11,11 @@ import { imageInlineComponent, inlineImageConfig } from '@milkdown/kit/component
 import { imageBlockConfig } from '@milkdown/kit/component/image-block'
 import { editorViewOptionsCtx, editorViewCtx } from '@milkdown/kit/core'
 import { emoji } from '@milkdown/plugin-emoji'
-import { createUploader, onUpload } from '~/utils/uploader'
+import { createUploader, onUpload, toCheckUploader } from '~/utils/uploader'
 import '@milkdown/crepe/theme/common/style.css'
 import '@milkdown/crepe/theme/nord.css'
 import '@milkdown/crepe/theme/nord-dark.css'
-import { filePicker, filePickerNodeBlock, filePickerConfig, clearContentAndAddBlockType } from 'milkdown-plugin-file'
+import { filePicker, filePickerNodeBlock, filePickerConfig, clearContentAndAddBlockType } from 'milkdown-plugin-file' //'@/utils/md-plugins/milkdown-plugin-file/src'
 import { html } from 'atomico'
 
 const model = defineModel<string>({ required: true })
@@ -95,7 +95,9 @@ useEditor((root) => {
 
       ctx.update(filePickerConfig.key, (prev) => ({
         ...prev,
-        onUpload: async (file: File) => onUpload(file, path)
+        onUpload: async (file: File) => onUpload(file, path),
+        toCheckUpload: async (url: string) => toCheckUploader(url),
+        failedCheckMessage: 'Unable to access file!'
       }))
 
       ctx.update(editorViewOptionsCtx, (prev) => ({

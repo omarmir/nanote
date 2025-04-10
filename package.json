@@ -35,7 +35,7 @@
     "@vueuse/core": "13.0.0",
     "@vueuse/integrations": "13.0.0",
     "atomico": "^1.79.2",
-    "milkdown-plugin-file": "0.1.5",
+    "milkdown-plugin-file": "0.2.0",
     "clsx": "^2.1.1",
     "fast-glob": "^3.3.3",
     "focus-trap": "^7.6.4",
