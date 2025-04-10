@@ -22,6 +22,18 @@ export function defineEventHandlerWithError<T extends EventHandlerRequest, D>(ha
           statusMessage: err.statusMessage ?? 'Internal Server Error',
           message: err.message ?? 'An unexpected error occurred'
         })
+      } else if (error instanceof Error && (error as NodeJS.ErrnoException).code === 'ENOENT') {
+        throw createError({
+          statusCode: 404,
+          statusMessage: 'Not Found',
+          message: 'The requested file does not exist.'
+        })
+      } else if (error instanceof Error && (error as NodeJS.ErrnoException).code === 'EACCES') {
+        throw createError({
+          statusCode: 403,
+          statusMessage: 'Forbidden',
+          message: 'Permission denied: Cannot access the requested file.'
+        })
       } else {
         throw createError({
           statusCode: 500,

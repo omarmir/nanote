@@ -3,19 +3,11 @@ import { writeFile, mkdir, constants } from 'node:fs/promises'
 import path from 'node:path'
 import { access, existsSync } from 'node:fs'
 import { uploadPath } from '~/server/folder'
-import type { MultiPartData, UploadItem } from '~/types/upload'
+import type { MultiPartData } from '~/types/upload'
 import { defineEventHandlerWithError } from '~/server/wrappers/error'
 // import { waitforme } from '~/server/utils'
 
 export default defineEventHandlerWithError(async (event) => {
-  const storage = event.context.$attachment.storage
-  if (!storage) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Internal Server Error',
-      message: 'Upload storage not initialized'
-    })
-  }
   const formData = await readMultipartFormData(event)
   if (!formData) {
     throw createError({
@@ -84,10 +76,6 @@ export default defineEventHandlerWithError(async (event) => {
     })
   }
 
-  let uploads = await storage.getItem<UploadItem[]>('uploads')
-  if (!uploads || uploads === null) uploads = []
   await writeFile(attachPath, fileEntry.data)
-  uploads.push({ path: pathEntry.data.toString(), fileName, deleted: false })
-  await storage.setItem('uploads', uploads)
   return `/api/attachment/${fileName}`
 })
