@@ -4,8 +4,8 @@ import { createReadStream } from 'node:fs'
 
 import { defineEventHandlerWithNotebookAndNote } from '~/server/wrappers/note'
 
-export default defineEventHandlerWithNotebookAndNote(async (event, _cleanNotebook, cleanNote, fullPath) => {
-  try {
+export default defineEventHandlerWithNotebookAndNote(
+  async (event, _cleanNotebook, cleanNote, fullPath): Promise<void> => {
     //Get info
     const stats = await stat(fullPath)
 
@@ -24,12 +24,5 @@ export default defineEventHandlerWithNotebookAndNote(async (event, _cleanNoteboo
 
     // Return file stream
     return sendStream(event, createReadStream(fullPath))
-  } catch (error) {
-    console.error('Error serving file:', error)
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Internal Server Error',
-      message: 'Failed to retrieve file'
-    })
   }
-})
+)

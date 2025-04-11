@@ -1,7 +1,8 @@
 import type { EventHandlerRequest, H3Event } from 'h3'
 import { access, constants } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
-import basePath from '~/server/folder'
+import { notesPath } from '~/server/folder'
+import type { APIError } from '~/types/result'
 
 type EventHandlerWithNotebookAndNote<T extends EventHandlerRequest, D> = (
   event: H3Event<T>,
@@ -31,7 +32,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
     }
 
     // Construct paths
-    const targetFolder = resolve(join(basePath, ...notebooks))
+    const targetFolder = resolve(join(notesPath, ...notebooks))
     const filename = `${note}.md`
     const fullPath = join(targetFolder, filename)
 
@@ -57,7 +58,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
     }
 
     // Security checks
-    if (!targetFolder.startsWith(resolve(basePath))) {
+    if (!targetFolder.startsWith(resolve(notesPath))) {
       throw createError({
         statusCode: 400,
         statusMessage: 'Bad Request',
@@ -70,6 +71,8 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
       await access(targetFolder, constants.R_OK | constants.W_OK)
       if (options?.noteCheck) await access(fullPath, constants.R_OK | constants.W_OK)
     } catch (error) {
+      console.error('Note error:', error)
+
       const err = error as NodeJS.ErrnoException
       const message =
         err.code === 'ENOENT'
@@ -84,7 +87,36 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
         message
       })
     }
-
-    return await handler(event, notebooks, note, fullPath, targetFolder)
+    try {
+      return await handler(event, notebooks, note, fullPath, targetFolder)
+    } catch (error) {
+      console.log(event, error)
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+        throw createError({
+          statusCode: 404,
+          statusMessage: 'Not Found',
+          message: 'Note or notebook does not exist'
+        })
+      } else if (error instanceof URIError) {
+        throw createError({
+          statusCode: 400,
+          statusMessage: 'Bad Request',
+          message: 'Invalid URL encoding.'
+        })
+      } else if (error instanceof Error && 'statusCode' in error) {
+        const err = error as APIError
+        throw createError({
+          statusCode: err.statusCode ?? 500,
+          statusMessage: err.statusMessage ?? 'Internal Server Error',
+          message: err.message ?? 'An unexpected error occurred'
+        })
+      } else {
+        throw createError({
+          statusCode: 500,
+          statusMessage: 'Internal Server Error',
+          message: 'An unexpected error occurred'
+        })
+      }
+    }
   })
 }

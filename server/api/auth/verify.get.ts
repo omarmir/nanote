@@ -1,8 +1,9 @@
 import jwt from 'jsonwebtoken'
 import SECRET_KEY from '~/server/key'
+import { defineEventHandlerWithError } from '~/server/wrappers/error'
 import type { Result } from '~/types/result'
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandlerWithError(async (event): Promise<Result<boolean>> => {
   const cookie = getCookie(event, 'token')
 
   if (!cookie) {

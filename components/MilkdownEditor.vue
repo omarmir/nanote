@@ -11,11 +11,11 @@ import { imageInlineComponent, inlineImageConfig } from '@milkdown/kit/component
 import { imageBlockConfig } from '@milkdown/kit/component/image-block'
 import { editorViewOptionsCtx, editorViewCtx } from '@milkdown/kit/core'
 import { emoji } from '@milkdown/plugin-emoji'
-import { createUploader, onUpload } from '~/utils/uploader'
+import { createUploader, onUpload, toCheckUploader } from '~/utils/uploader'
 import '@milkdown/crepe/theme/common/style.css'
 import '@milkdown/crepe/theme/nord.css'
 import '@milkdown/crepe/theme/nord-dark.css'
-import { filePicker, filePickerNodeBlock, filePickerConfig, clearContentAndAddBlockType } from 'milkdown-plugin-file'
+import { filePicker, filePickerNodeBlock, filePickerConfig, clearContentAndAddBlockType } from 'milkdown-plugin-file' //'@/utils/md-plugins/milkdown-plugin-file/src'
 import { html } from 'atomico'
 
 const model = defineModel<string>({ required: true })
@@ -26,7 +26,8 @@ const { disabled, isFocus, note, notebooks } = defineProps<{
   notebooks: string[]
 }>()
 
-const customUploader = createUploader(notebooks, note)
+const customUploader = createUploader()
+const path = notePathArrayJoiner([...notebooks, note])
 
 useEditor((root) => {
   const crepe = new Crepe({
@@ -79,12 +80,12 @@ useEditor((root) => {
 
       ctx.update(imageBlockConfig.key, (defaultConfig) => ({
         ...defaultConfig,
-        onUpload: async (file: File) => onUpload(file, notebooks, note)
+        onUpload: async (file: File) => onUpload(file, path)
       }))
 
       ctx.update(inlineImageConfig.key, (prev) => ({
         ...prev,
-        onUpload: async (file: File) => onUpload(file, notebooks, note)
+        onUpload: async (file: File) => onUpload(file, path)
       }))
 
       ctx.update(uploadConfig.key, (prev) => ({
@@ -94,7 +95,9 @@ useEditor((root) => {
 
       ctx.update(filePickerConfig.key, (prev) => ({
         ...prev,
-        onUpload: async (file: File) => onUpload(file, notebooks, note)
+        onUpload: async (file: File) => onUpload(file, path),
+        toCheckUpload: async (url: string) => toCheckUploader(url),
+        failedCheckMessage: 'Unable to access file!'
       }))
 
       ctx.update(editorViewOptionsCtx, (prev) => ({
@@ -113,6 +116,10 @@ useEditor((root) => {
 <style lang="postcss">
 .milkdown-editor.focus div.milkdown milkdown-block-handle {
   display: none;
+}
+
+.milkdown-editor div.milkdown milkdown-block-handle {
+  @apply hidden lg:flex;
 }
 
 milkdown-toolbar,
@@ -160,6 +167,12 @@ milkdown-link-preview {
           @apply inline-flex size-5;
         }
       }
+      a.attachment-button.not-exist {
+        @apply bg-red-500 text-white dark:bg-red-800;
+        div.file-icon svg path {
+          @apply !fill-red-200;
+        }
+      }
       .file-input {
         @apply inline cursor-pointer items-center rounded-md border border-gray-300 bg-gray-50 text-sm text-gray-900 file:cursor-pointer file:rounded-l-md file:border-none file:bg-accent file:py-0.5 file:text-white file:hover:bg-accent-hover focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400;
       }
@@ -179,6 +192,12 @@ milkdown-link-preview {
         @apply flex flex-col gap-1 bg-transparent font-bold text-gray-900 hover:underline dark:text-white;
         div.file-icon {
           @apply size-10;
+        }
+      }
+      a.attachment-button.not-exist {
+        @apply bg-transparent;
+        div.file-icon svg path {
+          @apply !fill-red-500 dark:!fill-red-800;
         }
       }
     }

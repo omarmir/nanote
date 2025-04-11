@@ -1,12 +1,21 @@
 import SECRET_KEY from '~/server/key'
-import { envNotesPath } from '~/server/folder'
+import { envNotesPath, envUploadsPath } from '~/server/folder'
+import { defineEventHandlerWithError } from '../wrappers/error'
 
-export default defineEventHandler(async (_event) => {
+type Health = {
+  status: 'OK'
+  message: 'Service is running'
+  warnings: string[]
+}
+
+export default defineEventHandlerWithError(async (_event): Promise<Health> => {
   const warnings = []
 
   if (SECRET_KEY === 'nanote') warnings.push('Secret key should be changed from the default.')
   if (!envNotesPath)
     if (!envNotesPath) warnings.push('Storage location is not set, this could result in loss of notes.')
+  if (!envUploadsPath)
+    if (!envUploadsPath) warnings.push('Uploads location is not set, this could result in loss of uploads.')
 
   return {
     status: 'OK',

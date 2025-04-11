@@ -26,4 +26,6 @@ logs
 # notes dir
 notes
 uploads
+
+# debugging plugin
 utils/md-plugins

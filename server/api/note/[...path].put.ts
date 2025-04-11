@@ -7,12 +7,11 @@ import type { RenameNote } from '~/types/notebook'
 /**
  * Renaming note
  */
-export default defineEventHandlerWithNotebookAndNote(async (event, notebook, note, fullPath, notebookPath) => {
-  const body = await readBody(event)
+export default defineEventHandlerWithNotebookAndNote(
+  async (event, notebook, note, fullPath, notebookPath): Promise<RenameNote> => {
+    const body = await readBody(event)
 
-  // await waitforme(5000)
-
-  try {
+    // await waitforme(5000)
     // Validate and decode parameters
     if (!body?.newName) {
       throw createError({
@@ -48,22 +47,5 @@ export default defineEventHandlerWithNotebookAndNote(async (event, notebook, not
       createdAt: stats.birthtime.toISOString(),
       updatedAt: stats.mtime.toISOString()
     } satisfies RenameNote
-  } catch (error) {
-    if (error instanceof URIError) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'Bad Request',
-        message: 'Invalid URL encoding.'
-      })
-    }
-
-    const httpError = error as { statusCode?: number }
-    if (httpError.statusCode) throw error
-
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Internal Server Error',
-      message: 'Failed to rename note.'
-    })
   }
-})
+)

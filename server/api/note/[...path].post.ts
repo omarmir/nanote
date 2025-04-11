@@ -1,15 +1,16 @@
-import { writeFile, stat, access, constants } from 'node:fs/promises'
+import { writeFile, stat } from 'node:fs/promises'
 import { readMultipartFormData } from 'h3'
 import { Buffer } from 'node:buffer'
 
 import { defineEventHandlerWithNotebookAndNote } from '~/server/wrappers/note'
 import type { Note } from '~/types/notebook'
+import { checkIfPathExists } from '~/server/utils'
 
 /**
  * Add note
  */
 export default defineEventHandlerWithNotebookAndNote(
-  async (event, notebook, note, fullPath) => {
+  async (event, notebook, note, fullPath): Promise<Note> => {
     let fileContent = Buffer.from('')
 
     // Parse form data if available
@@ -21,37 +22,29 @@ export default defineEventHandlerWithNotebookAndNote(
       }
     }
 
-    try {
-      await access(fullPath, constants.F_OK)
+    /**
+     * Try to access the note and if it exists throw a specific error (it exists)
+     */
+    //If folder already exists check
+    const notebookExists = await checkIfPathExists(fullPath)
+    if (notebookExists)
       throw createError({
-        statusCode: 400,
-        statusMessage: 'Bad Request',
-        message: 'Note with that name already exists.'
+        statusCode: 409,
+        statusMessage: 'Conflict',
+        message: 'Notebook already exists'
       })
-    } catch (err) {
-      if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err
-    }
 
-    try {
-      await writeFile(fullPath, fileContent)
-      const stats = await stat(fullPath)
-      const createdAtTime = stats.birthtime.getTime() !== 0 ? stats.birthtime : stats.ctime
+    await writeFile(fullPath, fileContent)
+    const stats = await stat(fullPath)
+    const createdAtTime = stats.birthtime.getTime() !== 0 ? stats.birthtime : stats.ctime
 
-      return {
-        notebook: notebook,
-        name: note,
-        createdAt: createdAtTime.toISOString(),
-        updatedAt: stats.mtime.toISOString(),
-        size: stats.size
-      } satisfies Note
-    } catch (error) {
-      console.error('Error creating note:', error)
-      throw createError({
-        statusCode: 500,
-        statusMessage: 'Internal Server Error',
-        message: 'Failed to create note'
-      })
-    }
+    return {
+      notebook: notebook,
+      name: note,
+      createdAt: createdAtTime.toISOString(),
+      updatedAt: stats.mtime.toISOString(),
+      size: stats.size
+    } satisfies Note
   },
   {
     noteCheck: false

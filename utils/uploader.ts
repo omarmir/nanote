@@ -1,11 +1,12 @@
 import type { Uploader } from '@milkdown/kit/plugin/upload'
 import type { Node } from '@milkdown/kit/prose/model'
 
-const onUpload = async (file: File, notebook: string[], note: string): Promise<string> => {
+const onUpload = async (file: File, path: string): Promise<string> => {
   const formData = new FormData()
   formData.append('file', file)
+  formData.append('path', path)
 
-  const url = await $fetch<string>(`/api/${notebook}/${note}/attachment`, {
+  const url = await $fetch<string>('/api/attachment', {
     method: 'POST',
     body: formData
   })
@@ -13,11 +14,20 @@ const onUpload = async (file: File, notebook: string[], note: string): Promise<s
   return url
 }
 
-const createUploader = (notebooks: string[], note: string) => {
+const toCheckUploader = async (fileURL: string) => {
+  const resp = await $fetch<string>('/api/attachment/check', {
+    method: 'GET',
+    query: { url: fileURL }
+  })
+
+  return resp
+}
+
+const createUploader = () => {
   const uploader: Uploader = async (files, schema) => {
     const nodes: Node[] = await Promise.all(
       Array.from(files).map(async (file) => {
-        const src = await onUpload(file, notebook, note)
+        const src = onUpload
 
         // Handle image files
         if (file.type.includes('image')) {
@@ -40,4 +50,4 @@ const createUploader = (notebooks: string[], note: string) => {
   return uploader
 }
 
-export { createUploader, onUpload }
+export { createUploader, onUpload, toCheckUploader }

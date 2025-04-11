@@ -3,7 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest'
 import { setup, $fetch } from '@nuxt/test-utils'
 import { getAuthCookie } from '~/tests/setup'
 import { join } from 'node:path'
-import basePath from '~/server/folder'
+import { notesPath } from '~/server/folder'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { nanoid } from 'nanoid'
 import type { SearchResult } from '~/types/notebook'
@@ -20,13 +20,13 @@ describe('Health check', async () => {
 
   beforeAll(async () => {
     authCookie = await getAuthCookie()
-    const fullPath = join(basePath, notebookName)
+    const fullPath = join(notesPath, notebookName)
     await mkdir(fullPath)
 
     // create file
     let fileContent = Buffer.from('')
     fileContent = Buffer.from(nanoidString)
-    const filePath = join(basePath, notebookName, `${fileName}.md`)
+    const filePath = join(notesPath, notebookName, `${fileName}.md`)
     await writeFile(filePath, fileContent)
   })
 
