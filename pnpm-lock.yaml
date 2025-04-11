@@ -78,8 +78,8 @@ importers:
         specifier: ^2.4.0
         version: 2.4.0
       milkdown-plugin-file:
-        specifier: 0.2.0
-        version: 0.2.0(@codemirror/language@6.11.0)(@codemirror/state@6.5.2)(@codemirror/view@6.36.4)(@milkdown/core@7.6.4(@milkdown/ctx@7.6.4)(@milkdown/prose@7.6.4)(@milkdown/transformer@7.6.4(@milkdown/prose@7.6.4)))(@milkdown/prose@7.6.4)(element-internals-polyfill@0.1.55)
+        specifier: 0.2.1
+        version: 0.2.1(@codemirror/language@6.11.0)(@codemirror/state@6.5.2)(@codemirror/view@6.36.4)(@milkdown/core@7.6.4(@milkdown/ctx@7.6.4)(@milkdown/prose@7.6.4)(@milkdown/transformer@7.6.4(@milkdown/prose@7.6.4)))(@milkdown/prose@7.6.4)(element-internals-polyfill@0.1.55)
       mime:
         specifier: ^4.0.6
         version: 4.0.6
@@ -4067,8 +4067,8 @@ packages:
     resolution: {integrity: sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==}
     engines: {node: '>=8.6'}
 
-  milkdown-plugin-file@0.2.0:
-    resolution: {integrity: sha512-/85qyIVedh/CTErsvicYhY0k44Skh0w7AkELhR9wm7oyviZPiOnI8IT4rye/gcFnTCfbkfM79BXpWAa7XlD5Vw==}
+  milkdown-plugin-file@0.2.1:
+    resolution: {integrity: sha512-b+ZH3M8ffBv12UK9I76FlWJY51HzkvoVLsbc/ZfZquaMQ4XCKnFO3pYDjPpDht7LkcYHQwIROLfUue6f0oz9ww==}
     peerDependencies:
       '@milkdown/core': ^7.6.3
       '@milkdown/prose': ^7.6.3
@@ -10883,7 +10883,7 @@ snapshots:
       braces: 3.0.3
       picomatch: 2.3.1
 
-  milkdown-plugin-file@0.2.0(@codemirror/language@6.11.0)(@codemirror/state@6.5.2)(@codemirror/view@6.36.4)(@milkdown/core@7.6.4(@milkdown/ctx@7.6.4)(@milkdown/prose@7.6.4)(@milkdown/transformer@7.6.4(@milkdown/prose@7.6.4)))(@milkdown/prose@7.6.4)(element-internals-polyfill@0.1.55):
+  milkdown-plugin-file@0.2.1(@codemirror/language@6.11.0)(@codemirror/state@6.5.2)(@codemirror/view@6.36.4)(@milkdown/core@7.6.4(@milkdown/ctx@7.6.4)(@milkdown/prose@7.6.4)(@milkdown/transformer@7.6.4(@milkdown/prose@7.6.4)))(@milkdown/prose@7.6.4)(element-internals-polyfill@0.1.55):
     dependencies:
       '@milkdown/core': 7.6.4(@milkdown/ctx@7.6.4)(@milkdown/prose@7.6.4)(@milkdown/transformer@7.6.4(@milkdown/prose@7.6.4))
       '@milkdown/ctx': 7.6.4

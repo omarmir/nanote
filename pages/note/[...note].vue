@@ -114,6 +114,7 @@ const saveFile = async (markdownText: string) => {
     //@ts-expect-error PATH is available but likely mismatched due to dynamic URL
     await $fetch(`/api/note/${notebookPath}/${note}`, { method: 'PATCH', body: formData })
     savingState.value = 'success'
+    error.value = null
   } catch (err) {
     error.value = `Unable to save: ${(err as FetchError).data.message}`
     savingState.value = 'error'

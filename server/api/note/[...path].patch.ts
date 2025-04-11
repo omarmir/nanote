@@ -8,14 +8,7 @@ import type { NoteResponse } from '~/types/notebook'
  */
 
 export default defineEventHandlerWithAttachmentNotebookNote(
-  async (
-    event,
-    notebook,
-    note,
-    fullPath,
-    _notebookPath,
-    markAllAttachmentsForNoteForDeletion
-  ): Promise<NoteResponse> => {
+  async (event, notebook, note, fullPath, markAttachmentForDeletionIfNeeded): Promise<NoteResponse> => {
     // Parse form data
     const formData = await readMultipartFormData(event)
     if (!formData) {
@@ -40,23 +33,15 @@ export default defineEventHandlerWithAttachmentNotebookNote(
     const originalStats = await stat(fullPath)
     const originalStatsCreatedAtTime =
       originalStats.birthtime.getTime() !== 0 ? originalStats.birthtime : originalStats.ctime
+
     // Overwrite file content
     await writeFile(fullPath, fileEntry.data)
 
+    // remove any attachments that are gone
+    await markAttachmentForDeletionIfNeeded(fileEntry.data)
+
     // Get new stats after update
     const newStats = await stat(fullPath)
-
-    // Let the notes get marked for deletion
-    const storage = event.context.$attachment.storage
-    if (!storage) {
-      throw createError({
-        statusCode: 500,
-        statusMessage: 'Internal Server Error',
-        message: 'Upload storage not initialized'
-      })
-    } else {
-      event.context.$attachment.addToQueueForAttachmentMarking({ notebook, note, fileData: fileEntry.data })
-    }
 
     return {
       notebook,
