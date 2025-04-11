@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "nuxt build",
+    "test": "vitest run",
     "dev": "nuxt dev",
     "devenv": "SECRET_KEY=test NOTES_PATH=/home/omar/Documents/notes nuxt dev",
     "generate": "nuxt generate",
@@ -54,18 +55,23 @@
   "devDependencies": {
     "@nuxt/eslint": "^1.0.1",
     "@nuxt/eslint-config": "^1.0.1",
+    "@nuxt/test-utils": "^3.17.2",
     "@nuxtjs/eslint-module": "^4.1.0",
     "@types/jsonwebtoken": "^9.0.8",
     "@types/shell-escape": "^0.2.3",
     "@typescript-eslint/eslint-plugin": "^8.24.1",
     "@typescript-eslint/parser": "^8.24.1",
+    "@vue/test-utils": "^2.4.6",
     "eslint": "^9.20.1",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-nuxt": "^4.0.0",
     "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-tailwindcss": "3.18.0",
+    "happy-dom": "^17.4.3",
+    "playwright-core": "^1.51.0",
     "prettier": "^3.5.1",
-    "prettier-plugin-tailwindcss": "^0.6.11"
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "vitest": "^3.0.8"
   },
   "pnpm": {
     "overrides": {

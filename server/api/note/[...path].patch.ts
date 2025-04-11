@@ -1,6 +1,7 @@
 import { writeFile, stat } from 'node:fs/promises'
 import { readMultipartFormData } from 'h3'
 import { defineEventHandlerWithNotebookAndNote } from '~/server/wrappers/note'
+import type { NoteResponse } from '~/types/notebook'
 // import { waitforme } from '~/server/utils'
 
 /**
@@ -48,7 +49,7 @@ export default defineEventHandlerWithNotebookAndNote(async (event, notebook, not
       updatedAt: newStats.mtime.toISOString(),
       size: newStats.size,
       originalFilename: fileEntry.filename || 'unknown'
-    }
+    } satisfies NoteResponse
   } catch (error) {
     console.error('Error updating note:', error)
     throw createError({
