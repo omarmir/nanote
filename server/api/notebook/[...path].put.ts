@@ -3,8 +3,11 @@ import { join, resolve } from 'node:path'
 import { defineEventHandlerWithNotebook } from '~/server/wrappers/notebook'
 import type { RenameNotebook } from '~/types/notebook'
 
+/**
+ * Rename notebook
+ */
 export default defineEventHandlerWithNotebook(
-  async (event, cleanNotebook, fullPath, targetFolder, basePath) => {
+  async (event, notebook, fullPath, parentFolder) => {
     const body = await readBody(event)
     try {
       // Validate input
@@ -20,7 +23,7 @@ export default defineEventHandlerWithNotebook(
       const cleanNewName = newName.replace(/[\\/:*?"<>|.]/g, '')
 
       // Construct paths
-      const newPath = resolve(join(basePath, cleanNewName))
+      const newPath = resolve(join(parentFolder, cleanNewName))
 
       // Check if new name exists
       try {
@@ -39,12 +42,15 @@ export default defineEventHandlerWithNotebook(
 
       // Get updated stats
       const stats = await stat(newPath)
+      const notebookName = notebook.at(-1) ?? ''
 
       return {
-        oldName: cleanNotebook,
+        oldName: notebookName,
         newName: cleanNewName,
         createdAt: stats.birthtime.toISOString(),
-        updatedAt: stats.mtime.toISOString()
+        updatedAt: stats.mtime.toISOString(),
+        notebooks: notebook.slice(0, -1), // Have to slice off itself since the notebooks is built off the fetch url which in this case includes this book
+        path: newPath
       } satisfies RenameNotebook
     } catch (error) {
       if (error instanceof URIError) {

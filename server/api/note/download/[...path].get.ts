@@ -4,7 +4,7 @@ import { createReadStream } from 'node:fs'
 
 import { defineEventHandlerWithNotebookAndNote } from '~/server/wrappers/note'
 
-export default defineEventHandlerWithNotebookAndNote(async (event, cleanNotebook, cleanNote, fullPath) => {
+export default defineEventHandlerWithNotebookAndNote(async (event, _cleanNotebook, cleanNote, fullPath) => {
   try {
     //Get info
     const stats = await stat(fullPath)

@@ -1,67 +1,47 @@
-import { readdir, stat } from 'node:fs/promises'
-import { join, resolve } from 'node:path'
+// server/api/notes.ts
+import { defineEventHandler } from 'h3'
+import path from 'node:path'
 import type { Note } from '~/types/notebook'
 import basePath from '~/server/folder'
-/**
- * All notes ordered by date updated
- */
-export default defineEventHandler(async (event): Promise<Note[]> => {
+import fg from 'fast-glob'
+
+export default defineEventHandler(async (event) => {
   const query = getQuery<{ display: number }>(event)
+  const displayCount = Math.min(Math.max(Number(query.display) || 5, 1), 100) // Clamp between 1-100
 
   try {
-    // Get all notebooks (folders)
-    const notebooks = await readdir(basePath, { withFileTypes: true }).then((entries) =>
-      entries.filter((d) => d.isDirectory()).map((d) => d.name)
-    )
+    const files = await fg('**/*.md', {
+      cwd: basePath,
+      absolute: true,
+      stats: true,
+      onlyFiles: true,
+      suppressErrors: true // Handle permission issues gracefully
+    })
 
-    // Collect notes from all notebooks
-    const allNotes = await Promise.all(
-      notebooks.map(async (notebook) => {
-        const notebookPath = resolve(join(basePath, notebook))
+    // Sort by most recently modified first and take top N
+    const recentFiles = files.sort((a, b) => b.stats!.mtimeMs - a.stats!.mtimeMs).slice(0, displayCount)
 
-        try {
-          const files = await readdir(notebookPath, { withFileTypes: true })
-          const notes = await Promise.all(
-            files.map(async (dirent) => {
-              if (!dirent.isFile() || !dirent.name.endsWith('.md')) return null
+    const notes: Note[] = recentFiles.map((file) => {
+      const relativePath = path.relative(basePath, file.path)
+      const notebook =
+        path.dirname(relativePath) !== '.' ? path.dirname(relativePath).split(path.sep).filter(Boolean) : []
 
-              const filePath = join(notebookPath, dirent.name)
-              try {
-                const stats = await stat(filePath)
-                const createdAtTime = stats.birthtime.getTime() !== 0 ? stats.birthtime : stats.ctime
+      return {
+        name: path.basename(file.path, '.md'),
+        createdAt: file.stats!.birthtime.toISOString(),
+        updatedAt: file.stats!.mtime.toISOString(),
+        notebook,
+        size: Math.round(file.stats!.size / 1024)
+      }
+    })
 
-                return {
-                  name: dirent.name.replace(/\.md$/, ''),
-                  notebook,
-                  createdAt: createdAtTime.toISOString(),
-                  updatedAt: stats.mtime.toISOString(),
-                  size: stats.size
-                } satisfies Note
-              } catch (error) {
-                console.error(`Error processing ${filePath}:`, error)
-                return null
-              }
-            })
-          )
-          return notes.filter((note) => note !== null)
-        } catch (error) {
-          console.error(`Error reading notebook ${notebook}:`, error)
-          return []
-        }
-      })
-    )
-
-    // Flatten and sort notes
-    return allNotes
-      .flat()
-      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-      .slice(0, query.display ?? allNotes.length)
+    return notes
   } catch (error) {
-    console.error('Error reading base directory:', error)
+    console.error('Error retrieving recent notes:', error)
     throw createError({
       statusCode: 500,
       statusMessage: 'Internal Server Error',
-      message: 'Failed to retrieve notes'
+      message: 'Failed to retrieve recent notes'
     })
   }
 })

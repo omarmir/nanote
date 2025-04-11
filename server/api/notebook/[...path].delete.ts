@@ -3,6 +3,9 @@ import { rm } from 'node:fs/promises'
 import { defineEventHandlerWithNotebook } from '~/server/wrappers/notebook'
 import type { DeleteNotebook } from '~/types/notebook'
 
+/**
+ * Dekete notebook
+ */
 export default defineEventHandlerWithNotebook(
   async (_event, cleanNotebook, fullPath) => {
     try {

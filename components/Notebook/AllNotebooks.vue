@@ -8,14 +8,12 @@
       </h3>
       <div class="min-w-xs relative my-2 flex w-1/3 min-w-72 flex-wrap items-center">
         <div class="relative my-2 flex w-full flex-wrap items-center">
-          <NotebookNewNotebook @error="notebookAddedError"></NotebookNewNotebook>
+          <NotebookNewNotebook @error="(err) => (notebookAddedError = err)"></NotebookNewNotebook>
         </div>
       </div>
     </div>
-    <!-- end card header -->
-    <!-- card body  -->
-    <CommonDangerAlert v-if="error" class="mb-4 rounded-none">
-      {{ error }}
+    <CommonDangerAlert v-if="notebookAddedError" class="rounded-none">
+      {{ notebookAddedError }}
     </CommonDangerAlert>
     <div class="block flex-auto px-9 py-8 pt-6">
       <div class="overflow-x-auto">
@@ -47,40 +45,44 @@
                 <div class="mb-2.5 h-2 w-2/5 rounded-full bg-gray-200 dark:bg-gray-700"></div>
               </td>
             </tr>
+            <CommonDangerAlert v-if="notebookStore.error">
+              {{ notebookStore.error.data.message ?? notebookStore.error.message }}
+            </CommonDangerAlert>
             <tr
-              v-for="notebook in notebookStore.notebooks"
+              v-for="notebook in notebookStore.notebooks?.notebooks"
               :key="notebook.name"
               class="border-b border-neutral-200 last:border-b-0 dark:border-neutral-700">
-              <td class="flex flex-col">
-                <NotebookRenameNotebook :notebook="notebook.name" @toggle="toggleNotes"></NotebookRenameNotebook>
-                <NoteNotebookNotes
-                  v-if="notebook.name === openNotebookNotes?.notebook"
-                  class="ml-8"
+              <td class="flex flex-col py-2">
+                <NotebookContents
                   :on-background="true"
-                  :notebook="notebook.name"
-                  :notes="openNotebookNotes?.notes"
-                  @added="addedNote"></NoteNotebookNotes>
-                <CommonDangerAlert v-if="openError">{{ openError }}</CommonDangerAlert>
+                  :notebook="notebook"
+                  type="main"
+                  :show-children="notebookStore.currentLevel(notebook, 'main')"></NotebookContents>
               </td>
-              <td class="hidden pb-3 pt-4 align-top lg:table-cell">
+              <td class="hidden py-2 align-top lg:table-cell">
                 <div class="text-sm font-medium">
                   <CommonDateDisplay :date="notebook.createdAt"></CommonDateDisplay>
                 </div>
               </td>
-              <td class="hidden pb-3 pt-4 align-top lg:table-cell">
+              <td class="hidden py-2 align-top lg:table-cell">
                 <div class="text-sm font-medium">
                   <CommonDateDisplay :date="notebook.updatedAt"></CommonDateDisplay>
                 </div>
               </td>
-              <td class="table-cell pb-3 pt-4 align-top">
+              <td class="table-cell py-2 align-top">
                 <div class="flex w-full justify-center">
                   <div
                     class="flex size-6 flex-row items-center justify-center rounded-full bg-gray-200 text-xs font-medium text-gray-900 dark:bg-gray-700 dark:text-gray-200">
-                    <span>{{ notebook.fileCount }}</span>
+                    <span>{{ notebook.noteCount }}</span>
                   </div>
                 </div>
               </td>
-              <td class="pb-3 pt-4 align-top"><NotebookDelete :notebook="notebook.name"></NotebookDelete></td>
+              <td class="py-2 align-top">
+                <div class="flex flex-row items-center gap-2">
+                  <NotebookDelete :notebook></NotebookDelete>
+                  <NotebookManage :notebook></NotebookManage>
+                </div>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -89,34 +91,6 @@
   </CommonBaseCard>
 </template>
 <script lang="ts" setup>
-import type { Note } from '~/types/notebook'
-
-const store = useNoteStore()
 const notebookStore = useNotebookStore()
-
-const error: Ref<string | null> = ref(null)
-const openError: Ref<{ notebook: string; error: string } | null> = ref(null)
-const openNotebookNotes: Ref<{ notebook: string; notes: Note[] } | null> = ref(null)
-
-const notebookAddedError = (addError: string) => (error.value = addError)
-
-const toggleNotes = async (notebook: string) => {
-  if (openNotebookNotes.value?.notebook === notebook) {
-    openNotebookNotes.value = null
-    return
-  }
-  const resp = await store.getNotebookNotes(notebook)
-
-  if (resp.success) {
-    openNotebookNotes.value = { notebook, notes: resp.data }
-  } else {
-    openError.value = { notebook, error: resp.message }
-  }
-}
-
-const addedNote = (newNote: Note) => {
-  if (openNotebookNotes.value?.notebook === newNote.notebook) {
-    openNotebookNotes.value?.notes.push(newNote)
-  }
-}
+const notebookAddedError: Ref<string | null> = ref(null)
 </script>

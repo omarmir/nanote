@@ -2,15 +2,18 @@ import { stat } from 'node:fs/promises'
 
 import { defineEventHandlerWithNotebookAndNote } from '~/server/wrappers/note'
 
-export default defineEventHandlerWithNotebookAndNote(async (_event, cleanNotebook, cleanNote, fullPath) => {
+/**
+ * Get note info
+ */
+export default defineEventHandlerWithNotebookAndNote(async (_event, notebooks, note, fullPath) => {
   try {
     // Read file contents and stats
     const stats = await stat(fullPath)
     const createdAtTime = stats.birthtime.getTime() !== 0 ? stats.birthtime : stats.ctime
 
     return {
-      name: cleanNote,
-      notebook: cleanNotebook,
+      name: note,
+      notebook: notebooks,
       createdAt: createdAtTime.toISOString(),
       updatedAt: stats.mtime.toISOString(),
       size: stats.size // Optional: Remove if not needed

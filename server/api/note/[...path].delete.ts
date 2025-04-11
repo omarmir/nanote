@@ -3,14 +3,17 @@ import { unlink } from 'node:fs/promises'
 import { defineEventHandlerWithNotebookAndNote } from '~/server/wrappers/note'
 import type { DeleteNote } from '~/types/notebook'
 
-export default defineEventHandlerWithNotebookAndNote(async (_event, cleanNotebook, cleanNote, fullPath) => {
+/**
+ * Delete note
+ */
+export default defineEventHandlerWithNotebookAndNote(async (_event, notebook, note, fullPath) => {
   try {
     // Read file contents and stats
     await unlink(fullPath)
 
     return {
-      notebook: cleanNotebook,
-      name: cleanNote,
+      notebook: notebook,
+      name: note,
       deleted: true,
       timestamp: new Date().toISOString()
     } satisfies DeleteNote

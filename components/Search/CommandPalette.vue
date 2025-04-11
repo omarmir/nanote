@@ -5,7 +5,7 @@
     :hide-title-desc="true"
     position="top"
     theme="primary"
-    title="Command prompt"
+    title="Search results"
     desc="Quick shortcuts and search">
     <div class="flex flex-col gap-4">
       <label for="command" class="hidden">Search</label>
@@ -101,7 +101,10 @@ watch(isShown, async () => {
 })
 
 const navigate = (result: SearchResult) => {
-  const route = result.matchType === 'folder' ? `/${result.notebook}` : `/${result.notebook}/${result.note}`
+  const route =
+    result.matchType === 'folder'
+      ? `/notebook/${result.notebook.join('/')}`
+      : `/note/${result.notebook.join('/')}/${result.name}`
   router.push(route)
   isShown.value = false
 }

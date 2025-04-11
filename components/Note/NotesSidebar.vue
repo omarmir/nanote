@@ -2,7 +2,7 @@
   <aside
     id="sidenav-main"
     ref="sidebar"
-    class="fixed inset-y-0 z-40 m-0 flex w-[300px] shrink-0 flex-col overflow-y-auto bg-neutral-900 transition-all duration-300 ease-in-out lg:ml-[300px] lg:translate-x-0 [&::-webkit-scrollbar-thumb]:bg-neutral-500 [&::-webkit-scrollbar-track]:bg-neutral-300 [&::-webkit-scrollbar]:w-1">
+    class="fixed inset-y-0 z-40 m-0 flex w-[300px] shrink-0 flex-col overflow-y-auto overflow-x-hidden bg-neutral-900 transition-all duration-300 ease-in-out lg:ml-[300px] lg:translate-x-0 [&::-webkit-scrollbar-thumb]:bg-neutral-500 [&::-webkit-scrollbar-track]:bg-neutral-300 [&::-webkit-scrollbar]:w-1">
     <div class="h-svw bg-cyan-300/5">
       <div class="mt-24 pl-7">
         <slot></slot>

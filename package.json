@@ -35,6 +35,7 @@
     "@vueuse/integrations": "^12.7.0",
     "atomico": "^1.79.2",
     "clsx": "^2.1.1",
+    "fast-glob": "^3.3.3",
     "focus-trap": "^7.6.4",
     "jsonwebtoken": "^9.0.2",
     "material-file-icons": "^2.4.0",

@@ -19,14 +19,14 @@ import { filePicker, filePickerNodeBlock, filePickerConfig, clearContentAndAddBl
 import { html } from 'atomico'
 
 const model = defineModel<string>({ required: true })
-const { disabled, isFocus, note, notebook } = defineProps<{
+const { disabled, isFocus, note, notebooks } = defineProps<{
   disabled: boolean
   isFocus: boolean
   note: string
-  notebook: string
+  notebooks: string[]
 }>()
 
-const customUploader = createUploader(notebook, note)
+const customUploader = createUploader(notebooks, note)
 
 useEditor((root) => {
   const crepe = new Crepe({
@@ -79,12 +79,12 @@ useEditor((root) => {
 
       ctx.update(imageBlockConfig.key, (defaultConfig) => ({
         ...defaultConfig,
-        onUpload: async (file: File) => onUpload(file, notebook, note)
+        onUpload: async (file: File) => onUpload(file, notebooks, note)
       }))
 
       ctx.update(inlineImageConfig.key, (prev) => ({
         ...prev,
-        onUpload: async (file: File) => onUpload(file, notebook, note)
+        onUpload: async (file: File) => onUpload(file, notebooks, note)
       }))
 
       ctx.update(uploadConfig.key, (prev) => ({
@@ -94,7 +94,7 @@ useEditor((root) => {
 
       ctx.update(filePickerConfig.key, (prev) => ({
         ...prev,
-        onUpload: async (file: File) => onUpload(file, notebook, note)
+        onUpload: async (file: File) => onUpload(file, notebooks, note)
       }))
 
       ctx.update(editorViewOptionsCtx, (prev) => ({

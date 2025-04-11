@@ -2,8 +2,11 @@ import { mkdir, access, constants } from 'node:fs/promises'
 import type { Notebook } from '~/types/notebook'
 import { defineEventHandlerWithNotebook } from '~/server/wrappers/notebook'
 
+/**
+ * Create notebook
+ */
 export default defineEventHandlerWithNotebook(
-  async (event, cleanNotebook, fullPath) => {
+  async (_event, notebook, fullPath, _parentFolder, name) => {
     try {
       // Check if folder already exists and read/write-able
       await access(fullPath, constants.R_OK | constants.W_OK)
@@ -25,10 +28,13 @@ export default defineEventHandlerWithNotebook(
 
       // Return the new notebook structure matching your type
       return {
-        name: cleanNotebook,
+        notebooks: notebook.slice(0, -1) ?? [],
+        name: name ?? '',
         createdAt: new Date().toISOString(),
         updatedAt: null,
-        fileCount: 0
+        notebookCount: 0,
+        noteCount: 0,
+        path: fullPath
       } satisfies Notebook
     } catch (error) {
       console.error('Error creating notebook:', error)

@@ -5,8 +5,11 @@ import { Buffer } from 'node:buffer'
 import { defineEventHandlerWithNotebookAndNote } from '~/server/wrappers/note'
 import type { Note } from '~/types/notebook'
 
+/**
+ * Add note
+ */
 export default defineEventHandlerWithNotebookAndNote(
-  async (event, cleanNotebook, cleanNote, fullPath) => {
+  async (event, notebook, note, fullPath) => {
     let fileContent = Buffer.from('')
 
     // Parse form data if available
@@ -35,8 +38,8 @@ export default defineEventHandlerWithNotebookAndNote(
       const createdAtTime = stats.birthtime.getTime() !== 0 ? stats.birthtime : stats.ctime
 
       return {
-        notebook: cleanNotebook,
-        name: cleanNote,
+        notebook: notebook,
+        name: note,
         createdAt: createdAtTime.toISOString(),
         updatedAt: stats.mtime.toISOString(),
         size: stats.size

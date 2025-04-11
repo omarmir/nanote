@@ -5,8 +5,8 @@ import basePath from '~/server/folder'
 
 type EventHandlerWithNotebookAndNote<T extends EventHandlerRequest, D> = (
   event: H3Event<T>,
-  cleanNotebook: string,
-  cleanNote: string,
+  notebooks: string[],
+  note: string,
   fullPath: string,
   notebookPath: string
 ) => Promise<D>
@@ -16,9 +16,13 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
   options?: { noteCheck: boolean }
 ) {
   return defineEventHandler(async (event) => {
-    const { notebook, note } = event.context.params || {}
+    // Decode the path and then remove characters we cannot have
+    const params = decodeURIComponent(event.context.params?.path ?? '')
+    const path = params.split('/').map((p) => p.replace(/[\\/:*?"<>|.]/g, '')) || []
+    const notebooks = path.slice(0, -1)
+    const note = path.at(-1)
 
-    if (!notebook || !note) {
+    if (notebooks.length === 0 || !note) {
       throw createError({
         statusCode: 400,
         statusMessage: 'Bad Request',
@@ -26,21 +30,13 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
       })
     }
 
-    // Decode URL components first
-    const decodedNotebook = decodeURIComponent(notebook)
-    const decodedNote = decodeURIComponent(note)
-
-    // Then sanitize (preserve spaces)
-    const cleanNotebook = decodedNotebook.replace(/[\\/:*?"<>|.]/g, '')
-    const cleanNote = decodedNote.replace(/[\\/:*?"<>|]/g, '')
-
     // Construct paths
-    const targetFolder = resolve(join(basePath, cleanNotebook))
-    const filename = `${cleanNote}.md`
+    const targetFolder = resolve(join(basePath, ...notebooks))
+    const filename = `${note}.md`
     const fullPath = join(targetFolder, filename)
 
     //Is the name going to exceed limits?
-    if (cleanNote.length > 255) {
+    if (note.length > 255) {
       throw createError({
         statusCode: 400,
         statusMessage: 'Bad Request',
@@ -78,8 +74,8 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
       const message =
         err.code === 'ENOENT'
           ? err.path === targetFolder
-            ? `Notebook "${cleanNotebook}" does not exist`
-            : `Note "${cleanNote}" does not exist`
+            ? `Notebook "${notebooks.join(' > ')}" does not exist`
+            : `Note "${note}" does not exist`
           : 'Access error'
 
       throw createError({
@@ -89,6 +85,6 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
       })
     }
 
-    return await handler(event, cleanNotebook, cleanNote, fullPath, targetFolder)
+    return await handler(event, notebooks, note, fullPath, targetFolder)
   })
 }

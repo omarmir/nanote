@@ -3,7 +3,10 @@ import { readMultipartFormData } from 'h3'
 import { defineEventHandlerWithNotebookAndNote } from '~/server/wrappers/note'
 // import { waitforme } from '~/server/utils'
 
-export default defineEventHandlerWithNotebookAndNote(async (event, cleanNotebook, cleanNote, fullPath) => {
+/**
+ * Update note
+ */
+export default defineEventHandlerWithNotebookAndNote(async (event, notebook, note, fullPath) => {
   // Parse form data
   const formData = await readMultipartFormData(event)
   if (!formData) {
@@ -38,8 +41,8 @@ export default defineEventHandlerWithNotebookAndNote(async (event, cleanNotebook
     const newStats = await stat(fullPath)
 
     return {
-      notebook: cleanNotebook,
-      note: cleanNote,
+      notebook: notebook,
+      note: note,
       path: fullPath,
       createdAt: originalStatsCreatedAtTime.toISOString(),
       updatedAt: newStats.mtime.toISOString(),

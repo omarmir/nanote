@@ -19,5 +19,8 @@ export default defineNuxtConfig({
       // specify specific font data - this will bypass any providers
       { name: 'JetBrains Mono', provider: 'google', global: true }
     ]
+  },
+  routeRules: {
+    '/api/notebook': { redirect: '/api/notebook/*' }
   }
 })

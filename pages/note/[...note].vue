@@ -3,8 +3,9 @@
     <div class="mb-6 w-full max-w-full px-3 sm:flex-none">
       <div class="flex flex-col gap-2 divide-y divide-gray-300 dark:divide-gray-700">
         <NoteName
+          v-if="note"
           v-model="renamePending"
-          :notebook="notebook"
+          :notebooks="notebooksArray"
           :name="note"
           :saving-state
           :is-focus
@@ -27,8 +28,8 @@
         </div>
       </div>
       <CommonDangerAlert v-if="error" class="mb-4">{{ error }}</CommonDangerAlert>
-      <MilkdownProvider>
-        <Milkdown v-model="md" :note :notebook :disabled="renamePending" :is-focus />
+      <MilkdownProvider v-if="note">
+        <Milkdown v-model="md" :note :notebooks="notebooksArray" :disabled="renamePending" :is-focus />
       </MilkdownProvider>
     </div>
   </div>
@@ -40,8 +41,10 @@ import { watchDebounced } from '@vueuse/core'
 import type { FetchError } from 'ofetch'
 import type { SavingState } from '~/types/notebook'
 const route = useRoute()
-const notebook = typeof route.params.notebook === 'string' ? route.params.notebook : route.params.notebook[0]
-const note = typeof route.params.note === 'string' ? route.params.note : route.params.note[0]
+const note = route.params.note.at(-1)
+const notebooksParams = route.params.note.slice(0, -1)
+const notebooksArray = typeof notebooksParams === 'string' ? [notebooksParams] : notebooksParams
+const notebookPath = notePathArrayJoiner(notebooksArray)
 const isFocus = useState('isFocus', () => false)
 
 const renamePending = ref(false)
@@ -52,7 +55,7 @@ const updated: Ref<Date | null> = ref(null)
 const savingState: Ref<SavingState> = ref('success')
 
 const fetchMarkdown = async () => {
-  if (!note || !notebook) {
+  if (!note || !notebooksParams) {
     error.value = 'Notebook or note not specified'
   }
 
@@ -62,7 +65,7 @@ const fetchMarkdown = async () => {
      * Native fetch gives direct access to the ReadableStream via response.body
      * $fetch/useFetch abstract the stream away, trying to parse the entire response at once (not ideal for chunks)
      */
-    const response = await fetch(`/api/${notebook}/${note}/download`)
+    const response = await fetch(`/api/note/download/${notebookPath}/${note}`)
 
     if (!response.body) throw new Error('No response body')
 
@@ -108,7 +111,8 @@ const saveFile = async (markdownText: string) => {
   formData.append('filename', `${note}.md`) // The filename to use when saving
 
   try {
-    await $fetch(`/api/${notebook}/${note}`, { method: 'PATCH', body: formData })
+    //@ts-expect-error PATH is available but likely mismatched due to dynamic URL
+    await $fetch(`/api/note/${notebookPath}/${note}`, { method: 'PATCH', body: formData })
     savingState.value = 'success'
   } catch (err) {
     error.value = `Unable to save: ${(err as FetchError).data.message}`

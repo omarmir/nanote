@@ -4,7 +4,7 @@
       id="sidenav-main"
       ref="sidebar"
       :class="{ '-translate-x-full': !isSidebarOpen }"
-      class="fixed inset-y-0 left-0 z-40 m-0 flex w-[300px] shrink-0 flex-col overflow-y-auto bg-neutral-900 transition-all duration-300 ease-in-out lg:translate-x-0 [&::-webkit-scrollbar-thumb]:bg-neutral-500 [&::-webkit-scrollbar-track]:bg-neutral-300 [&::-webkit-scrollbar]:w-1">
+      class="fixed inset-y-0 left-0 z-40 m-0 flex w-[300px] shrink-0 flex-col overflow-y-auto overflow-x-hidden bg-neutral-900 transition-all duration-300 ease-in-out lg:translate-x-0 [&::-webkit-scrollbar-thumb]:bg-neutral-500 [&::-webkit-scrollbar-track]:bg-neutral-300 [&::-webkit-scrollbar]:w-1">
       <div class="h-svw">
         <!--logo start-->
         <NuxtLink to="/">
@@ -68,10 +68,24 @@
         </div>
       </div>
     </aside>
-    <NoteNotesSidebar v-if="store.currentNotebook" class="hidden lg:flex" @close="store.resetCurrentNotebook()">
-      <h2 class="text-lg font-bold text-white">{{ store.currentNotebook }}</h2>
-      <h3 class="flex select-none items-center text-xs font-medium text-neutral-200">Notes</h3>
-      <NoteNotebookNotes :notes="noteStore.currentNotes" :notebook="store.currentNotebook"></NoteNotebookNotes>
+    <NoteNotesSidebar
+      v-if="notebookStore.sidebarTopLevel && notebookStore.sidebarTopLevel.length > 0"
+      class="hidden lg:flex"
+      @close="notebookStore.resetSidebarNotebook()">
+      <h2 class="text-lg font-bold text-white">
+        {{ notebookStore.sidebarTopLevel[0] }}
+      </h2>
+      <h3 class="flex select-none items-center text-xs font-medium text-neutral-200">Contents</h3>
+      <div v-if="notebookStore.notebooks?.notebooks[notebookStore.sidebarTopLevel[0]].contents" class="mt-4">
+        <NoteNewNote
+          v-if="notebookStore.notebooks?.notebooks[notebookStore.sidebarTopLevel[0]]"
+          class="mb-4"
+          :notebook="notebookStore.notebooks?.notebooks[notebookStore.sidebarTopLevel[0]]"></NoteNewNote>
+        <NotebookContentItems
+          :notebook-contents="notebookStore.notebooks?.notebooks[notebookStore.sidebarTopLevel[0]].contents"
+          :on-background="false"
+          type="sidebar"></NotebookContentItems>
+      </div>
     </NoteNotesSidebar>
     <div
       v-if="isSidebarOpen"
@@ -84,8 +98,7 @@ import { onClickOutside, useMagicKeys, whenever } from '@vueuse/core'
 
 const { isSidebarOpen, outsideClick } = useSidebar()
 const input = useTemplateRef('sidebar')
-const store = useNotebookStore()
-const noteStore = useNoteStore()
+const notebookStore = useNotebookStore()
 const showCommandPalette = ref(false)
 
 onClickOutside(input, () => (isSidebarOpen.value = false))

@@ -5,10 +5,10 @@ import basePath from '~/server/folder'
 
 type EventHandlerWithNotebook<T extends EventHandlerRequest, D> = (
   event: H3Event<T>,
-  cleanNotebook: string,
+  notebook: string[],
   fullPath: string,
-  targetFolder: string,
-  basePath: string
+  parentFolder: string,
+  name: string | undefined
 ) => Promise<D>
 
 export function defineEventHandlerWithNotebook<T extends EventHandlerRequest, D>(
@@ -16,33 +16,16 @@ export function defineEventHandlerWithNotebook<T extends EventHandlerRequest, D>
   options?: { notebookCheck: boolean }
 ) {
   return defineEventHandler(async (event) => {
-    const notebook = event.context.params?.notebook
-
-    if (!notebook) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'Bad Request',
-        message: 'Missing notebook'
-      })
-    }
-
-    // Decode URL components first
-    const decodedNotebook = decodeURIComponent(notebook)
-
-    // Then sanitize (preserve spaces)
-    const cleanNotebook = decodedNotebook.replace(/[\\/:*?"<>|.]/g, '')
+    // Decode the path and then remove characters we cannot have
+    const params = decodeURIComponent(event.context.params?.path ?? '')
+    const notebooks = params
+      .split('/')
+      .map((p) => p.replace(/[\\/:*?"<>|.]/g, ''))
+      .filter(Boolean) // Removes empty strings
 
     // Construct paths
-    const fullPath = join(basePath, cleanNotebook)
+    const fullPath = join(basePath, ...notebooks)
     const targetFolder = resolve(fullPath)
-
-    if (decodedNotebook.length > 255) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'Bad Request',
-        message: `Name exceeds maximum allowed length of 255 characters.`
-      })
-    }
 
     // Check OS path length limitations
     const isWindows = process.platform === 'win32'
@@ -56,9 +39,11 @@ export function defineEventHandlerWithNotebook<T extends EventHandlerRequest, D>
       })
     }
 
+    const parentFolderArray = notebooks.slice(0, -1) ?? []
+    const parentFolder = join(basePath, ...parentFolderArray)
+    const name = notebooks.at(-1)
     // This is for a new notebook, we can bail early
-    if (options?.notebookCheck === false)
-      return await handler(event, cleanNotebook, fullPath, resolve(basePath), basePath)
+    if (options?.notebookCheck === false) return await handler(event, notebooks, fullPath, parentFolder, name)
 
     // Security checks
     if (!targetFolder.startsWith(resolve(basePath))) {
@@ -75,10 +60,10 @@ export function defineEventHandlerWithNotebook<T extends EventHandlerRequest, D>
       throw createError({
         statusCode: 404,
         statusMessage: 'Not Found',
-        message: `Notebook "${cleanNotebook}" does not exist`
+        message: `Notebook "${notebooks.join(' > ')}" does not exist`
       })
     }
 
-    return await handler(event, cleanNotebook, fullPath, targetFolder, basePath)
+    return await handler(event, notebooks, fullPath, parentFolder, name)
   })
 }
