@@ -2,12 +2,9 @@ import { fileURLToPath } from 'node:url'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { setup, $fetch } from '@nuxt/test-utils'
 import { getAuthCookie } from '~/tests/setup'
-import { access, mkdir, writeFile } from 'node:fs/promises'
+import { access, constants, mkdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { notesPath, uploadPath } from '~/server/folder'
-import { createStorage } from 'unstorage'
-import fsDriver from 'unstorage/drivers/fs'
-import type { UploadItem } from '~/types/upload'
 
 let authCookie = ''
 let apiFilePath = ''
@@ -15,10 +12,6 @@ describe('Attachments upload and view', async () => {
   await setup({
     rootDir: fileURLToPath(new URL('..', import.meta.url)),
     server: true
-  })
-
-  const storage = createStorage({
-    driver: fsDriver({ base: uploadPath })
   })
 
   beforeAll(async () => {
@@ -59,26 +52,12 @@ describe('Attachments upload and view', async () => {
     expect(response).toEqual('Test Upload')
   })
 
-  it('Adds entry to the kv store', async () => {
-    let uploads = await storage.getItem<UploadItem[]>('uploads')
-    if (!uploads || uploads === null) uploads = []
-    const fileName = apiFilePath.split('/').at(-1) ?? ''
-
-    const resp: UploadItem = { path: '/notes/test', fileName, deleted: false }
-
-    expect(uploads).toEqual(expect.arrayContaining([resp]))
-  })
-
-  it('Marks attachment for deletion', async () => {
+  it('Deletes attachment on note update where attachment is removed', async () => {
     const fileName = `upload.txt`
 
     //Create notebook
     const fullPath = join(notesPath, 'TestUpload')
     await mkdir(fullPath)
-
-    //Create note
-    const notePath = join(fullPath, 'TestUpload.md')
-    await writeFile(notePath, [`# Test Note ::file{href="${fileName}" title="upload.txt"}`])
 
     // create attachments
     const attachmentBlob = new Blob([`Test Upload`], { type: 'text' })
@@ -90,6 +69,10 @@ describe('Attachments upload and view', async () => {
       body: attachmentFormData,
       headers: { Cookie: authCookie }
     })
+
+    //Create note
+    const notePath = join(fullPath, 'TestUpload.md')
+    await writeFile(notePath, [`# Test Note ::file{href="${resp}" title="upload.txt"}`])
 
     const uploadedFileName = resp.split('/').at(-1) ?? ''
 
@@ -105,29 +88,19 @@ describe('Attachments upload and view', async () => {
       headers: { Cookie: authCookie }
     })
 
-    let uploads = await storage.getItem<UploadItem[]>('uploads')
-    if (!uploads || uploads === null) uploads = []
-
-    const uploadedItem: UploadItem = { path: 'TestUpload/TestUpload', fileName: uploadedFileName, deleted: true }
-
     // Delay for 2 seconds - just to make sure its cleared the queue
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
-    const arrayItem = uploads.find(
-      (item) => item.path === uploadedItem.path && item.fileName === uploadedFileName && item.deleted === true
-    )
-    expect(arrayItem).not.toBeUndefined()
+    const filePath = join(uploadPath, 'attachments', uploadedFileName)
+    await expect(access(filePath, constants.R_OK | constants.W_OK)).rejects.toThrow()
   })
 
-  it('Marks all attachments for deletion', async () => {
+  it('Deletes all attachments belonging to a deleted note', async () => {
     const fileName = 'upload.txt'
+
     //Create notebook
     const fullPath = join(notesPath, 'TestUploadAll')
     await mkdir(fullPath)
-
-    //Create note
-    const notePath = join(fullPath, 'TestUploadAll.md')
-    await writeFile(notePath, [`# Test Note`])
 
     // create attachments
     const attachmentBlob = new Blob([`Test Upload`], { type: 'text' })
@@ -135,66 +108,27 @@ describe('Attachments upload and view', async () => {
     attachmentFormData.append('file', attachmentBlob, fileName) // The file to upload
     attachmentFormData.append('path', 'TestUploadAll/TestUploadAll') // The filename to use when saving
 
-    await $fetch<string>('/api/attachment', {
+    const resp = await $fetch<string>('/api/attachment', {
       method: 'POST',
       body: attachmentFormData,
       headers: { Cookie: authCookie }
     })
 
-    await $fetch<string>('/api/attachment', {
-      method: 'POST',
-      body: attachmentFormData,
-      headers: { Cookie: authCookie }
-    })
+    //Create note
+    const notePath = join(fullPath, 'TestUploadAll.md')
+    await writeFile(notePath, [`# Test Note ::file{href="${resp}" title="upload.txt"}`])
 
-    //Send note update
-    const blob = new Blob(['# Updated'], { type: 'text/markdown' })
-    const formData = new FormData()
-    formData.append('file', blob, `TestUploadAll.md`) // The file to upload
-    formData.append('filename', `TestUploadAll.md`) // The filename to use when saving
+    const uploadedFileName = resp.split('/').at(-1) ?? ''
 
     await $fetch('/api/note/TestUploadAll/TestUploadAll', {
       method: 'DELETE',
       headers: { Cookie: authCookie }
     })
 
-    let uploads = await storage.getItem<UploadItem[]>('uploads')
-    if (!uploads || uploads === null) uploads = []
-
     // Delay for 2 seconds - just to make sure its cleared the queue
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
-    const arrayItem = uploads.filter((item) => item.path === 'TestUploadAll/TestUploadAll' && item.deleted === true)
-    expect(arrayItem.length).toEqual(2)
+    const filePath = join(uploadPath, 'attachments', uploadedFileName)
+    await expect(access(filePath, constants.R_OK | constants.W_OK)).rejects.toThrow()
   })
-
-  // it('Deletes all attachments marked for deletion', async () => {
-
-  //   const uploads = await storage.getItem<UploadItem[]>('uploads')
-
-  //   const directoryPath = join(uploadPath, 'attachments')
-  //   const files = await readdir(directoryPath)
-
-  //   const toBeDeleted = uploads?.filter((item) => item.deleted) ?? []
-
-  //   expect(toBeDeleted?.length).toBeGreaterThan(0)
-
-  //   const filesToBeDeleted = files.filter((file) => toBeDeleted.find((manifest) => manifest.fileName === file) ? true : false)
-
-  //   expect(filesToBeDeleted.length).toBeGreaterThan(0)
-
-  //   await $fetch('/api/attachment/clean', {
-  //     method: 'GET',
-  //     headers: { Cookie: authCookie }
-  //   })
-
-  //   // Delay for 5 seconds - just to make sure IO operations are done
-  //   await new Promise((resolve) => setTimeout(resolve, 2000))
-
-  //   const afterDeletionFiles = await readdir(directoryPath)
-
-  //   const anyFilesLeftOver = filesToBeDeleted.some((manifest) => afterDeletionFiles.includes(manifest))
-
-  //   expect(anyFilesLeftOver).toBe(false)
-  // })
 })
