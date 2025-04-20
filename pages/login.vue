@@ -38,7 +38,9 @@
           required></CommonBaseInput>
       </div>
       <p v-if="store.error" class="text-sm font-medium text-red-500">{{ store.error }}</p>
-      <CommonThemeButton type="submit" class="flex self-end py-2">Login</CommonThemeButton>
+      <div class="mt-2 flex flex-wrap place-content-end">
+        <CommonThemeButton type="submit" class="py-2">Login</CommonThemeButton>
+      </div>
     </form>
   </CommonBaseCard>
 </template>

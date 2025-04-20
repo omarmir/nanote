@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import SECRET_KEY from '~/server/key'
 import { defineEventHandlerWithError } from '~/server/wrappers/error'
 
-export default defineEventHandlerWithError(async (event): Promise<{ token: string }> => {
+export default defineEventHandlerWithError(async (event) => {
   const body = await readBody(event)
   const { key } = body
 
@@ -25,5 +25,5 @@ export default defineEventHandlerWithError(async (event): Promise<{ token: strin
     path: '/'
   })
 
-  return { token }
+  return sendRedirect(event, '/', 303)
 })

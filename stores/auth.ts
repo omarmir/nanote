@@ -26,16 +26,18 @@ export const useAuthStore = defineStore('auth', () => {
       return
     }
     isLoggingIn.value = true
+    error.value = null // Clear previous errors
+
     try {
       await $fetch(`/api/auth/login`, {
         method: 'POST',
         body: { key: secretKey }
       })
       localStorage.setItem('isLoggedIn', 'true')
-      navigateTo('/')
+      await navigateTo('/')
     } catch (err) {
-      console.log(err)
-      error.value = (err as FetchError).data.message
+      error.value = (err as FetchError).data?.message ?? 'Login failed'
+      localStorage.setItem('isLoggedIn', 'false')
     } finally {
       isLoggingIn.value = false
     }
