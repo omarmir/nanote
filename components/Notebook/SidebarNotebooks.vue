@@ -8,22 +8,8 @@
       :key="notebook.name"
       class="items-center px-4 py-1"
       :class="{ 'bg-cyan-300/5': notebook.name === notebookStore.sidebarTopLevel?.[0] }">
-      <div class="lg:hidden">
-        <NotebookContents
-          type="sidebar"
-          :on-background="false"
-          :notebook="notebook"
-          :show-children="true"></NotebookContents>
-        <CommonDangerAlert v-if="notebookStore.error" class="mb-4 mt-4">
-          {{ notebookStore.error.data.message }}
-        </CommonDangerAlert>
-      </div>
-      <div class="hidden lg:block">
-        <NotebookContents
-          type="sidebar"
-          :on-background="false"
-          :notebook="notebook"
-          :show-children="false"></NotebookContents>
+      <div>
+        <NotebookContents type="sidebar" :on-background="false" :notebook="notebook"></NotebookContents>
         <CommonDangerAlert v-if="notebookStore.error" class="mb-4 mt-4">
           {{ notebookStore.error.data.message }}
         </CommonDangerAlert>

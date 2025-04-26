@@ -7,7 +7,7 @@
         :hide-rename="!onBackground"
         @toggle="openNotebook"></NotebookRenameNotebook>
     </div>
-    <div v-if="showChildren">
+    <div>
       <CommonDangerAlert v-if="openError">
         {{ openError }}
       </CommonDangerAlert>
@@ -25,16 +25,10 @@
 <script lang="ts" setup async>
 import type { Notebook, NotebookDisplay } from '~/types/notebook'
 
-const {
-  notebook,
-  onBackground,
-  type,
-  showChildren = true
-} = defineProps<{
+const { notebook, onBackground, type } = defineProps<{
   notebook: Notebook
   onBackground: boolean
   type: NotebookDisplay
-  showChildren?: boolean
 }>()
 const notebookStore = useNotebookStore()
 

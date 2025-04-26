@@ -68,25 +68,6 @@
         </div>
       </div>
     </aside>
-    <NoteNotesSidebar
-      v-if="notebookStore.sidebarTopLevel && notebookStore.sidebarTopLevel.length > 0"
-      class="hidden lg:flex"
-      @close="notebookStore.resetSidebarNotebook()">
-      <h2 class="text-lg font-bold text-white">
-        {{ notebookStore.sidebarTopLevel[0] }}
-      </h2>
-      <h3 class="flex select-none items-center text-xs font-medium text-neutral-200">Contents</h3>
-      <div v-if="notebookStore.notebooks?.notebooks[notebookStore.sidebarTopLevel[0]].contents" class="mt-4">
-        <NoteNewNote
-          v-if="notebookStore.notebooks?.notebooks[notebookStore.sidebarTopLevel[0]]"
-          class="mb-4"
-          :notebook="notebookStore.notebooks?.notebooks[notebookStore.sidebarTopLevel[0]]"></NoteNewNote>
-        <NotebookContentItems
-          :notebook-contents="notebookStore.notebooks?.notebooks[notebookStore.sidebarTopLevel[0]].contents"
-          :on-background="false"
-          type="sidebar"></NotebookContentItems>
-      </div>
-    </NoteNotesSidebar>
     <div
       v-if="isSidebarOpen"
       class="fixed left-0 top-0 z-30 flex h-[100%] w-[100%] animate-overlayShow flex-row items-center justify-center bg-gray-950/50 lg:hidden"></div>
@@ -98,7 +79,6 @@ import { onClickOutside, useMagicKeys, whenever } from '@vueuse/core'
 
 const { isSidebarOpen, outsideClick } = useSidebar()
 const input = useTemplateRef('sidebar')
-const notebookStore = useNotebookStore()
 const showCommandPalette = ref(false)
 
 onClickOutside(input, () => (isSidebarOpen.value = false))
