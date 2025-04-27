@@ -25,7 +25,12 @@
                 </div>
               </template>
               <template #icon>
-                <IconsAdd></IconsAdd>
+                <IconsAdd v-if="isNotebook"></IconsAdd>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" class="size-6" viewBox="0 0 24 24">
+                  <path
+                    fill="currentColor"
+                    d="M11 18h2v-3h3v-2h-3v-3h-2v3H8v2h3zm-7 4V2h10l6 6v14zm9-13V4H6v16h12V9zM6 4v5zv16z" />
+                </svg>
               </template>
             </CommonToggleInput>
           </div>
@@ -36,9 +41,10 @@
   </div>
 </template>
 <script lang="ts" setup>
-import type { Notebook } from '~/types/notebook'
+import type { Note, Notebook } from '~/types/notebook'
+import type { Result } from '~/types/result'
 const { notebook } = defineProps<{ notebook: Notebook }>()
-
+const router = useRouter()
 const noteBookStore = useNotebookStore()
 const isOpen = ref(false)
 const newItem: Ref<string | null> = ref('')
@@ -51,7 +57,7 @@ const addItem = async () => {
     return
   }
 
-  const resp = isNotebook.value
+  const resp: Result<Note | Notebook> = isNotebook.value
     ? await noteBookStore.addNotebook(newItem.value, notebook)
     : await noteBookStore.addNote(notebook, newItem.value)
 
@@ -64,5 +70,11 @@ const addItem = async () => {
   isNotebook.value = false
   error.value = null
   isOpen.value = false
+
+  if (!isNotebook.value) {
+    const newNote = resp.data as Note
+    const url = `/note/${notePathArrayJoiner(newNote.notebook)}/${newNote.name}`
+    router.push(url)
+  }
 }
 </script>
