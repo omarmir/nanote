@@ -16,6 +16,7 @@ import '@milkdown/crepe/theme/common/style.css'
 import '@milkdown/crepe/theme/nord.css'
 import '@milkdown/crepe/theme/nord-dark.css'
 import { filePicker, filePickerNodeBlock, filePickerConfig, clearContentAndAddBlockType } from 'milkdown-plugin-file' //'@/utils/md-plugins/milkdown-plugin-file/src'
+import { dateTimeTextSubs } from '~/milkdown/text-sub'
 import { html } from 'atomico'
 
 const model = defineModel<string>({ required: true })
@@ -110,20 +111,21 @@ useEditor((root) => {
     .use(emoji)
     .use(imageInlineComponent)
     .use(filePicker)
+    .use(dateTimeTextSubs)
   return crepe
 })
 </script>
 <style lang="postcss">
-.milkdown-editor.focus div.milkdown milkdown-block-handle {
+.milkdown-editor.focus div.milkdown .milkdown-block-handle {
   display: none;
 }
 
-.milkdown-editor div.milkdown milkdown-block-handle {
+.milkdown-editor div.milkdown .milkdown-block-handle {
   @apply hidden lg:flex;
 }
 
-milkdown-toolbar,
-milkdown-link-preview {
+.milkdown-toolbar,
+.milkdown-link-preview {
   z-index: 999 !important;
 }
 
