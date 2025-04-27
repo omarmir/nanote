@@ -24,7 +24,14 @@ export default defineNuxtConfig({
   ],
   tailwindcss: {
     config: {
-      content: ['./components/**/*.{vue,js,ts}', './layouts/**/*.vue', './pages/**/*.vue']
+      content: {
+        files: [
+          '{srcDir}/components/**/*.{vue,js,ts}',
+          '{srcDir}/layouts/**/*.vue',
+          '{srcDir}/pages/**/*.vue',
+          '!{srcDir}/node_modules'
+        ]
+      }
     }
   },
   fonts: {
@@ -39,5 +46,16 @@ export default defineNuxtConfig({
   },
   routeRules: {
     '/api/notebook': { redirect: '/api/notebook/*' }
+  },
+  vite: {
+    server: {
+      watch: {
+        usePolling: false // on Linux/macOS you usually don’t need polling
+      }
+    },
+    optimizeDeps: {
+      // pre-bundle common deps so they’re not re-scanned each time
+      include: ['vue', 'vue-router', 'pinia']
+    }
   }
 })

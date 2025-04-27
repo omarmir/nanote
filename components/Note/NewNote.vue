@@ -21,7 +21,7 @@
               <template #label>
                 <div class="flex flex-row flex-nowrap gap-2">
                   <IconsNotebook class="size-5 text-accent"></IconsNotebook>
-                  <span>Notebook?</span>
+                  <span class="hidden lg:inline">Notebook?</span>
                 </div>
               </template>
               <template #icon>
