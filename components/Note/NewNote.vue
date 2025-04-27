@@ -1,24 +1,39 @@
 <template>
-  <form class="w-full grow" @submit.prevent="addItem">
-    <label for="search" class="sr-only mb-2 text-sm font-medium text-gray-900">Note</label>
-    <div class="relative mr-4 max-w-lg">
-      <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
-        <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-gray-400" viewBox="0 0 24 24">
-          <path fill="currentColor" d="M4 22V2h10l6 6v14zm9-13V4H6v16h12V9zM6 4v5zv16z" />
-        </svg>
-      </div>
-      <CommonToggleInput v-model="newItem" v-model:toggle="isNotebook" placeholder="Name" title="Notebook?">
-        <template #label>
-          <IconsNotebook class="size-5 text-accent"></IconsNotebook>
-          <span class="hidden">Notebook?</span>
+  <div class="flex py-2">
+    <button class="flex flex-row items-center gap-2 text-accent hover:text-accent-hover" @click="isOpen = true">
+      <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 24 24">
+        <path
+          fill="currentColor"
+          d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10s10-4.477 10-10S17.523 2 12 2m5 11h-4v4h-2v-4H7v-2h4V7h2v4h4z" />
+      </svg>
+      Add
+    </button>
+    <Teleport to="body">
+      <CommonBaseDialog v-model="isOpen" title="New" :desc="`Add note or notebook inside ${notebook.name}`">
+        <template #desc>
+          Add note or notebook inside
+          <span class="font-bold text-teal-600">{{ notebook.name }}</span>
         </template>
-        <template #icon>
-          <IconsAdd></IconsAdd>
-        </template>
-      </CommonToggleInput>
-    </div>
-    <CommonDangerAlert v-if="error" class="mb-0 mr-4 mt-2">{{ error }}</CommonDangerAlert>
-  </form>
+        <form class="w-full grow" @submit.prevent="addItem">
+          <label for="search" class="sr-only mb-2 text-sm font-medium text-gray-900">Note</label>
+          <div class="w-full">
+            <CommonToggleInput v-model="newItem" v-model:toggle="isNotebook" placeholder="Name" title="Notebook?">
+              <template #label>
+                <div class="flex flex-row flex-nowrap gap-2">
+                  <IconsNotebook class="size-5 text-accent"></IconsNotebook>
+                  <span>Notebook?</span>
+                </div>
+              </template>
+              <template #icon>
+                <IconsAdd></IconsAdd>
+              </template>
+            </CommonToggleInput>
+          </div>
+          <CommonDangerAlert v-if="error" class="mb-0 mr-4 mt-2">{{ error }}</CommonDangerAlert>
+        </form>
+      </CommonBaseDialog>
+    </Teleport>
+  </div>
 </template>
 <script lang="ts" setup>
 import { IconsNotebook } from '#components'
@@ -26,7 +41,7 @@ import type { Notebook } from '~/types/notebook'
 const { notebook } = defineProps<{ notebook: Notebook }>()
 
 const noteBookStore = useNotebookStore()
-
+const isOpen = ref(false)
 const newItem: Ref<string | null> = ref('')
 const isNotebook: Ref<boolean> = ref(false)
 const error: Ref<string | null> = ref(null)
@@ -45,6 +60,7 @@ const addItem = async () => {
     newItem.value = null
     isNotebook.value = false
     error.value = null
+    isOpen.value = false
   } else {
     error.value = resp.message
   }

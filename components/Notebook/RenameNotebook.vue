@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-2">
+  <div class="flex flex-col py-2">
     <div class="flex flex-row items-center gap-2">
       <button v-if="!onSidebar" class="text-teal-600 hover:text-teal-800" @click="isRenaming = !isRenaming">
         <svg xmlns="http://www.w3.org/2000/svg" class="size-6" viewBox="0 0 24 24" title="Rename notebook">
@@ -18,7 +18,7 @@
         @click="toggleNotebook()">
         <IconsNotebook class="size-5 grow-0"></IconsNotebook>
         <div class="flex flex-col justify-start text-left text-sm font-semibold">
-          <span v-show="!isRenaming" class="w-full py-2">
+          <span v-show="!isRenaming" class="w-full">
             {{ localNotebook.name }}
           </span>
         </div>

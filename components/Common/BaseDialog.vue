@@ -8,7 +8,7 @@
     :class="{ 'items-center': position === 'middle', 'top-1 lg:top-24': position === 'top' }"
     @keydown="keyDown">
     <dialog
-      ref="delete-wrapper"
+      ref="dialog-wrapper"
       aria-describedby="desc"
       aria-labelledby="title"
       :aria-hidden="!open"
@@ -20,7 +20,11 @@
           <h2 id="title" class="text-md font-medium text-accent" :class="{ 'text-red-600': theme === 'danger' }">
             {{ title }}
           </h2>
-          <p id="desc" class="text-sm font-normal text-gray-900 dark:text-gray-400">{{ desc }}</p>
+          <p id="desc" class="text-sm font-normal text-gray-900 dark:text-gray-400">
+            <slot name="desc">
+              {{ desc }}
+            </slot>
+          </p>
         </div>
         <slot></slot>
       </div>
@@ -48,7 +52,6 @@
 </template>
 <script lang="ts" setup>
 import { onClickOutside, onKeyStroke } from '@vueuse/core'
-import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
 import type { Theme } from '~/types/ui'
 const open = defineModel<boolean>({ required: true })
 
@@ -68,11 +71,9 @@ const {
   isCommand?: boolean
 }>()
 
-const renameWrapper = useTemplateRef('delete-wrapper')
+const dialogWrapper = useTemplateRef('dialog-wrapper')
 
-const { activate, deactivate } = useFocusTrap(renameWrapper, { immediate: true })
-
-onClickOutside(renameWrapper, () => {
+onClickOutside(dialogWrapper, () => {
   open.value = false
 })
 
@@ -88,16 +89,5 @@ const keyDown = (payload: KeyboardEvent) => {
 onKeyStroke('Escape', (e) => {
   e.preventDefault()
   open.value = false
-})
-
-onMounted(async () => {
-  watch(open, async () => {
-    if (open.value) {
-      await nextTick()
-      activate()
-    } else {
-      deactivate()
-    }
-  })
 })
 </script>

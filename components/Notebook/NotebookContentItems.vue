@@ -1,6 +1,6 @@
 <template>
   <ul v-if="notebookContents">
-    <li v-for="note in notebookContents.notes" :key="note.name" class="mb-4">
+    <li v-for="note in notebookContents.notes" :key="note.name" class="py-2">
       <NuxtLink
         :to="`/note/${notePathArrayJoiner(note.notebook)}/${note.name}`"
         :class="{ 'text-gray-900 hover:text-gray-400 dark:text-gray-400 dark:hover:text-gray-100': onBackground }"
@@ -22,11 +22,7 @@
       v-for="nestedNotebook in notebookContents.notebooks"
       :key="nestedNotebook.path"
       class="flex flex-row items-center">
-      <NotebookContents :on-background :notebook="nestedNotebook" :show-childre="true" :type>
-        <template #manage>
-          <NotebookManage :notebook="nestedNotebook"></NotebookManage>
-        </template>
-      </NotebookContents>
+      <NotebookContents :on-background :notebook="nestedNotebook" :show-childre="true" :type></NotebookContents>
     </li>
   </ul>
 </template>

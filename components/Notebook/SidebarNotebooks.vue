@@ -6,7 +6,7 @@
     <li
       v-for="notebook in notebookStore.notebooks?.notebooks"
       :key="notebook.name"
-      class="items-center px-4 py-1"
+      class="items-center px-4"
       :class="{ 'bg-cyan-300/5': notebook.name === notebookStore.sidebarTopLevel?.[0] }">
       <div>
         <NotebookContents type="sidebar" :on-background="false" :notebook="notebook"></NotebookContents>

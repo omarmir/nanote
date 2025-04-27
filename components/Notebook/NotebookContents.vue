@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col">
+  <div>
     <div class="flex flex-row items-center gap-2">
       <slot name="manage"></slot>
       <NotebookRenameNotebook
@@ -7,18 +7,19 @@
         :hide-rename="!onBackground"
         @toggle="openNotebook"></NotebookRenameNotebook>
     </div>
-    <div>
-      <CommonDangerAlert v-if="openError">
-        {{ openError }}
-      </CommonDangerAlert>
-      <div v-if="notebookStore.currentLevel(notebook, type)" class="ml-8">
-        <NoteNewNote class="mb-4" :notebook="notebook"></NoteNewNote>
-        <NotebookContentItems
-          v-if="notebook.contents"
-          :notebook-contents="notebook.contents"
-          :on-background
-          :type></NotebookContentItems>
-      </div>
+    <CommonDangerAlert v-if="openError">
+      {{ openError }}
+    </CommonDangerAlert>
+    <div
+      v-if="notebookStore.currentLevel(notebook, type)"
+      :class="onBackground ? 'ml-8' : 'ml-6'"
+      class="flex flex-col">
+      <NotebookContentItems
+        v-if="notebook.contents"
+        :notebook-contents="notebook.contents"
+        :on-background
+        :type></NotebookContentItems>
+      <NoteNewNote :notebook="notebook"></NoteNewNote>
     </div>
   </div>
 </template>
