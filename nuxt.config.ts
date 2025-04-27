@@ -5,11 +5,9 @@ export default defineNuxtConfig({
     head: {
       title: 'Nanote', // default fallback title
       htmlAttrs: {
-        lang: 'en',
+        lang: 'en'
       },
-      link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      ]
+      link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
     }
   },
   compatibilityDate: '2024-11-01',
@@ -24,6 +22,11 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@nuxt/test-utils/module'
   ],
+  tailwindcss: {
+    config: {
+      content: ['./components/**/*.{vue,js,ts}', './layouts/**/*.vue', './pages/**/*.vue']
+    }
+  },
   fonts: {
     families: [
       // do not resolve this font with any provider from `@nuxt/fonts`

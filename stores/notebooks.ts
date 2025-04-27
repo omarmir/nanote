@@ -22,8 +22,8 @@ export const useNotebookStore = defineStore('notebook', () => {
     lazy: false
   })
 
-  const mainTopLevel: Ref<string[] | null> = ref(null)
-  const sidebarTopLevel: Ref<string[] | null> = ref(null)
+  const mainOpenNotebooks: Ref<string[]> = ref([])
+  const sidebarOpenNotebooks: Ref<string[]> = ref([])
 
   const getNotebookPaths = (notebook: Notebook): { apiPath: string; notebookPath: string[] } => {
     const apiPath = notebookPathArrayJoiner(notebook)
@@ -38,8 +38,9 @@ export const useNotebookStore = defineStore('notebook', () => {
     return { apiPath, notePath }
   }
 
-  const openNotebook = async (notebook: Notebook, type: NotebookDisplay): Promise<Result<NotebookContents>> => {
+  const toggleNotebook = async (notebook: Notebook, type: NotebookDisplay): Promise<Result<NotebookContents>> => {
     const { apiPath, notebookPath } = getNotebookPaths(notebook)
+
     try {
       const resp = await $fetch<NotebookContents>(`/api/notebook/${apiPath}`)
       const nb = getNotebookByPathArray(notebookPath, notebooks.value)
@@ -49,9 +50,19 @@ export const useNotebookStore = defineStore('notebook', () => {
         notebooks.value = resp
       }
       if (type === 'main') {
-        mainTopLevel.value = notebookPath
+        const idx = mainOpenNotebooks.value.indexOf(apiPath)
+        if (idx > -1) {
+          mainOpenNotebooks.value = mainOpenNotebooks.value.filter((path) => !path.startsWith(apiPath))
+        } else {
+          mainOpenNotebooks.value.push(apiPath)
+        }
       } else {
-        sidebarTopLevel.value = notebookPath
+        const idx = sidebarOpenNotebooks.value.indexOf(apiPath)
+        if (idx > -1) {
+          sidebarOpenNotebooks.value.splice(idx, 1)
+        } else {
+          sidebarOpenNotebooks.value.push(apiPath)
+        }
       }
 
       return { success: true, data: resp }
@@ -84,19 +95,17 @@ export const useNotebookStore = defineStore('notebook', () => {
   }
 
   const currentLevel = (notebook: Notebook, type: NotebookDisplay): boolean => {
-    const { notebookPath } = getNotebookPaths(notebook)
-    if (type === 'main' && mainTopLevel.value) {
-      //@ts-expect-error Should not error as its inside a guard
-      return notebookPath.every((item, index) => item === mainTopLevel.value[index])
-    } else if (type === 'sidebar' && sidebarTopLevel.value) {
-      //@ts-expect-error Should not error as its inside a guard
-      return notebookPath.every((item, index) => item === sidebarTopLevel.value[index])
+    const { apiPath } = getNotebookPaths(notebook)
+    if (type === 'main' && mainOpenNotebooks.value.length > 0) {
+      return mainOpenNotebooks.value.includes(apiPath)
+    } else if (type === 'sidebar' && sidebarOpenNotebooks.value) {
+      return sidebarOpenNotebooks.value.includes(apiPath)
     }
 
     return false
   }
 
-  const resetSidebarNotebook = () => (sidebarTopLevel.value = null)
+  const resetSidebarNotebook = () => (sidebarOpenNotebooks.value = [])
 
   const deleteNotebook = async (notebook: Notebook): Promise<Result<DeleteNotebook>> => {
     const { apiPath } = getNotebookPaths(notebook)
@@ -232,12 +241,12 @@ export const useNotebookStore = defineStore('notebook', () => {
   }
 
   return {
-    openNotebook,
+    toggleNotebook,
     notebooks,
     status,
     renameNotebook,
-    mainTopLevel,
-    sidebarTopLevel,
+    mainOpenNotebooks,
+    sidebarOpenNotebooks,
     error,
     currentLevel,
     resetSidebarNotebook,

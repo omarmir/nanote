@@ -5,7 +5,7 @@
       <NotebookRenameNotebook
         :notebook="notebook"
         :hide-rename="!onBackground"
-        @toggle="openNotebook"></NotebookRenameNotebook>
+        @toggle="toggleNotebook"></NotebookRenameNotebook>
     </div>
     <CommonDangerAlert v-if="openError">
       {{ openError }}
@@ -34,8 +34,8 @@ const { notebook, onBackground, type } = defineProps<{
 const notebookStore = useNotebookStore()
 
 const openError: Ref<string | null> = ref(null)
-const openNotebook = async (possiblyRenamedNotebook: Notebook) => {
-  const resp = await notebookStore.openNotebook(possiblyRenamedNotebook, type)
+const toggleNotebook = async (possiblyRenamedNotebook: Notebook) => {
+  const resp = await notebookStore.toggleNotebook(possiblyRenamedNotebook, type)
   if (!resp.success) openError.value = resp.message
 }
 </script>
