@@ -36,7 +36,6 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { IconsNotebook } from '#components'
 import type { Notebook } from '~/types/notebook'
 const { notebook } = defineProps<{ notebook: Notebook }>()
 
@@ -56,13 +55,14 @@ const addItem = async () => {
     ? await noteBookStore.addNotebook(newItem.value, notebook)
     : await noteBookStore.addNote(notebook, newItem.value)
 
-  if (resp.success) {
-    newItem.value = null
-    isNotebook.value = false
-    error.value = null
-    isOpen.value = false
-  } else {
+  if (!resp.success) {
     error.value = resp.message
+    return
   }
+
+  newItem.value = null
+  isNotebook.value = false
+  error.value = null
+  isOpen.value = false
 }
 </script>
