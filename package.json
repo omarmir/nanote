@@ -7,7 +7,6 @@
     "build": "nuxt build",
     "test": "vitest run",
     "dev": "nuxt dev",
-    "devenv": "SECRET_KEY=test NOTES_PATH=/home/omar/Documents/notes nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",

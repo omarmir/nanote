@@ -4,11 +4,11 @@
 
 A lightweight, self-hosted note-taking application with filesystem-based storage. Built with Nuxt 3, TypeScript, and designed for simplicity and performance. The primary goal of this app is to manage your notes in a manner that is 100% portable. You should be able to manage your notes in terminal, notepad or any other app - there is no database, just folders and files.
 
-**Auth** : If you don't set the SECRET_KEY environment variable the default secret key is `nanote` though you should set key
+**Auth** : If you don't set the SECRET_KEY environment variable the default secret key is `nanote` though you should set your own key
 
 ## Screenshot
 
-![Screenshot](/screenshot.png?raw=true 'Nanote screenshot')
+![Screenshot](https://raw.githubusercontent.com/omarmir/nanote/refs/heads/master/screenshot.png 'Nanote screenshot')
 
 ## Features
 
@@ -46,20 +46,22 @@ You can clone the repo, build the image and run the compose file.
 ```bash
 git clone https://github.com/omarmir/nanote.git
 cd nanote
-docket build -t nanote .
+docker build -t nanote .
 ```
 
-Edit the compose file (specifically the volumes mount point and environment path):
+Edit the compose file (specifically the volume mount point and environment variables):
 
 ```yml
 environment:
   - NOTES_PATH=/notes
+  - UPLOAD_PATH=/uploads
   - SECRET_KEY=<yourkey>
 volumes:
   - /path/to/local/folder:/notes
+  - /path/to/local/uploads:/uploads
 ```
 
-If these are not set then the app will save files locally within itself.
+If these are not set then the app will save files locally within itself. The notes environment variable is where it will save your notes, and uploads is where any attachments are stored.
 
 ```bash
 docker compose -d up
@@ -74,11 +76,13 @@ docker compose -d up
 ### Tech stack
 
 - Nuxt3 and Vue
+- Pinia
 - Tailwind 3
+- Milkdown (as the main editor)
 
 ### Contributing
 
-Right now, the place that needs the most help is the home page, its hard to read so some help there would be appreciated. Open an issue and discuss the issue first. Nanote is distributed under the GNU Affero General Public License.
+Right now, the place that needs the most help is the home page, it's hard to read so some help there would be appreciated. Open an issue and discuss the issue first. Nanote is distributed under the GNU Affero General Public License.
 
 ### Local Development
 

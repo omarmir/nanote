@@ -6,9 +6,11 @@ services:
       - '3030:3000'
     environment:
       - NOTES_PATH=/notes
+      - UPLOAD_PATH=/uploads
       - SECRET_KEY=<yourkey>
     volumes:
       - /path/to/local/folder:/notes
+      - /path/to/local/uploads:/uploads
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:3000/api/health']
       interval: 30s # Check every 30 seconds
