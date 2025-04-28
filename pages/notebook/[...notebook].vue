@@ -29,10 +29,7 @@
             <NuxtLink
               :to="`/note/${contents?.pathArray.join('/')}/${note.name}`"
               class="flex flex-row items-center gap-2 hover:text-gray-400 dark:hover:text-gray-100">
-              <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M4 22V2h10l6 6v14zm9-13V4H6v16h12V9zM6 4v5zv16z"></path>
-              </svg>
-
+              <IconsNote></IconsNote>
               {{ note.name }}
             </NuxtLink>
           </td>
@@ -78,6 +75,7 @@
   </CommonBaseCard>
 </template>
 <script lang="ts" setup>
+import { IconsNote } from '#components'
 import type { NotebookContents } from '~/types/notebook'
 
 const route = useRoute()
