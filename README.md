@@ -19,7 +19,7 @@ A lightweight, self-hosted note-taking application with filesystem-based storage
 - 🚀 **Performance** - Optimized file operations and platform-specific search
 - 📱 **Mobile friendly** - Mobile friendly layout for viewing and editing notes
 
-## Custom Remark Directives
+### Custom Remark Directives
 
 If you type in certain commands in text, they will be handled by the UI:
 
