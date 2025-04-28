@@ -23,12 +23,12 @@ A lightweight, self-hosted note-taking application with filesystem-based storage
 
 If you type in certain commands in text, they will be handled by the UI:
 
-- ::file will create an inline file picker allowing you to upload files (remember to set the upload path in the environment variables)
-- ::fileBlock will create an file block (a larger icon taking up the whole line) picker allowing you to upload files (remember to set the upload path in the environment variables)
-- ::today will show today's date
-- ::now will show todays's date and time
-- ::tomorrow will show tomorrow's date
-- ::yesterday will show yesterday's date
+- `::file` will create an inline file picker allowing you to upload files (remember to set the upload path in the environment variables)
+- `::fileBlock` will create an file block (a larger icon taking up the whole line) picker allowing you to upload files (remember to set the upload path in the environment variables)
+- `::today` will show today's date
+- `::now` will show todays's date and time
+- `::tomorrow` will show tomorrow's date
+- `::yesterday` will show yesterday's date
 
 ### Pending
 
