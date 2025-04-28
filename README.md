@@ -1,7 +1,5 @@
 # Nanote
 
-**CONSIDER THIS PRE-ALPHA**: There will be bugs. I am daily driving this app myself and will fix bugs reported or ones I find on my own ASAP.
-
 A lightweight, self-hosted note-taking application with filesystem-based storage. Built with Nuxt 3, TypeScript, and designed for simplicity and performance. The primary goal of this app is to manage your notes in a manner that is 100% portable. You should be able to manage your notes in terminal, notepad or any other app - there is no database, just folders and files.
 
 **Auth** : If you don't set the SECRET_KEY environment variable the default secret key is `nanote` though you should set your own key
@@ -21,11 +19,22 @@ A lightweight, self-hosted note-taking application with filesystem-based storage
 - 🚀 **Performance** - Optimized file operations and platform-specific search
 - 📱 **Mobile friendly** - Mobile friendly layout for viewing and editing notes
 
+## Custom Remark Directives
+
+If you type in certain commands in text, they will be handled by the UI:
+
+- ::file will create an inline file picker allowing you to upload files (remember to set the upload path in the environment variables)
+- ::fileBlock will create an file block (a larger icon taking up the whole line) picker allowing you to upload files (remember to set the upload path in the environment variables)
+- ::today will show today's date
+- ::now will show todays's date and time
+- ::tomorrow will show tomorrow's date
+- ::yesterday will show yesterday's date
+
 ### Pending
 
 - [ ] **Archive** - Archive notes and notebooks
 - [ ] **Rollup checklists** - Rollup checklist items from all their notes into its own page for easier task management
-- [ ] **File upload** - Images done, need one for file
+- [x] **File upload** - Images done, need one for file
 - [ ] **Encryption** - Note/Notebook encryption at rest
 - [ ] **Apps** - Mobile/desktop apps (possibly via PWA)
 
