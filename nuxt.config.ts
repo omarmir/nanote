@@ -25,12 +25,7 @@ export default defineNuxtConfig({
   tailwindcss: {
     config: {
       content: {
-        files: [
-          '{srcDir}/components/**/*.{vue,js,ts}',
-          '{srcDir}/layouts/**/*.vue',
-          '{srcDir}/pages/**/*.vue',
-          '!{srcDir}/node_modules'
-        ]
+        files: ['./components/**/*.{vue,js,ts}', './layouts/**/*.vue', './pages/**/*.vue', '!./node_modules']
       }
     }
   },
