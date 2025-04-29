@@ -78,7 +78,7 @@
                 </div>
               </td>
               <td class="py-2 align-top">
-                <div class="flex flex-row items-center gap-2">
+                <div class="flex flex-row items-center gap-4">
                   <NotebookDelete :notebook></NotebookDelete>
                   <NotebookManage :notebook></NotebookManage>
                 </div>

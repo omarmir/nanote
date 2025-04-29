@@ -29,7 +29,7 @@
             <NuxtLink
               :to="`/note/${contents?.pathArray.join('/')}/${note.name}`"
               class="flex flex-row items-center gap-2 hover:text-gray-400 dark:hover:text-gray-100">
-              <IconsNote></IconsNote>
+              <Icon name="lucide:file" />
               {{ note.name }}
             </NuxtLink>
           </td>
@@ -51,7 +51,7 @@
             <NuxtLink
               class="flex flex-row items-center gap-2 hover:text-gray-400 dark:hover:text-gray-100"
               :to="`/notebook/${contents?.pathArray.join('/')}/${nestedNotebook.name}`">
-              <IconsNotebook class="size-5 grow-0"></IconsNotebook>
+              <Icon name="lucide:book" class="grow-0" />
               {{ nestedNotebook.name }}
             </NuxtLink>
           </td>
@@ -75,7 +75,6 @@
   </CommonBaseCard>
 </template>
 <script lang="ts" setup>
-import { IconsNote } from '#components'
 import type { NotebookContents } from '~/types/notebook'
 
 const route = useRoute()

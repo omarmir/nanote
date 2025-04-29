@@ -1,8 +1,8 @@
 <template>
   <NuxtLink
-    class="text-teal-600 hover:text-teal-800"
+    class="text-accent hover:text-accent-hover"
     :to="`/notebook/${[...notebook.notebooks, notebook.name].join('/')}`">
-    <IconsOpenNotebook class="size-5 shrink-0"></IconsOpenNotebook>
+    <Icon name="lucide:book-open" class="size-6 shrink-0"></Icon>
   </NuxtLink>
 </template>
 <script lang="ts" setup>

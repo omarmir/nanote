@@ -1,7 +1,7 @@
 <template>
   <form class="w-full grow" @submit.prevent="addNotebook">
     <CommonButtonInput v-model="newBook" placeholder="New notebook" class="mb-4">
-      <template #icon><IconsAdd></IconsAdd></template>
+      <template #icon>sss</template>
     </CommonButtonInput>
   </form>
 </template>

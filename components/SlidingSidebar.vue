@@ -9,16 +9,7 @@
         <!--logo start-->
         <NuxtLink to="/">
           <div class="flex h-[96px] shrink-0 items-center justify-start gap-4 px-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="size-10" viewBox="0 0 50 50">
-              <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                <path
-                  stroke="#306cfe"
-                  d="M39.583 6.25H10.417c-1.15 0-2.084.933-2.084 2.083v33.334c0 1.15.933 2.083 2.084 2.083h29.166c1.15 0 2.084-.933 2.084-2.083V8.333c0-1.15-.933-2.083-2.084-2.083" />
-                <path
-                  stroke="#344054"
-                  d="M10.417 6.25h6.25v37.5h-6.25a2.083 2.083 0 0 1-2.084-2.083V8.333a2.083 2.083 0 0 1 2.084-2.083" />
-              </g>
-            </svg>
+            <Icon name="marketeq:notebook" class="size-10"></Icon>
             <h1 class="text-xl font-bold text-white">nanote</h1>
           </div>
         </NuxtLink>
@@ -36,11 +27,7 @@
                   to="/"
                   class="flex flex-grow flex-row items-center gap-2 text-base font-medium text-gray-400 hover:text-white"
                   @click="outsideClick()">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 24 24">
-                    <path
-                      fill="currentColor"
-                      d="M6 19h3v-6h6v6h3v-9l-6-4.5L6 10zm-2 2V9l8-6l8 6v12h-7v-6h-2v6zm8-8.75" />
-                  </svg>
+                  <Icon name="lucide:house" />
                   Home
                 </NuxtLink>
               </li>
@@ -48,11 +35,7 @@
                 <button
                   class="flex flex-grow flex-row items-center gap-2 text-base font-medium text-gray-400 hover:text-white"
                   @click="logout()">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 24 24">
-                    <path
-                      fill="currentColor"
-                      d="M5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h7v2H5v14h7v2zm11-4l-1.375-1.45l2.55-2.55H9v-2h8.175l-2.55-2.55L16 7l5 5z" />
-                  </svg>
+                  <Icon name="lucide:log-out" />
                   Logout
                 </button>
               </li>

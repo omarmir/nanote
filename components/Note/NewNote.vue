@@ -1,11 +1,7 @@
 <template>
   <div class="flex py-2">
     <button class="flex flex-row items-center gap-2 text-accent hover:text-accent-hover" @click="isOpen = true">
-      <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 24 24">
-        <path
-          fill="currentColor"
-          d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10s10-4.477 10-10S17.523 2 12 2m5 11h-4v4h-2v-4H7v-2h4V7h2v4h4z" />
-      </svg>
+      <Icon name="lucide:circle-plus" />
       Add
     </button>
     <Teleport to="body">
@@ -20,13 +16,13 @@
             <CommonToggleInput v-model="newItem" v-model:toggle="isNotebook" placeholder="Name" title="Notebook?">
               <template #label>
                 <div class="flex flex-row flex-nowrap gap-2">
-                  <IconsNotebook class="size-5 text-accent"></IconsNotebook>
+                  <Icon name="lucide:book" class="text-accent"></Icon>
                   <span class="hidden lg:inline">Notebook?</span>
                 </div>
               </template>
               <template #icon>
-                <IconsAddNotebook v-if="isNotebook"></IconsAddNotebook>
-                <IconsNoteAdd v-else></IconsNoteAdd>
+                <Icon v-if="isNotebook" name="lucide:book-plus" />
+                <Icon v-else name="lucide:file-plus" />
               </template>
             </CommonToggleInput>
           </div>
@@ -37,7 +33,6 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { IconsAddNotebook } from '#components'
 import type { Note, Notebook } from '~/types/notebook'
 import type { Result } from '~/types/result'
 const { notebook } = defineProps<{ notebook: Notebook }>()

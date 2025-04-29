@@ -31,7 +31,7 @@
               class="border-b border-dashed border-neutral-200 last:border-b-0 dark:border-neutral-700">
               <td>
                 <div class="my-3 flex flex-row items-center gap-2 hover:text-gray-400 dark:hover:text-gray-100">
-                  <IconsNote></IconsNote>
+                  <Icon name="lucide:file" />
                   <div class="flex flex-col justify-start">
                     <NuxtLink
                       :to="`/note/${notePathArrayJoiner(note.notebook)}/${note.name}`"
@@ -67,7 +67,6 @@
   </CommonBaseCard>
 </template>
 <script lang="ts" setup>
-import { IconsNote } from '#components'
 import type { Note } from '~/types/notebook'
 
 const { display } = defineProps<{ display: number }>()

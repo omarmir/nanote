@@ -4,26 +4,7 @@
     :class="{ 'bg-red-500 hover:bg-red-700': theme === 'danger' }"
     class="flex flex-row items-center gap-2 rounded-md bg-accent px-4 py-1 text-xs font-medium text-white hover:bg-accent-hover focus:outline-none focus:ring-4 focus:ring-neutral-300 disabled:bg-gray-300"
     @click="$emit('click')">
-    <svg v-if="showLoading && isLoading" xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-        <path stroke-dasharray="16" stroke-dashoffset="16" d="M12 3c4.97 0 9 4.03 9 9">
-          <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="16;0" />
-          <animateTransform
-            attributeName="transform"
-            dur="1.5s"
-            repeatCount="indefinite"
-            type="rotate"
-            values="0 12 12;360 12 12" />
-        </path>
-        <path
-          stroke-dasharray="64"
-          stroke-dashoffset="64"
-          stroke-opacity="0.3"
-          d="M12 3c4.97 0 9 4.03 9 9c0 4.97 -4.03 9 -9 9c-4.97 0 -9 -4.03 -9 -9c0 -4.97 4.03 -9 9 -9Z">
-          <animate fill="freeze" attributeName="stroke-dashoffset" dur="1.2s" values="64;0" />
-        </path>
-      </g>
-    </svg>
+    <Icon v-if="showLoading && isLoading" name="lucide:loader-circle" class="size-4 animate-spin" />
     <slot></slot>
   </button>
 </template>

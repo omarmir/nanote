@@ -20,7 +20,8 @@ export default defineNuxtConfig({
     '@nuxtjs/eslint-module',
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
-    '@nuxt/test-utils/module'
+    '@nuxt/test-utils/module',
+    '@nuxt/icon'
   ],
   tailwindcss: {
     config: {
@@ -28,6 +29,12 @@ export default defineNuxtConfig({
         files: ['./components/**/*.{vue,js,ts}', './layouts/**/*.vue', './pages/**/*.vue', '!./node_modules']
       }
     }
+  },
+  icon: {
+    size: '20px',
+    class: 'icon',
+    mode: 'svg',
+    cssLayer: 'base'
   },
   fonts: {
     families: [
