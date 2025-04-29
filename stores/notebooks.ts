@@ -106,6 +106,7 @@ export const useNotebookStore = defineStore('notebook', () => {
   }
 
   const resetSidebarNotebook = () => (sidebarOpenNotebooks.value = [])
+  const resetMainNotebook = () => (mainOpenNotebooks.value = [])
 
   const deleteNotebook = async (notebook: Notebook): Promise<Result<DeleteNotebook>> => {
     const { apiPath } = getNotebookPaths(notebook)
@@ -252,6 +253,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     resetSidebarNotebook,
     deleteNotebook,
     addNotebook,
+    resetMainNotebook,
     // Note
     deleteNote,
     renameNote,

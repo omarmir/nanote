@@ -20,7 +20,14 @@
         <table class="text-dark my-0 w-full border-neutral-200 align-middle">
           <thead class="align-bottom">
             <tr class="text-secondary-dark text-[0.95rem]">
-              <th class="pb-3 text-start text-xs font-medium uppercase text-gray-400 lg:w-1/2">Notebook</th>
+              <th class="pb-3 text-start text-xs font-medium uppercase text-gray-400 lg:w-1/2">
+                <div class="flex min-h-5 flex-row items-center gap-2">
+                  <span>Notebook</span>
+                  <CommonCollapseNotebooksButton
+                    v-if="notebookStore.mainOpenNotebooks.length > 0"
+                    @click="notebookStore.resetMainNotebook()"></CommonCollapseNotebooksButton>
+                </div>
+              </th>
               <th class="hidden pb-3 text-center text-xs font-medium uppercase text-gray-400 lg:table-cell">Created</th>
               <th class="hidden pb-3 text-center text-xs font-medium uppercase text-gray-400 lg:table-cell">Updated</th>
               <th class="pb-3 text-center text-xs font-medium uppercase text-gray-400">Notes</th>

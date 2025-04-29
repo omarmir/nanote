@@ -43,7 +43,12 @@
             <!-- menu item -->
             <div>
               <span class="flex select-none items-center px-4 py-3 text-xs font-medium text-neutral-200">
-                Notebooks
+                <div class="flex min-h-5 flex-row items-center gap-2">
+                  <span>Notebook</span>
+                  <CommonCollapseNotebooksButton
+                    v-if="notebookStore.sidebarOpenNotebooks.length > 0"
+                    @click="notebookStore.resetSidebarNotebook()"></CommonCollapseNotebooksButton>
+                </div>
               </span>
               <NotebookSidebarNotebooks></NotebookSidebarNotebooks>
             </div>
@@ -63,7 +68,7 @@ import { onClickOutside, useMagicKeys, whenever } from '@vueuse/core'
 const { isSidebarOpen, outsideClick } = useSidebar()
 const input = useTemplateRef('sidebar')
 const showCommandPalette = ref(false)
-
+const notebookStore = useNotebookStore()
 onClickOutside(input, () => (isSidebarOpen.value = false))
 
 const logout = async () => {
