@@ -1,8 +1,8 @@
 <template>
   <div>
-    <button class="text-gray-400 hover:text-white" @click="toggleDarkMode()">
-      <Icon v-if="isDarkModeEnabled" name="lucide:sun" />
-      <Icon v-else name="lucide:moon" />
+    <button @click="toggleDarkMode()">
+      <Icon v-if="isDarkModeEnabled" class="text-accent hover:text-accent-hover" name="lucide:sun" />
+      <Icon v-else class="text-amber-700 hover:text-amber-800" name="lucide:moon" />
     </button>
   </div>
 </template>
