@@ -49,7 +49,7 @@
                     v-if="notebookStore.sidebarOpenNotebooks.length > 0"
                     @click="notebookStore.resetSidebarNotebook()"></CommonCollapseNotebooksButton>
                 </div>
-                <DenseListSwitcher></DenseListSwitcher>
+                <DenseListSwitcher v-if="notebookStore.sidebarOpenNotebooks.length > 0"></DenseListSwitcher>
               </div>
               <NotebookSidebarNotebooks></NotebookSidebarNotebooks>
             </div>
