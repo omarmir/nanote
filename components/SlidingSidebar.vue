@@ -42,14 +42,15 @@
             </ul>
             <!-- menu item -->
             <div>
-              <span class="flex select-none items-center px-4 py-3 text-xs font-medium text-neutral-200">
+              <div class="flex select-none items-center justify-between px-4 py-3 text-xs font-medium text-neutral-200">
                 <div class="flex min-h-5 flex-row items-center gap-2">
                   <span>Notebook</span>
                   <CommonCollapseNotebooksButton
                     v-if="notebookStore.sidebarOpenNotebooks.length > 0"
                     @click="notebookStore.resetSidebarNotebook()"></CommonCollapseNotebooksButton>
                 </div>
-              </span>
+                <DenseListSwitcher></DenseListSwitcher>
+              </div>
               <NotebookSidebarNotebooks></NotebookSidebarNotebooks>
             </div>
           </div>
@@ -64,7 +65,6 @@
 </template>
 <script lang="ts" setup>
 import { onClickOutside, useMagicKeys, whenever } from '@vueuse/core'
-
 const { isSidebarOpen, outsideClick } = useSidebar()
 const input = useTemplateRef('sidebar')
 const showCommandPalette = ref(false)

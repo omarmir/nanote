@@ -11,7 +11,7 @@
           <Icon name="lucide:file" />
           <span class="text-sm">{{ note.name }}</span>
         </div>
-        <div class="ml-7 text-xs">
+        <div v-if="onBackground || (!onBackground && !settingsStore.isDenseListEnabled)" class="ml-7 text-xs">
           Created: {{ new Date(note.createdAt).toLocaleDateString('en-CA') }} @
           {{ new Date(note.createdAt).toLocaleTimeString() }}
         </div>
@@ -28,6 +28,8 @@
 <script lang="ts" setup>
 import type { NotebookContents, NotebookDisplay } from '~/types/notebook'
 const { outsideClick } = useSidebar()
+
+const settingsStore = useSettingsStore()
 
 const { notebookContents, onBackground, type } = defineProps<{
   notebookContents: NotebookContents | null | undefined
