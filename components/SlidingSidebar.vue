@@ -4,7 +4,7 @@
       id="sidenav-main"
       ref="sidebar"
       :class="{ '-translate-x-full': !isSidebarOpen }"
-      class="fixed inset-y-0 left-0 z-40 m-0 flex w-[350px] shrink-0 flex-col overflow-y-auto overflow-x-hidden bg-neutral-900 transition-all duration-300 ease-in-out lg:translate-x-0 [&::-webkit-scrollbar-thumb]:bg-neutral-500 [&::-webkit-scrollbar-track]:bg-neutral-300 [&::-webkit-scrollbar]:w-1">
+      class="fixed inset-y-0 left-0 z-40 m-0 flex w-[300px] shrink-0 flex-col overflow-y-auto overflow-x-hidden bg-neutral-900 transition-all duration-300 ease-in-out lg:w-[350px] lg:translate-x-0 [&::-webkit-scrollbar-thumb]:bg-neutral-500 [&::-webkit-scrollbar-track]:bg-neutral-300 [&::-webkit-scrollbar]:w-1">
       <div class="h-svw">
         <!--logo start-->
         <NuxtLink to="/">
