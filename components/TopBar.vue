@@ -1,6 +1,6 @@
 <template>
   <nav class="mt-4 flex flex-row justify-between gap-2" navbar-scroll="true">
-    <div class="relative ml-auto flex items-center sm:ml-2 lg:hidden">
+    <div class="relative ml-auto flex items-center lg:hidden">
       <!--Sidebar button-->
       <a
         href="javascript:void(0)"
