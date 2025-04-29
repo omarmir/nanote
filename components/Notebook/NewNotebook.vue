@@ -1,7 +1,9 @@
 <template>
   <form class="w-full grow" @submit.prevent="addNotebook">
     <CommonButtonInput v-model="newBook" placeholder="New notebook" class="mb-4">
-      <template #icon>sss</template>
+      <template #icon>
+        <Icon name="lucide:book-plus" />
+      </template>
     </CommonButtonInput>
   </form>
 </template>
