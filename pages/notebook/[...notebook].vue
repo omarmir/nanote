@@ -20,11 +20,14 @@
           <th class="hidden text-center text-xs font-medium uppercase text-gray-400 lg:table-cell">Created</th>
           <th class="hidden text-center text-xs font-medium uppercase text-gray-400 lg:table-cell">Updated</th>
           <th class="hidden text-center text-xs font-medium uppercase text-gray-400 lg:table-cell">Contents</th>
-          <th class="hidden text-center text-xs font-medium uppercase text-gray-400 lg:table-cell">Actions</th>
+          <th class="hidden text-center text-xs font-medium uppercase text-gray-400 lg:table-cell"></th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="note in contents?.notes" :key="`nt-${note.name}`">
+        <tr
+          v-for="note in contents?.notes"
+          :key="`nt-${note.name}`"
+          class="has-[.delete-button:hover]:text-red-500 has-[.manage-button:hover]:text-blue-500">
           <td class="py-2 align-top">
             <NuxtLink
               :to="`/note/${contents?.pathArray.join('/')}/${note.name}`"
@@ -34,19 +37,28 @@
             </NuxtLink>
           </td>
           <td class="hidden py-2 align-top lg:table-cell">
-            <div class="text-sm font-medium">
+            <div class="text-sm font-medium text-gray-900 dark:text-gray-400">
               <CommonDateDisplay :date="note.createdAt"></CommonDateDisplay>
             </div>
           </td>
           <td class="hidden py-2 align-top lg:table-cell">
-            <div class="text-sm font-medium">
+            <div class="text-sm font-medium text-gray-900 dark:text-gray-400">
               <CommonDateDisplay :date="note.updatedAt"></CommonDateDisplay>
             </div>
           </td>
-          <td class="hidden py-2 text-center align-top lg:table-cell">{{ note.size?.toFixed(2) }}kb</td>
-          <td></td>
+          <td class="hidden py-2 text-center align-top text-gray-900 dark:text-gray-400 lg:table-cell">
+            {{ note.size?.toFixed(2) }}kb
+          </td>
+          <td class="py-2 align-middle">
+            <div class="flex flex-row place-content-end items-center gap-4">
+              <NoteDelete :note :notebooks="note.notebook" class="delete-button"></NoteDelete>
+            </div>
+          </td>
         </tr>
-        <tr v-for="nestedNotebook in contents?.notebooks" :key="`nb-${nestedNotebook.name}`">
+        <tr
+          v-for="nestedNotebook in contents?.notebooks"
+          :key="`nb-${nestedNotebook.name}`"
+          class="has-[.delete-button:hover]:text-red-500">
           <td class="py-2 align-top">
             <NuxtLink
               class="flex flex-row items-center gap-2 hover:text-gray-400 dark:hover:text-gray-100"
@@ -56,19 +68,23 @@
             </NuxtLink>
           </td>
           <td class="hidden py-2 align-top lg:table-cell">
-            <div class="text-sm font-medium">
+            <div class="text-sm font-medium text-gray-900 dark:text-gray-400">
               <CommonDateDisplay :date="nestedNotebook.createdAt"></CommonDateDisplay>
             </div>
           </td>
           <td class="hidden py-2 align-top lg:table-cell">
-            <div class="text-sm font-medium">
+            <div class="text-sm font-medium text-gray-900 dark:text-gray-400">
               <CommonDateDisplay :date="nestedNotebook.updatedAt"></CommonDateDisplay>
             </div>
           </td>
-          <td class="hidden py-2 text-center align-top lg:table-cell">
+          <td class="hidden py-2 text-center align-top text-gray-900 dark:text-gray-400 lg:table-cell">
             {{ nestedNotebook.notebookCount + nestedNotebook.noteCount }}
           </td>
-          <td></td>
+          <td class="py-2 align-middle">
+            <div class="flex flex-row place-content-end items-center gap-4">
+              <NotebookDelete class="delete-button" :notebook="nestedNotebook"></NotebookDelete>
+            </div>
+          </td>
         </tr>
       </tbody>
     </table>
