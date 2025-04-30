@@ -34,7 +34,10 @@ export default defineNuxtConfig({
     size: '20px',
     class: 'icon',
     mode: 'svg',
-    cssLayer: 'base'
+    cssLayer: 'base',
+    clientBundle: {
+      scan: true
+    }
   },
   fonts: {
     families: [

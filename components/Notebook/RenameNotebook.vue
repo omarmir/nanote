@@ -2,13 +2,13 @@
   <div class="flex flex-col py-2">
     <div class="flex flex-row items-center gap-2">
       <button
-        v-if="!onSidebar"
+        v-if="type === 'main'"
         class="flex items-center text-teal-600 hover:text-teal-800"
         @click="isRenaming = !isRenaming">
         <Icon name="gg:rename" class="size-6" />
       </button>
       <button
-        :class="{ 'text-gray-400': onSidebar, 'hover:text-gray-100': onSidebar, 'hover:text-gray-500': !onSidebar }"
+        :class="{ 'text-gray-400 hover:text-gray-100': type === 'sidebar', 'hover:text-gray-500': type === 'main' }"
         class="flex flex-row items-center gap-2 dark:hover:text-gray-100"
         @click="toggleNotebook()">
         <Icon name="lucide:book" />
@@ -35,17 +35,16 @@
       </form>
     </div>
     <CommonDangerAlert v-if="error" class="mb-4 ml-6">{{ error }}</CommonDangerAlert>
+    <CommonDangerAlert v-if="openError" class="mb-4 ml-6">
+      {{ openError }}
+    </CommonDangerAlert>
   </div>
 </template>
 <script lang="ts" setup>
 import { onClickOutside } from '@vueuse/core'
-import type { Notebook } from '~/types/notebook'
+import type { Notebook, NotebookDisplay } from '~/types/notebook'
 
-const { notebook, hideRename: onSidebar = false } = defineProps<{ notebook: Notebook; hideRename?: boolean }>()
-
-const emit = defineEmits<{
-  (e: 'toggle', payload: Notebook): void
-}>()
+const { notebook, type } = defineProps<{ notebook: Notebook; type: NotebookDisplay }>()
 
 const newNotebookName = ref(notebook.name)
 const localNotebook = ref(notebook)
@@ -69,7 +68,9 @@ const renameNotebook = async () => {
   isRenaming.value = false
 }
 
-const toggleNotebook = () => {
-  emit('toggle', localNotebook.value)
+const openError: Ref<string | null> = ref(null)
+const toggleNotebook = async () => {
+  const resp = await notebookStore.toggleNotebook(notebook, type)
+  if (!resp.success) openError.value = resp.message
 }
 </script>

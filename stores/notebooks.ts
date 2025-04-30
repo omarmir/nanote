@@ -38,10 +38,10 @@ export const useNotebookStore = defineStore('notebook', () => {
     return { apiPath, notePath }
   }
 
-  const toggleNotebook = async (notebook: Notebook, type: NotebookDisplay): Promise<Result<NotebookContents>> => {
+  const toggleNotebook = async (notebook: Notebook, type: NotebookDisplay): Promise<Result<null>> => {
     const { apiPath, notebookPath } = getNotebookPaths(notebook)
 
-    try {
+    if (!mainOpenNotebooks.value.includes(apiPath) && !sidebarOpenNotebooks.value.includes(apiPath)) {
       const resp = await $fetch<NotebookContents>(`/api/notebook/${apiPath}`)
       const nb = getNotebookByPathArray(notebookPath, notebooks.value)
       if (nb) {
@@ -49,6 +49,9 @@ export const useNotebookStore = defineStore('notebook', () => {
       } else {
         notebooks.value = resp
       }
+    }
+
+    try {
       if (type === 'main') {
         const idx = mainOpenNotebooks.value.indexOf(apiPath)
         if (idx > -1) {
@@ -65,7 +68,7 @@ export const useNotebookStore = defineStore('notebook', () => {
         }
       }
 
-      return { success: true, data: resp }
+      return { success: true, data: null }
     } catch (error) {
       const err = error as FetchError
       return { success: false, message: err.data.message ?? err.message ?? 'Unknown error' }

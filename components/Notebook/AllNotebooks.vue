@@ -1,7 +1,7 @@
 <template>
-  <CommonBaseCard>
+  <CommonBaseCard class="px-4 pb-2 pt-5 lg:px-9">
     <!-- card header -->
-    <div class="flex min-h-[70px] flex-wrap items-stretch justify-between bg-transparent px-9 pb-0 pt-5">
+    <div class="flex min-h-[70px] flex-wrap items-stretch justify-between bg-transparent">
       <h3 class="text-dark m-2 ml-0 flex flex-col items-start justify-center">
         <span class="mr-3 text-lg font-medium dark:text-gray-300">Notebooks</span>
         <span class="font-base mt-1 text-sm text-gray-600 dark:text-gray-400">All notebooks</span>
@@ -15,7 +15,7 @@
     <CommonDangerAlert v-if="notebookAddedError" class="rounded-none">
       {{ notebookAddedError }}
     </CommonDangerAlert>
-    <div class="block flex-auto px-9 py-8 pt-6">
+    <div class="block flex-auto pt-6">
       <div class="overflow-x-auto">
         <table class="text-dark my-0 w-full border-neutral-200 align-middle">
           <thead class="align-bottom">
@@ -52,45 +52,57 @@
                 <div class="mb-2.5 h-2 w-2/5 rounded-full bg-gray-200 dark:bg-gray-700"></div>
               </td>
             </tr>
-            <CommonDangerAlert v-if="notebookStore.error">
-              {{ notebookStore.error.data.message ?? notebookStore.error.message }}
-            </CommonDangerAlert>
-            <tr
-              v-for="notebook in notebookStore.notebooks?.notebooks"
-              :key="notebook.name"
-              class="border-b border-neutral-200 last:border-b-0 dark:border-neutral-700">
-              <td class="flex flex-col py-2">
-                <NotebookContents
-                  :on-background="true"
-                  :notebook="notebook"
-                  type="main"
-                  :show-children="notebookStore.currentLevel(notebook, 'main')"></NotebookContents>
-              </td>
-              <td class="hidden py-2 align-top lg:table-cell">
-                <div class="text-sm font-medium">
-                  <CommonDateDisplay :date="notebook.createdAt"></CommonDateDisplay>
-                </div>
-              </td>
-              <td class="hidden py-2 align-top lg:table-cell">
-                <div class="text-sm font-medium">
-                  <CommonDateDisplay :date="notebook.updatedAt"></CommonDateDisplay>
-                </div>
-              </td>
-              <td class="table-cell py-2 align-top">
-                <div class="flex w-full justify-center">
-                  <div
-                    class="flex size-6 flex-row items-center justify-center rounded-full bg-gray-200 text-xs font-medium text-gray-900 dark:bg-gray-700 dark:text-gray-200">
-                    <span>{{ notebook.noteCount }}</span>
-                  </div>
-                </div>
-              </td>
-              <td class="py-2 align-top">
-                <div class="flex flex-row items-center gap-4">
-                  <NotebookDelete :notebook></NotebookDelete>
-                  <NotebookManage :notebook></NotebookManage>
-                </div>
+            <tr v-else-if="notebookStore.status === 'error'">
+              <td colspan="5">
+                <CommonDangerAlert>
+                  <span v-if="notebookStore.error">
+                    {{ notebookStore.error.data.message ?? notebookStore.error.message }}
+                  </span>
+                </CommonDangerAlert>
               </td>
             </tr>
+            <template v-for="notebook in notebookStore.notebooks?.notebooks" v-else :key="notebook.name">
+              <tr class="has-[.delete-button:hover]:text-red-500 has-[.manage-button:hover]:text-blue-500">
+                <td class="flex flex-col py-2">
+                  <NotebookRenameNotebook
+                    type="main"
+                    :notebook="notebook"
+                    :hide-rename="false"></NotebookRenameNotebook>
+                </td>
+                <td class="hidden py-2 align-top lg:table-cell">
+                  <div class="text-sm font-medium text-gray-900 dark:text-gray-400">
+                    <CommonDateDisplay :date="notebook.createdAt"></CommonDateDisplay>
+                  </div>
+                </td>
+                <td class="hidden py-2 align-top lg:table-cell">
+                  <div class="text-sm font-medium text-gray-900 dark:text-gray-400">
+                    <CommonDateDisplay :date="notebook.updatedAt"></CommonDateDisplay>
+                  </div>
+                </td>
+                <td class="table-cell py-2 align-top">
+                  <div class="flex w-full justify-center">
+                    <div
+                      class="flex size-6 flex-row items-center justify-center rounded-full bg-gray-200 text-xs font-medium text-gray-900 dark:bg-gray-700 dark:text-gray-200">
+                      <span>{{ notebook.noteCount }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="py-2 align-top">
+                  <div class="flex flex-row place-content-end items-center gap-4">
+                    <NotebookDelete class="delete-button" :notebook></NotebookDelete>
+                    <NotebookManage class="manage-button" :notebook></NotebookManage>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-neutral-200 last:border-b-0 dark:border-neutral-700">
+                <td colspan="5">
+                  <NotebookContents
+                    :notebook="notebook"
+                    type="main"
+                    :show-children="notebookStore.currentLevel(notebook, 'main')"></NotebookContents>
+                </td>
+              </tr>
+            </template>
           </tbody>
         </table>
       </div>

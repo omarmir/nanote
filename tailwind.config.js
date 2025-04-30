@@ -4,6 +4,15 @@ export default {
   // content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}', './pages/**/*.vue', './components/**/*.vue', './layouts/*.vue'],
   darkMode: 'class',
   theme: {
+    screens: {
+      'xs': '480px',  // Extra small devices
+      'sm': '640px',  // Small devices
+      'md': '768px',  // Medium devices
+      'lg': '1024px', // Large devices
+      'xl': '1280px', // Extra large devices
+      '2xl': '1536px', // 2X large devices
+      '3xl': '1920px', // Custom breakpoint
+    },
     extend: {
       boxShadow: {
         'top-md': '0 -1px 0 -1px #e0e3e8,0 -1px 6px 0 rgba(69,98,155,.12)',
