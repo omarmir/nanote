@@ -116,9 +116,16 @@ useEditor((root) => {
 })
 </script>
 <style lang="postcss">
-.milkdown-editor.focus div.milkdown milkdown-block-handle,
-.milkdown-editor.disabled div.milkdown milkdown-block-handle {
-  display: none;
+.milkdown-editor:is(.focus, .disabled) div.milkdown {
+  milkdown-block-handle {
+    display: none;
+  }
+}
+
+.milkdown-editor.disabled div.milkdown {
+  p.crepe-placeholder {
+    opacity: 0;
+  }
 }
 
 .milkdown-editor div.milkdown milkdown-block-handle {
