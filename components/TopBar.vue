@@ -1,6 +1,12 @@
 <template>
   <nav class="mt-4 flex flex-row justify-between gap-2" navbar-scroll="true">
-    <div class="relative ml-auto flex items-center lg:hidden">
+    <div class="relative flex w-full flex-row items-center justify-between lg:hidden">
+      <NuxtLink to="/">
+        <div class="flex shrink-0 items-center justify-start gap-4">
+          <Icon name="marketeq:notebook" class="size-10"></Icon>
+          <h1 class="text-xl font-bold text-white">nanote</h1>
+        </div>
+      </NuxtLink>
       <!--Sidebar button-->
       <a
         href="javascript:void(0)"
