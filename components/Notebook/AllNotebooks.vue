@@ -62,24 +62,24 @@
               </td>
             </tr>
             <template v-for="notebook in notebookStore.notebooks?.notebooks" v-else :key="notebook.name">
-              <tr class="has-[.delete-button:hover]:text-red-500 has-[.manage-button:hover]:text-blue-500">
-                <td class="flex flex-col py-2">
+              <tr class="space-y-4 has-[.delete-button:hover]:text-red-500 has-[.manage-button:hover]:text-blue-500">
+                <td class="py-2 align-middle">
                   <NotebookRenameNotebook
                     type="main"
                     :notebook="notebook"
                     :hide-rename="false"></NotebookRenameNotebook>
                 </td>
-                <td class="hidden py-2 align-top lg:table-cell">
+                <td class="hidden py-2 align-middle lg:table-cell">
                   <div class="text-sm font-medium text-gray-900 dark:text-gray-400">
                     <CommonDateDisplay :date="notebook.createdAt"></CommonDateDisplay>
                   </div>
                 </td>
-                <td class="hidden py-2 align-top lg:table-cell">
+                <td class="hidden py-2 align-middle lg:table-cell">
                   <div class="text-sm font-medium text-gray-900 dark:text-gray-400">
                     <CommonDateDisplay :date="notebook.updatedAt"></CommonDateDisplay>
                   </div>
                 </td>
-                <td class="table-cell py-2 align-top">
+                <td class="table-cell py-2 align-middle">
                   <div class="flex w-full justify-center">
                     <div
                       class="flex size-6 flex-row items-center justify-center rounded-full bg-gray-200 text-xs font-medium text-gray-900 dark:bg-gray-700 dark:text-gray-200">
@@ -87,7 +87,7 @@
                     </div>
                   </div>
                 </td>
-                <td class="py-2 align-top">
+                <td class="py-2 align-middle">
                   <div class="flex flex-row place-content-end items-center gap-4">
                     <NotebookDelete class="delete-button" :notebook></NotebookDelete>
                     <NotebookManage class="manage-button" :notebook></NotebookManage>

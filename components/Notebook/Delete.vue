@@ -14,15 +14,10 @@
         and cannot be undone. Are you sure you want to delete this notebook?
       </template>
       <div class="flex flex-row flex-wrap justify-end gap-4">
-        <CommonThemeButton
-          :show-loading="true"
-          :is-loading="deletingState"
-          class="py-2"
-          theme="danger"
-          @click="deleteNotebook()">
+        <CommonThemeButton :show-loading="true" :is-loading="deletingState" theme="danger" @click="deleteNotebook()">
           Delete
         </CommonThemeButton>
-        <CommonThemeButton class="py-2" @click="deleteDialog = false">Cancel</CommonThemeButton>
+        <CommonThemeButton @click="deleteDialog = false">Cancel</CommonThemeButton>
         <CommonDangerAlert v-if="error" class="mb-4 w-full">{{ error }}</CommonDangerAlert>
       </div>
     </CommonBaseDialog>

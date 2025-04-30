@@ -1,5 +1,5 @@
 <template>
-  <div class="flex py-2">
+  <div class="flex">
     <button class="flex flex-row items-center gap-2 text-accent hover:text-accent-hover" @click="isOpen = true">
       <Icon name="lucide:circle-plus" />
       Add

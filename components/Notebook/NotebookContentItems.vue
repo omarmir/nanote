@@ -1,6 +1,8 @@
 <template>
-  <ul v-if="notebookContents">
-    <li v-for="note in notebookContents.notes" :key="note.name" class="py-2">
+  <ul
+    v-if="notebookContents && (notebookContents.notes.length > 0 || notebookContents.notebooks)"
+    class="flex flex-col gap-2">
+    <li v-for="note in notebookContents.notes" :key="note.name">
       <div
         :class="{
           'text-gray-900 hover:text-gray-400 dark:text-gray-400 dark:hover:text-gray-100': type === 'main'
@@ -31,7 +33,7 @@
     <li
       v-for="nestedNotebook in notebookContents.notebooks"
       :key="nestedNotebook.path"
-      class="flex flex-col items-start">
+      class="flex flex-col items-start gap-2">
       <div
         class="flex w-full flex-row justify-between has-[.delete-button:hover]:text-red-500 has-[.manage-button:hover]:text-blue-500">
         <NotebookRenameNotebook :type :notebook="nestedNotebook" :hide-rename="false" />

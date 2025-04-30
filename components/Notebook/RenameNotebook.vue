@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col py-2">
+  <div>
     <div class="flex flex-row items-center gap-2">
       <button
         v-if="type === 'main'"
