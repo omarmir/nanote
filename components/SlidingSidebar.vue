@@ -7,12 +7,17 @@
       class="fixed inset-y-0 left-0 z-40 m-0 flex w-[300px] shrink-0 flex-col overflow-y-auto overflow-x-hidden bg-neutral-900 transition-all duration-300 ease-in-out lg:w-[350px] lg:translate-x-0 [&::-webkit-scrollbar-thumb]:bg-neutral-500 [&::-webkit-scrollbar-track]:bg-neutral-300 [&::-webkit-scrollbar]:w-1">
       <div class="h-svw">
         <!--logo start-->
-        <NuxtLink to="/">
-          <div class="flex h-[96px] shrink-0 items-center justify-start gap-4 px-4">
-            <Icon name="marketeq:notebook" class="size-10"></Icon>
-            <h1 class="text-xl font-bold text-white">nanote</h1>
-          </div>
-        </NuxtLink>
+        <div class="flex flex-row justify-between px-4">
+          <NuxtLink to="/">
+            <div class="flex h-[96px] shrink-0 items-center justify-start gap-4">
+              <Icon name="marketeq:notebook" class="size-10"></Icon>
+              <h1 class="text-xl font-bold text-white">nanote</h1>
+            </div>
+          </NuxtLink>
+          <button title="Close sidebar" class="hover:text-red-500" @click="outsideClick()">
+            <Icon name="lucide:x"></Icon>
+          </button>
+        </div>
         <!--logo end-->
         <div class="relative">
           <div class="flex w-full flex-col font-medium">
