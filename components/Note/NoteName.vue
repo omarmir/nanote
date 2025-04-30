@@ -34,6 +34,13 @@
           <Icon v-else class="size-6" name="lucide:eye" />
           Focus
         </button>
+        <button
+          class="flex flex-row items-center gap-2 text-gray-900 hover:text-accent-hover dark:text-gray-400 dark:hover:text-accent"
+          @click="$emit('readonlymode')">
+          <Icon v-if="isReadOnly" class="size-6" name="lucide:pencil" />
+          <Icon v-else class="size-6" name="lucide:pencil-off" />
+          Edit
+        </button>
         <NuxtLink
           v-if="isFocus"
           to="/"
@@ -63,8 +70,15 @@ const {
   name,
   notebooks,
   savingState,
-  isFocus = false
-} = defineProps<{ name: string; savingState: SavingState; notebooks: string[]; isFocus?: boolean }>()
+  isFocus = false,
+  isReadOnly = false
+} = defineProps<{
+  name: string
+  savingState: SavingState
+  notebooks: string[]
+  isFocus?: boolean
+  isReadOnly?: boolean
+}>()
 
 const notebookStore = useNotebookStore()
 
@@ -100,5 +114,5 @@ const deleteNote = async () => {
   actionPending.value = true
 }
 
-defineEmits(['focusmode'])
+defineEmits(['focusmode', 'readonlymode'])
 </script>

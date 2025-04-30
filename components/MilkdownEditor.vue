@@ -1,5 +1,5 @@
 <template>
-  <Milkdown class="milkdown-editor" :class="{ focus: isFocus }" />
+  <Milkdown class="milkdown-editor" :class="{ focus: isFocus, disabled }" />
 </template>
 
 <script setup lang="ts">
@@ -116,11 +116,12 @@ useEditor((root) => {
 })
 </script>
 <style lang="postcss">
-.milkdown-editor.focus div.milkdown .milkdown-block-handle {
+.milkdown-editor.focus div.milkdown milkdown-block-handle,
+.milkdown-editor.disabled div.milkdown milkdown-block-handle {
   display: none;
 }
 
-.milkdown-editor div.milkdown .milkdown-block-handle {
+.milkdown-editor div.milkdown milkdown-block-handle {
   @apply hidden lg:flex;
 }
 

@@ -9,6 +9,8 @@
           :name="note"
           :saving-state
           :is-focus
+          :is-read-only
+          @readonlymode="toggleReadOnlyMode()"
           @focusmode="toggleFocusMode()"></NoteName>
         <div class="flex flex-row items-center gap-4 py-2">
           <div v-if="updated" class="text-sm text-gray-500 dark:text-gray-300">
@@ -29,7 +31,7 @@
       </div>
       <CommonDangerAlert v-if="error" class="mb-4">{{ error }}</CommonDangerAlert>
       <MilkdownProvider v-if="note">
-        <Milkdown v-model="md" :note :notebooks="notebooksArray" :disabled="renamePending" :is-focus />
+        <Milkdown v-model="md" :note :notebooks="notebooksArray" :disabled="renamePending || isReadOnly" :is-focus />
       </MilkdownProvider>
     </div>
   </div>
@@ -45,8 +47,9 @@ const note = route.params.note.at(-1)
 const notebooksParams = route.params.note.slice(0, -1)
 const notebooksArray = typeof notebooksParams === 'string' ? [notebooksParams] : notebooksParams
 const notebookPath = notePathArrayJoiner(notebooksArray)
-const isFocus = useState('isFocus', () => false)
 
+const isFocus = useState('isFocus', () => false)
+const isReadOnly = useState('isReadOnly', () => false)
 const renamePending = ref(false)
 const error: Ref<string | null> = ref(null)
 
@@ -127,4 +130,6 @@ const toggleFocusMode = () => {
   isFocus.value = !isFocus.value
   setPageLayout(isFocus.value ? 'focus' : 'default')
 }
+
+const toggleReadOnlyMode = () => (isReadOnly.value = !isReadOnly.value)
 </script>
