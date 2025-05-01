@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:1
 
 # Define the Node.js version to use
-ARG NODE_VERSION=22.12.0
+ARG NODE_VERSION=23.11.0
 
 # Base image for Node.js
 FROM node:${NODE_VERSION}-slim AS base
