@@ -1,6 +1,17 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
 export default defineNuxtConfig({
+  nitro: {
+    experimental: {
+      database: true
+    },
+    database: {
+      default: {
+        connector: 'sqlite',
+        options: { name: 'data.db' }
+      }
+    }
+  },
   app: {
     head: {
       title: 'Nanote', // default fallback title
