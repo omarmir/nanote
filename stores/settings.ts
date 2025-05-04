@@ -1,16 +1,26 @@
 import { defineStore } from 'pinia'
+import type { InsertSetting } from '~/server/db/schema'
 
 export const useSettingsStore = defineStore('settings', () => {
-  const lsIsDense: boolean = (localStorage.getItem('isDense') ?? 'false') === 'true' //its stored as a string must compare as string.
+  const { $settings } = useNuxtApp()
+  const settingSetError: Ref<null | string> = ref(null)
+  const error: Ref<string | null> = ref($settings.error ? ($settings.error ?? 'Unknown error') : null)
   const lsIsDark: boolean = (localStorage.getItem('isDark') ?? 'false') === 'true' //its stored as a string must compare as string.
 
   /**
    * Dense list
    */
-  const isDenseListEnabled: Ref<boolean> = ref(lsIsDense)
-  const toggleDenseMode = () => {
+  const isDenseListEnabled: Ref<boolean> = ref($settings.data.get('isDense') === 'true')
+  const toggleDenseMode = async () => {
     isDenseListEnabled.value = !isDenseListEnabled.value
-    localStorage.setItem('isDense', isDenseListEnabled.value.toString())
+    const setting: InsertSetting = {
+      setting: 'isDense',
+      value: isDenseListEnabled.value.toString()
+    }
+
+    const resp = await $fetch('/api/settings', { method: 'POST', body: setting })
+
+    if (!resp.success) settingSetError.value = resp.message
   }
 
   /**
@@ -34,6 +44,8 @@ export const useSettingsStore = defineStore('settings', () => {
     isDenseListEnabled,
     toggleDarkMode,
     isDarkModeEnabled,
-    setInitialDarkMode
+    setInitialDarkMode,
+    error,
+    settingSetError
   }
 })

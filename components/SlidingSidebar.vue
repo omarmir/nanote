@@ -56,6 +56,10 @@
                 </div>
                 <DenseListSwitcher v-if="notebookStore.sidebarOpenNotebooks.length > 0"></DenseListSwitcher>
               </div>
+              <CommonDangerAlert v-if="settingsStore.error || settingsStore.settingSetError" class="mb-4 rounded-none">
+                <div v-if="settingsStore.error">{{ settingsStore.error }}</div>
+                <div v-if="settingsStore.settingSetError">{{ settingsStore.settingSetError }}</div>
+              </CommonDangerAlert>
               <NotebookSidebarNotebooks></NotebookSidebarNotebooks>
             </div>
           </div>
@@ -74,6 +78,7 @@ const { isSidebarOpen, outsideClick } = useSidebar()
 const input = useTemplateRef('sidebar')
 const showCommandPalette = ref(false)
 const notebookStore = useNotebookStore()
+const settingsStore = useSettingsStore()
 onClickOutside(input, () => (isSidebarOpen.value = false))
 
 const logout = async () => {
