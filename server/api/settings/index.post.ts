@@ -1,16 +1,22 @@
-import type { ResultSet } from '@libsql/client'
 import type { InsertSetting } from '~/server/db/schema'
 import { settings } from '~/server/db/schema'
 import { db } from '~/server/utils/drizzle'
 import { defineEventHandlerWithError } from '~/server/wrappers/error'
 import type { Result } from '~/types/result'
 
-export default defineEventHandlerWithError(async (event): Promise<Result<ResultSet>> => {
+export default defineEventHandlerWithError(async (event): Promise<Result<null>> => {
   const setting = await readBody<InsertSetting>(event)
 
-  const result = await db.insert(settings).values(setting).run()
+  await db
+    .insert(settings)
+    .values(setting)
+    .onConflictDoUpdate({
+      target: [settings.setting], // Replace 'key' with your unique column name
+      set: { value: setting.value }
+    })
+
   return {
     success: true,
-    data: result
+    data: null
   }
 })
