@@ -4,9 +4,7 @@ import { dbPath } from '~/server/folder'
 
 export const tables = schema
 
-export function useDrizzle() {
-  return drizzle(dbPath, { schema })
-}
+export const db = drizzle(dbPath, { schema })
 
-export type User = typeof schema.settings.$inferSelect
+export type Settings = typeof schema.settings.$inferSelect
 export { sql, eq, and, or } from 'drizzle-orm'
