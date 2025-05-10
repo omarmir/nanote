@@ -37,6 +37,15 @@
                 </NuxtLink>
               </li>
               <li class="flex cursor-pointer select-none items-center rounded-xl px-4 py-3">
+                <NuxtLink
+                  to="/settings"
+                  class="flex flex-grow flex-row items-center gap-2 text-base font-medium text-gray-400 hover:text-white"
+                  @click="outsideClick()">
+                  <Icon name="lucide:settings" />
+                  Settings
+                </NuxtLink>
+              </li>
+              <li class="flex cursor-pointer select-none items-center rounded-xl px-4 py-3">
                 <button
                   class="flex flex-grow flex-row items-center gap-2 text-base font-medium text-gray-400 hover:text-white"
                   @click="logout()">
