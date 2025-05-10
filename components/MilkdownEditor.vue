@@ -17,7 +17,6 @@ import '@milkdown/crepe/theme/nord.css'
 import '@milkdown/crepe/theme/nord-dark.css'
 import { filePicker, filePickerNodeBlock, filePickerConfig, clearContentAndAddBlockType } from 'milkdown-plugin-file' //'@/utils/md-plugins/milkdown-plugin-file/src'
 import { dateTimeTextSubs } from '~/milkdown/text-sub'
-import { html } from 'atomico'
 
 const model = defineModel<string>({ required: true })
 const { disabled, isFocus, note, notebooks } = defineProps<{
@@ -43,17 +42,7 @@ useEditor((root) => {
           const advanced = builder.getGroup('advanced')
           advanced.addItem('file', {
             label: 'Attachment',
-            icon: html`
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                <path
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13.324 8.436L9.495 12.19c-.364.36-.564.852-.556 1.369a2 2 0 0 0 .6 1.387c.375.371.88.584 1.403.593a1.92 1.92 0 0 0 1.386-.55l3.828-3.754a3.75 3.75 0 0 0 1.112-2.738a4 4 0 0 0-1.198-2.775a4.1 4.1 0 0 0-2.808-1.185a3.85 3.85 0 0 0-2.77 1.098L6.661 9.39a5.63 5.63 0 0 0-1.667 4.107a6 6 0 0 0 1.798 4.161a6.15 6.15 0 0 0 4.21 1.778a5.77 5.77 0 0 0 4.157-1.646l3.829-3.756" />
-              </svg>
-            `,
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M11.314 3.121a5 5 0 1 1 7.07 7.071l-7.777 7.778a3 3 0 1 1-4.243-4.242l7.778-7.778l1.414 1.414l-7.778 7.778a1 1 0 1 0 1.414 1.414l7.779-7.778a3 3 0 1 0-4.243-4.243L4.95 12.314a5 5 0 0 0 7.07 7.07l8.486-8.485l1.414 1.415l-8.485 8.485a7 7 0 0 1-9.9-9.9z"/></svg>`,
             onRun: (ctx) => {
               const view = ctx.get(editorViewCtx)
               const { dispatch, state } = view
@@ -79,11 +68,13 @@ useEditor((root) => {
         if (model.value.length === 0) ctx.get(editorViewCtx).focus()
       })
 
+      //@ts-expect-error ctx version mismatch - not going to harm the app
       ctx.update(imageBlockConfig.key, (defaultConfig) => ({
         ...defaultConfig,
         onUpload: async (file: File) => onUpload(file, path)
       }))
 
+      //@ts-expect-error ctx version mismatch - not going to harm the app
       ctx.update(inlineImageConfig.key, (prev) => ({
         ...prev,
         onUpload: async (file: File) => onUpload(file, path)
@@ -94,6 +85,7 @@ useEditor((root) => {
         uploader: customUploader
       }))
 
+      //@ts-expect-error ctx version mismatch - not going to harm the app
       ctx.update(filePickerConfig.key, (prev) => ({
         ...prev,
         onUpload: async (file: File) => onUpload(file, path),
@@ -108,6 +100,7 @@ useEditor((root) => {
     })
     .use(listener)
     .use(upload)
+    //@ts-expect-error ctx version mismatch - not going to harm the app
     .use(emoji)
     .use(imageInlineComponent)
     .use(filePicker)
@@ -116,8 +109,62 @@ useEditor((root) => {
 })
 </script>
 <style lang="postcss">
+.milkdown-editor {
+  .milkdown-slash-menu {
+    background: #f8f9ff;
+    box-shadow:
+      0px 1px 3px 1px rgba(0, 0, 0, 0.15),
+      0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+    .menu-group h6 {
+      color: #111827 !important;
+    }
+    .menu-groups .menu-group {
+      li.hover {
+        background: #e1e2e8;
+      }
+    }
+    .tab-group ul {
+      li:hover {
+        background: #eceef4;
+      }
+      li.selected {
+        background: #e1e2e8;
+      }
+    }
+  }
+}
+
+.dark .milkdown-editor {
+  .milkdown-slash-menu {
+    background: #111418;
+    span.milkdown-icon svg path {
+      fill: white;
+    }
+    .menu-group h6 {
+      color: #e1e2e8 !important;
+      opacity: 0.6;
+    }
+    .menu-groups .menu-group {
+      li.hover {
+        background: #1d2024;
+      }
+      li.active {
+        background: #32353a;
+      }
+    }
+    .tab-group ul {
+      li:hover {
+        background: #1d2024;
+      }
+      li.selected {
+        background: #32353a;
+      }
+    }
+  }
+}
+
 .milkdown-editor:is(.focus, .disabled) div.milkdown {
-  milkdown-block-handle {
+  .milkdown-block-handle {
     display: none;
   }
 }
@@ -128,7 +175,7 @@ useEditor((root) => {
   }
 }
 
-.milkdown-editor div.milkdown milkdown-block-handle {
+.milkdown-editor div.milkdown .milkdown-block-handle {
   @apply hidden lg:flex;
 }
 
