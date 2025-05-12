@@ -1,13 +1,13 @@
 import path from 'node:path'
+import jwt from 'jsonwebtoken'
 import { notesPath, uploadPath } from '~/server/folder'
 import { readdir, rm, unlink, lstat } from 'node:fs/promises'
-import { $fetch } from '@nuxt/test-utils'
 
 let authCookie: string
 
 export async function authenticate() {
-  const authResponse = await $fetch('/api/auth/login', { method: 'POST', body: { key: 'nanote' } })
-  authCookie = `token=${authResponse.token}`
+  const token = jwt.sign({ app: 'nanote' }, 'nanote', { expiresIn: '7d' })
+  authCookie = `token=${token}`
 }
 
 export async function getAuthCookie() {

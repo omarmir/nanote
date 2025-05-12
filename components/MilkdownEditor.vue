@@ -1,5 +1,7 @@
 <template>
-  <Milkdown class="milkdown-editor" :class="{ focus: isFocus, disabled }" />
+  <Milkdown
+    class="milkdown-editor"
+    :class="{ focus: isFocus, disabled, 'para-spaced': settingsStore.settings.isParagraphSpaced }" />
 </template>
 
 <script setup lang="ts">
@@ -17,7 +19,6 @@ import '@milkdown/crepe/theme/nord.css'
 import '@milkdown/crepe/theme/nord-dark.css'
 import { filePicker, filePickerNodeBlock, filePickerConfig, clearContentAndAddBlockType } from 'milkdown-plugin-file' //'@/utils/md-plugins/milkdown-plugin-file/src'
 import { dateTimeTextSubs } from '~/milkdown/text-sub'
-import { html } from 'atomico'
 
 const model = defineModel<string>({ required: true })
 const { disabled, isFocus, note, notebooks } = defineProps<{
@@ -43,17 +44,7 @@ useEditor((root) => {
           const advanced = builder.getGroup('advanced')
           advanced.addItem('file', {
             label: 'Attachment',
-            icon: html`
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                <path
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13.324 8.436L9.495 12.19c-.364.36-.564.852-.556 1.369a2 2 0 0 0 .6 1.387c.375.371.88.584 1.403.593a1.92 1.92 0 0 0 1.386-.55l3.828-3.754a3.75 3.75 0 0 0 1.112-2.738a4 4 0 0 0-1.198-2.775a4.1 4.1 0 0 0-2.808-1.185a3.85 3.85 0 0 0-2.77 1.098L6.661 9.39a5.63 5.63 0 0 0-1.667 4.107a6 6 0 0 0 1.798 4.161a6.15 6.15 0 0 0 4.21 1.778a5.77 5.77 0 0 0 4.157-1.646l3.829-3.756" />
-              </svg>
-            `,
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M11.314 3.121a5 5 0 1 1 7.07 7.071l-7.777 7.778a3 3 0 1 1-4.243-4.242l7.778-7.778l1.414 1.414l-7.778 7.778a1 1 0 1 0 1.414 1.414l7.779-7.778a3 3 0 1 0-4.243-4.243L4.95 12.314a5 5 0 0 0 7.07 7.07l8.486-8.485l1.414 1.415l-8.485 8.485a7 7 0 0 1-9.9-9.9z"/></svg>`,
             onRun: (ctx) => {
               const view = ctx.get(editorViewCtx)
               const { dispatch, state } = view
@@ -114,21 +105,66 @@ useEditor((root) => {
     .use(dateTimeTextSubs)
   return crepe
 })
+const settingsStore = useSettingsStore()
 </script>
 <style lang="postcss">
+.milkdown-editor .milkdown {
+  --crepe-color-background: #fdfcff;
+  --crepe-color-on-background: #1b1c1d;
+  --crepe-color-surface: #f8f9ff;
+  --crepe-color-surface-low: #f2f3fa;
+  --crepe-color-on-surface: #191c20;
+  --crepe-color-on-surface-variant: #43474e;
+  --crepe-color-outline: #73777f;
+  --crepe-color-primary: #37618e;
+  --crepe-color-secondary: #d7e3f8;
+  --crepe-color-on-secondary: #101c2b;
+  --crepe-color-inverse: #2e3135;
+  --crepe-color-on-inverse: #eff0f7;
+  --crepe-color-inline-code: #ba1a1a;
+  --crepe-color-error: #ba1a1a;
+  --crepe-color-hover: #eceef4;
+  --crepe-color-selected: #e1e2e8;
+  --crepe-color-inline-area: #d8dae0;
+  --crepe-shadow-1: 0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+}
+.dark .milkdown-editor {
+  .milkdown-slash-menu {
+    span.milkdown-icon svg path {
+      fill: white;
+    }
+  }
+}
+
+.dark .milkdown-editor .milkdown {
+  --crepe-color-background: transparent;
+  --crepe-color-on-background: #f8f9ff;
+  --crepe-color-surface: #111418;
+  --crepe-color-surface-low: #191c20;
+  --crepe-color-on-surface: #e1e2e8;
+  --crepe-color-on-surface-variant: #c3c6cf;
+  --crepe-color-outline: #8d9199;
+  --crepe-color-primary: #a1c9fd;
+  --crepe-color-secondary: #3c4858;
+  --crepe-color-on-secondary: #d7e3f8;
+  --crepe-color-inverse: #e1e2e8;
+  --crepe-color-on-inverse: #2e3135;
+  --crepe-color-inline-code: #ffb4ab;
+  --crepe-color-error: #ffb4ab;
+  --crepe-color-hover: #1d2024;
+  --crepe-color-selected: #32353a;
+  --crepe-color-inline-area: #111418;
+  --crepe-shadow-1: 0px 1px 2px 0px rgba(255, 255, 255, 0.3), 0px 1px 3px 1px rgba(255, 255, 255, 0.15);
+  --crepe-shadow-2: 0px 1px 2px 0px rgba(255, 255, 255, 0.3), 0px 2px 6px 2px rgba(255, 255, 255, 0.15);
+}
+
 .milkdown-editor:is(.focus, .disabled) div.milkdown {
-  milkdown-block-handle {
+  .milkdown-block-handle {
     display: none;
   }
 }
 
-.milkdown-editor.disabled div.milkdown {
-  p.crepe-placeholder {
-    opacity: 0;
-  }
-}
-
-.milkdown-editor div.milkdown milkdown-block-handle {
+.milkdown-editor div.milkdown .milkdown-block-handle {
   @apply hidden lg:flex;
 }
 
@@ -211,6 +247,22 @@ useEditor((root) => {
         }
       }
     }
+  }
+}
+
+.milkdown-editor.para-spaced {
+  div.milkdown {
+    .ProseMirror {
+      p {
+        @apply py-1;
+      }
+    }
+  }
+}
+
+.milkdown-editor.disabled div.milkdown {
+  p.crepe-placeholder {
+    opacity: 0;
   }
 }
 </style>

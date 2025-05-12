@@ -37,6 +37,15 @@
                 </NuxtLink>
               </li>
               <li class="flex cursor-pointer select-none items-center rounded-xl px-4 py-3">
+                <NuxtLink
+                  to="/settings"
+                  class="flex flex-grow flex-row items-center gap-2 text-base font-medium text-gray-400 hover:text-white"
+                  @click="outsideClick()">
+                  <Icon name="lucide:settings" />
+                  Settings
+                </NuxtLink>
+              </li>
+              <li class="flex cursor-pointer select-none items-center rounded-xl px-4 py-3">
                 <button
                   class="flex flex-grow flex-row items-center gap-2 text-base font-medium text-gray-400 hover:text-white"
                   @click="logout()">
@@ -56,6 +65,10 @@
                 </div>
                 <DenseListSwitcher v-if="notebookStore.sidebarOpenNotebooks.length > 0"></DenseListSwitcher>
               </div>
+              <CommonDangerAlert v-if="settingsStore.error || settingsStore.settingSetError" class="mb-4 rounded-none">
+                <div v-if="settingsStore.error">{{ settingsStore.error }}</div>
+                <div v-if="settingsStore.settingSetError">{{ settingsStore.settingSetError }}</div>
+              </CommonDangerAlert>
               <NotebookSidebarNotebooks></NotebookSidebarNotebooks>
             </div>
           </div>
@@ -74,6 +87,7 @@ const { isSidebarOpen, outsideClick } = useSidebar()
 const input = useTemplateRef('sidebar')
 const showCommandPalette = ref(false)
 const notebookStore = useNotebookStore()
+const settingsStore = useSettingsStore()
 onClickOutside(input, () => (isSidebarOpen.value = false))
 
 const logout = async () => {

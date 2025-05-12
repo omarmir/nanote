@@ -1,39 +1,67 @@
 import { defineStore } from 'pinia'
+import type { InsertSetting } from '~/server/db/schema'
+import type { Result } from '~/types/result'
 
 export const useSettingsStore = defineStore('settings', () => {
-  const lsIsDense: boolean = (localStorage.getItem('isDense') ?? 'false') === 'true' //its stored as a string must compare as string.
-  const lsIsDark: boolean = (localStorage.getItem('isDark') ?? 'false') === 'true' //its stored as a string must compare as string.
+  const { $settings } = useNuxtApp()
+  const settingSetError: Ref<null | string> = ref(null)
+  const error: Ref<string | null> = ref($settings.error ? ($settings.error ?? 'Unknown error') : null)
+  const settings = reactive({
+    isDense: $settings.data.get('isDense') === 'true',
+    isParagraphSpaced: $settings.data.get('isParagraphSpaced') === 'true'
+  })
+
+  const setSetting = async (insertSetting: InsertSetting): Promise<Result<null>> => {
+    const newSetting: InsertSetting = {
+      setting: insertSetting.setting,
+      value: insertSetting.value
+    }
+
+    const resp = await $fetch('/api/settings', { method: 'POST', body: newSetting })
+    if (!resp.success) settingSetError.value = resp.message
+
+    return resp
+  }
 
   /**
    * Dense list
    */
-  const isDenseListEnabled: Ref<boolean> = ref(lsIsDense)
-  const toggleDenseMode = () => {
-    isDenseListEnabled.value = !isDenseListEnabled.value
-    localStorage.setItem('isDense', isDenseListEnabled.value.toString())
+  const setDenseMode = async () => {
+    const setting: InsertSetting = {
+      setting: 'isDense',
+      value: settings.isDense.toString()
+    }
+    setSetting(setting)
   }
+  const toggleDenseMode = () => (settings.isDense = !settings.isDense)
 
   /**
-   * Dark mode
+   * Paragraph spacing
    */
-  const isDarkModeEnabled: Ref<boolean> = ref(lsIsDark)
-
-  const toggleDarkMode = () => {
-    isDarkModeEnabled.value = !isDarkModeEnabled.value
-    localStorage.setItem('isDark', isDarkModeEnabled.value.toString())
-
-    document.documentElement.classList.toggle('dark')
+  const setParagraphSpacing = async () => {
+    const setting: InsertSetting = {
+      setting: 'isParagraphSpaced',
+      value: settings.isParagraphSpaced.toString()
+    }
+    setSetting(setting)
   }
+  const toggleParagraphSpacing = () => (settings.isParagraphSpaced = !settings.isParagraphSpaced)
 
-  const setInitialDarkMode = () => {
-    if (lsIsDark && !document.documentElement.classList.contains('dark')) document.documentElement.classList.add('dark')
-  }
+  watch(
+    () => settings.isDense,
+    () => setDenseMode()
+  )
+
+  watch(
+    () => settings.isParagraphSpaced,
+    () => setParagraphSpacing()
+  )
 
   return {
     toggleDenseMode,
-    isDenseListEnabled,
-    toggleDarkMode,
-    isDarkModeEnabled,
-    setInitialDarkMode
+    settings,
+    error,
+    settingSetError,
+    toggleParagraphSpacing
   }
 })

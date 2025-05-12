@@ -4,7 +4,7 @@
       <NuxtLink to="/">
         <div class="flex shrink-0 items-center justify-start gap-4">
           <Icon name="marketeq:notebook" class="size-10"></Icon>
-          <h1 class="text-xl font-bold text-white">nanote</h1>
+          <h1 class="text-xl font-bold text-gray-900 dark:text-white">nanote</h1>
         </div>
       </NuxtLink>
       <!--Sidebar button-->

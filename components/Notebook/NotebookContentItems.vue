@@ -17,9 +17,7 @@
               <Icon name="lucide:file" />
               <span class="text-sm">{{ note.name }}</span>
             </div>
-            <div
-              v-if="type === 'main' || (type === 'sidebar' && !settingsStore.isDenseListEnabled)"
-              class="ml-7 text-xs">
+            <div v-if="type === 'main' || (type === 'sidebar' && !settingsStore.settings.isDense)" class="ml-7 text-xs">
               Created: {{ new Date(note.createdAt).toLocaleDateString('en-CA') }} @
               {{ new Date(note.createdAt).toLocaleTimeString() }}
             </div>
