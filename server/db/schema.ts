@@ -7,5 +7,13 @@ export const settings = sqliteTable('settings', {
   value: text('value').notNull()
 })
 
+export const shared = sqliteTable('shared', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  path: text('path').notNull(),
+  key: text('key').notNull(),
+  isWriteable: integer('writable', { mode: 'boolean' }).notNull().default(false),
+  expiry: integer({ mode: 'timestamp' })
+})
+
 export type SelectSetting = InferSelectModel<typeof settings>
 export type InsertSetting = InferInsertModel<typeof settings>
