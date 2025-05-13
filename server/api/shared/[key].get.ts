@@ -1,5 +1,10 @@
 import { defineEventHandlerWithError } from '../../wrappers/error'
 import { shared } from '~/server/db/schema'
+import { join, resolve } from 'node:path'
+import { notesPath } from '~/server/folder'
+import { access, constants, stat } from 'node:fs/promises'
+import { createReadStream } from 'node:fs'
+
 // import type { Note } from '~/types/notebook'
 
 export default defineEventHandlerWithError(async (event) => {
@@ -11,17 +16,49 @@ export default defineEventHandlerWithError(async (event) => {
       message: 'Sharing key is required'
     }
 
-  const resp = await db.select().from(shared).where(eq(shared.key, key))
+  const note = await db.query.shared.findFirst({
+    where: eq(shared.key, key)
+  })
 
-  if (resp.length === 0) {
+  if (!note) {
     return {
       success: false,
       message: 'No shared note found'
     }
   }
 
-  return {
-    success: true,
-    data: resp
+  const fullPath = resolve(join(notesPath, ...note.path.split('/')))
+
+  console.log(fullPath)
+
+  try {
+    // Verify notebook and note exist and is read/write allowed
+    await access(fullPath, constants.R_OK | constants.W_OK)
+  } catch (error) {
+    console.error('Note error:', error)
+    const message = 'Access error: Applicaiton does not have access to the note or is no longer on filesystem.'
+    throw createError({
+      statusCode: 404,
+      statusMessage: 'Not Found',
+      message
+    })
   }
+
+  const stats = await stat(fullPath)
+
+  const createdAtTime = stats.birthtime.getTime() !== 0 ? stats.birthtime : stats.ctime
+  const createdAt = createdAtTime.toISOString()
+  const updatedAt = stats.mtime.toISOString()
+
+  // Set appropriate headers
+  setHeaders(event, {
+    'Content-Type': 'text/markdown',
+    'Content-Disposition': `attachment; filename="${fullPath.split('/').at(-1)}"`,
+    'Cache-Control': 'no-cache',
+    'Content-Created': createdAt,
+    'Content-Updated': updatedAt
+  })
+
+  // Return file stream
+  return sendStream(event, createReadStream(fullPath))
 })

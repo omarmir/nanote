@@ -43,10 +43,10 @@ import { watchDebounced } from '@vueuse/core'
 import type { FetchError } from 'ofetch'
 import type { SavingState } from '~/types/notebook'
 const route = useRoute()
-const note = route.params.note.at(-1)
+const note = route.params.note.at(-1) ?? ''
 const notebooksParams = route.params.note.slice(0, -1)
 const notebooksArray = typeof notebooksParams === 'string' ? [notebooksParams] : notebooksParams
-const notebookPath = notePathArrayJoiner(notebooksArray)
+const notebookAPIPath = notePathArrayJoiner([...notebooksArray, note])
 
 const isFocus = useState('isFocus', () => false)
 const isReadOnly = useState('isReadOnly', () => false)
@@ -68,7 +68,7 @@ const fetchMarkdown = async () => {
      * Native fetch gives direct access to the ReadableStream via response.body
      * $fetch/useFetch abstract the stream away, trying to parse the entire response at once (not ideal for chunks)
      */
-    const response = await fetch(`/api/note/download/${notebookPath}/${note}`)
+    const response = await fetch(`/api/note/download/${notebookAPIPath}`)
 
     if (!response.body) throw new Error('No response body')
 
@@ -115,7 +115,7 @@ const saveFile = async (markdownText: string) => {
 
   try {
     //@ts-expect-error PATH is available but likely mismatched due to dynamic URL
-    await $fetch(`/api/note/${notebookPath}/${note}`, { method: 'PATCH', body: formData })
+    await $fetch(`/api/note/${notebookPath}`, { method: 'PATCH', body: formData })
     savingState.value = 'success'
     error.value = null
   } catch (err) {
