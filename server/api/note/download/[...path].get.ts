@@ -1,5 +1,6 @@
 import { sendStream, setHeaders } from 'h3'
 import { stat } from 'node:fs/promises'
+import { extname } from 'node:path'
 import { createReadStream } from 'node:fs'
 
 import { defineEventHandlerWithNotebookAndNote } from '~/server/wrappers/note'
@@ -13,9 +14,12 @@ export default defineEventHandlerWithNotebookAndNote(
     const createdAt = createdAtTime.toISOString()
     const updatedAt = stats.mtime.toISOString()
 
+    // Determine content type based on file extension
+    const fileExtension = extname(fullPath).toLowerCase()
+    const contentType = fileExtension === '.md' ? 'text/markdown' : 'text/plain'
     // Set appropriate headers
     setHeaders(event, {
-      'Content-Type': 'text/markdown',
+      'Content-Type': contentType,
       'Content-Disposition': `attachment; filename="${cleanNote}"`,
       'Cache-Control': 'no-cache',
       'Content-Created': createdAt,

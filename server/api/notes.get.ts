@@ -30,7 +30,8 @@ export default defineEventHandlerWithError(async (event): Promise<Note[]> => {
       createdAt: file.stats!.birthtime.toISOString(),
       updatedAt: file.stats!.mtime.toISOString(),
       notebook,
-      size: Math.round(file.stats!.size / 1024)
+      size: Math.round(file.stats!.size / 1024),
+      isMarkdown: path.extname(file.path).toLowerCase() === '.md'
     }
   })
 
