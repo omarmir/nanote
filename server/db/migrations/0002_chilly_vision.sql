@@ -1,1 +1,0 @@
-ALTER TABLE `shared` ADD `expiry` integer;

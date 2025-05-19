@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "2badd0fd-d75e-4362-99fb-516d786a7dbc",
-  "prevId": "bb421910-8fab-4ed2-b20d-fc1475c3e3ef",
+  "id": "b1b1d7da-058f-4d0f-ab39-2aae5d888085",
+  "prevId": "d8c9bbd0-7fbe-446e-8862-951c0151a9d8",
   "tables": {
     "settings": {
       "name": "settings",
@@ -74,6 +74,13 @@
           "notNull": true,
           "autoincrement": false,
           "default": false
+        },
+        "expiry": {
+          "name": "expiry",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {},
