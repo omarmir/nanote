@@ -32,7 +32,8 @@
             <NuxtLink
               :to="`/note/${contents?.pathArray.join('/')}/${note.name}`"
               class="flex flex-row items-center gap-2 hover:text-gray-400 dark:hover:text-gray-100">
-              <Icon name="lucide:file" />
+              <Icon v-if="note.isMarkdown" name="lucide:file-text" />
+              <Icon v-else name="lucide:file" />
               {{ note.name }}
             </NuxtLink>
           </td>

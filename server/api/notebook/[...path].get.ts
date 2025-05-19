@@ -26,7 +26,7 @@ export default defineEventHandlerWithNotebook(async (_event, notebook, fullPath)
           createdAt: createdAtTime.toISOString(),
           updatedAt: stats.mtime.toISOString(),
           size: stats.size / 1024,
-          isMarkdown: extname(fullPath).toLowerCase() === '.md'
+          isMarkdown: extname(filePath).toLowerCase() === '.md'
         } satisfies Note
         notebookContents.notes.push(note)
       } else if (dirent.isDirectory()) {

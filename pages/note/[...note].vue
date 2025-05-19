@@ -110,12 +110,12 @@ const saveFile = async (markdownText: string) => {
   const blob = new Blob([markdownText], { type: 'text/markdown' })
 
   const formData = new FormData()
-  formData.append('file', blob, `${note}.md`) // The file to upload
-  formData.append('filename', `${note}.md`) // The filename to use when saving
+  formData.append('file', blob, note) // The file to upload
+  formData.append('filename', note) // The filename to use when saving
 
   try {
-    //@ts-expect-error PATH is available but likely mismatched due to dynamic URL
-    await $fetch(`/api/note/${notebookPath}`, { method: 'PATCH', body: formData })
+    // @ts-expect-error PATCH is perfectly fine - no idea why its freaking out
+    await $fetch(`/api/note/${notebookAPIPath}`, { method: 'PATCH', body: formData })
     savingState.value = 'success'
     error.value = null
   } catch (err) {

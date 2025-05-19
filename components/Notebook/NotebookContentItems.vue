@@ -14,7 +14,8 @@
           @click="outsideClick()">
           <div class="flex flex-col gap-1">
             <div class="flex flex-row items-center gap-2">
-              <Icon name="lucide:file" />
+              <Icon v-if="note.isMarkdown" name="lucide:file-text" />
+              <Icon v-else name="lucide:file" />
               <span class="text-sm">{{ note.name }}</span>
             </div>
             <div v-if="type === 'main' || (type === 'sidebar' && !settingsStore.settings.isDense)" class="ml-7 text-xs">

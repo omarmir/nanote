@@ -12,6 +12,10 @@ type EventHandlerWithSearch<T extends EventHandlerRequest, D> = (
   searchResults: SearchResult[]
 ) => Promise<D>
 
+/**
+ * For now we are going to keep the search specific to md files to keep it fast
+ */
+
 export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(handler: EventHandlerWithSearch<T, D>) {
   return defineEventHandler(async (event) => {
     const fullPath = resolve(notesPath)
