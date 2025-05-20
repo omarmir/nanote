@@ -15,7 +15,8 @@ describe('Health check', async () => {
       warnings: [
         'Secret key should be changed from the default.',
         'Storage location is not set, this could result in loss of notes.',
-        'Uploads location is not set, this could result in loss of uploads.'
+        'Uploads location is not set, this could result in loss of uploads.',
+        'Config location is not set, this could result in loss of settings and shared notes.'
       ]
     }
 
