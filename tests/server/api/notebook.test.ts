@@ -35,9 +35,10 @@ describe('Notebook check', async () => {
       notes: [
         {
           createdAt: expect.any(String),
-          name: 'Content',
+          name: 'Content.md',
           notebook: ['Test'],
           size: 0.01171875,
+          isMarkdown: true,
           updatedAt: expect.any(String)
         }
       ],

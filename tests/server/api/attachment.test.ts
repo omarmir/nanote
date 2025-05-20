@@ -82,7 +82,7 @@ describe('Attachments upload and view', async () => {
     formData.append('file', blob, `TestUpload.md`) // The file to upload
     formData.append('filename', `TestUpload.md`) // The filename to use when saving
 
-    await $fetch('/api/note/TestUpload/TestUpload', {
+    await $fetch('/api/note/TestUpload/TestUpload.md', {
       method: 'PATCH',
       body: formData,
       headers: { Cookie: authCookie }
@@ -120,7 +120,7 @@ describe('Attachments upload and view', async () => {
 
     const uploadedFileName = resp.split('/').at(-1) ?? ''
 
-    await $fetch('/api/note/TestUploadAll/TestUploadAll', {
+    await $fetch('/api/note/TestUploadAll/TestUploadAll.md', {
       method: 'DELETE',
       headers: { Cookie: authCookie }
     })
