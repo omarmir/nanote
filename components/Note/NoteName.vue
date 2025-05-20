@@ -82,9 +82,11 @@ const {
 
 const notebookStore = useNotebookStore()
 
-const note = ref(name)
+const { name: noteName, extension } = getFileNameAndExtension(name)
 
-const isRenaming = computed(() => name !== note.value)
+const note = ref(noteName)
+
+const isRenaming = computed(() => name !== `${note.value}.${extension}`)
 const error: Ref<string | null> = ref(null)
 const deleteError: Ref<string | null> = ref(null)
 const actionPending = defineModel<boolean>({ required: true })
@@ -92,7 +94,7 @@ const deleteDialog = ref(false)
 
 const renameNote = async () => {
   actionPending.value = true
-  const resp = await notebookStore.renameNote(notebooks, name, note.value)
+  const resp = await notebookStore.renameNote(notebooks, name, `${note.value}.${extension}`)
   if (resp.success) {
     error.value = null
     navigateTo(resp.data.newName)
