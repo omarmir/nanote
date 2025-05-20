@@ -68,6 +68,9 @@ importers:
       '@vueuse/integrations':
         specifier: 13.0.0
         version: 13.0.0(focus-trap@7.6.4)(fuse.js@7.1.0)(jwt-decode@4.0.0)(vue@3.5.13(typescript@5.8.3))
+      content-disposition:
+        specifier: ^0.5.4
+        version: 0.5.4
       drizzle-orm:
         specifier: ^0.43.1
         version: 0.43.1(@libsql/client@0.15.4)
@@ -132,6 +135,9 @@ importers:
       '@nuxtjs/eslint-module':
         specifier: ^4.1.0
         version: 4.1.0(eslint@9.26.0(jiti@2.4.2))(magicast@0.3.5)(vite@6.3.5(@types/node@22.15.17)(jiti@2.4.2)(terser@5.39.0)(yaml@2.7.1))(webpack@5.99.7(esbuild@0.25.4))
+      '@types/content-disposition':
+        specifier: ^0.5.8
+        version: 0.5.8
       '@types/jsonwebtoken':
         specifier: ^9.0.9
         version: 9.0.9
@@ -1683,6 +1689,9 @@ packages:
 
   '@tybys/wasm-util@0.9.0':
     resolution: {integrity: sha512-6+7nlbMVX/PVDCwaIQ8nTOPveOcFLSt8GcXdx8hD0bt39uWxYT88uXzqTd4fTvqta7oeUJqudepapKNt2DYJFw==}
+
+  '@types/content-disposition@0.5.8':
+    resolution: {integrity: sha512-QVSSvno3dE0MgO76pJhmv4Qyi/j0Yk9pBp0Y7TJ2Tlj+KCgJWY6qX7nnxCOLkZ3VYRSIk1WTxCvwUSdx6CCLdg==}
 
   '@types/debug@4.1.12':
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
@@ -8931,6 +8940,8 @@ snapshots:
     dependencies:
       tslib: 2.8.1
     optional: true
+
+  '@types/content-disposition@0.5.8': {}
 
   '@types/debug@4.1.12':
     dependencies:

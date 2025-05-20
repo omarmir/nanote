@@ -2,6 +2,7 @@ import { sendStream, setHeaders } from 'h3'
 import { stat } from 'node:fs/promises'
 import { extname } from 'node:path'
 import { createReadStream } from 'node:fs'
+import contentDisposition from 'content-disposition'
 
 import { defineEventHandlerWithNotebookAndNote } from '~/server/wrappers/note'
 
@@ -20,7 +21,7 @@ export default defineEventHandlerWithNotebookAndNote(
     // Set appropriate headers
     setHeaders(event, {
       'Content-Type': contentType,
-      'Content-Disposition': `attachment; filename="${cleanNote}"`,
+      'Content-Disposition': contentDisposition(`${cleanNote}`, { type: 'attachment' }),
       'Cache-Control': 'no-cache',
       'Content-Created': createdAt,
       'Content-Updated': updatedAt
