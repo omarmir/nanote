@@ -82,14 +82,7 @@
             class="shrink-1 whitespace-pre-line break-words bg-gray-200 p-2 font-mono dark:bg-gray-500 dark:text-gray-200">
             {{ shareLink }}
           </div>
-          <button
-            v-if="isSupported"
-            class="bg-transparent hover:text-accent dark:text-white dark:hover:text-accent"
-            @click="copyLink()">
-            <Icon v-if="isCopied === null" name="lucide:copy"></Icon>
-            <Icon v-if="isCopied" name="lucide:circle-check" class="text-emerald-600"></Icon>
-            <Icon v-if="isCopied === false" name="lucide:circle-x" class="text-red-500"></Icon>
-          </button>
+          <CommonCopyButton v-model="shareLink"></CommonCopyButton>
         </div>
       </div>
     </CommonBaseDialog>
@@ -99,7 +92,6 @@
 import type { SavingState } from '~/types/notebook'
 import type { Result } from '~/types/result'
 import type { FetchError } from 'ofetch'
-import { useClipboard } from '@vueuse/core'
 
 const {
   name,
@@ -120,8 +112,6 @@ const notebookAPIPath = notePathArrayJoiner([...notebooks, name])
 
 const { name: noteName, extension } = getFileNameAndExtension(name)
 
-const { copy, copied, isSupported } = useClipboard()
-
 const note = ref(noteName)
 const isRenaming = computed(() => name !== `${note.value}.${extension}`)
 const error: Ref<string | null> = ref(null)
@@ -132,16 +122,7 @@ const shareDialog = ref(false)
 const shareLink: Ref<string | null> = ref(null)
 const shareError: Ref<string | null> = ref(null)
 const isGeneratingShareLink: Ref<boolean> = ref(false)
-const isCopied: Ref<boolean | null> = ref(null)
 
-const copyLink = async () => {
-  if (!shareLink.value) return
-  await copy(shareLink.value)
-  isCopied.value = copied.value
-  setTimeout(() => {
-    isCopied.value = null
-  }, 5000)
-}
 const generateShareCode = async () => {
   try {
     const sharedKey = await $fetch<Result<string>>(`/api/share/${notebookAPIPath}`, { method: 'POST' })

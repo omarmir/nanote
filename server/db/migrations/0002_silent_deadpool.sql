@@ -1,0 +1,1 @@
+ALTER TABLE `shared` ADD `name` text;
