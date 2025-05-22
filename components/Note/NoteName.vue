@@ -41,13 +41,7 @@
           <Icon v-else class="size-6" name="lucide:pencil-off" />
           Edit
         </button>
-        <button
-          class="flex flex-row items-center gap-2 text-gray-900 hover:text-accent-hover dark:text-gray-400 dark:hover:text-accent"
-          @click="shareDialog = true">
-          <Icon v-if="isReadOnly" class="size-6" name="lucide:pencil" />
-          <Icon v-else class="size-6" name="lucide:share-2" />
-          Share
-        </button>
+        <NoteShare :notebook-a-p-i-path></NoteShare>
         <NuxtLink
           v-if="isFocus"
           to="/"
@@ -68,30 +62,10 @@
         <CommonThemeButton class="py-2" @click="deleteDialog = false">Cancel</CommonThemeButton>
       </div>
     </CommonBaseDialog>
-    <CommonBaseDialog
-      v-model="shareDialog"
-      theme="primary"
-      title="Share Note"
-      desc="Generate a sharable link. Note that they will only be able to view the note only.">
-      <div>
-        <CommonThemeButton :is-loading="isGeneratingShareLink" class="py-2" theme="info" @click="generateShareCode()">
-          Generate
-        </CommonThemeButton>
-        <div v-if="shareLink" class="mt-4 flex flex-row gap-4">
-          <div
-            class="shrink-1 whitespace-pre-line break-words bg-gray-200 p-2 font-mono dark:bg-gray-500 dark:text-gray-200">
-            {{ shareLink }}
-          </div>
-          <CommonCopyButton v-model="shareLink"></CommonCopyButton>
-        </div>
-      </div>
-    </CommonBaseDialog>
   </div>
 </template>
 <script lang="ts" setup>
 import type { SavingState } from '~/types/notebook'
-import type { Result } from '~/types/result'
-import type { FetchError } from 'ofetch'
 
 const {
   name,
@@ -118,25 +92,6 @@ const error: Ref<string | null> = ref(null)
 const deleteError: Ref<string | null> = ref(null)
 const actionPending = defineModel<boolean>({ required: true })
 const deleteDialog = ref(false)
-const shareDialog = ref(false)
-const shareLink: Ref<string | null> = ref(null)
-const shareError: Ref<string | null> = ref(null)
-const isGeneratingShareLink: Ref<boolean> = ref(false)
-
-const generateShareCode = async () => {
-  try {
-    const sharedKey = await $fetch<Result<string>>(`/api/share/${notebookAPIPath}`, { method: 'POST' })
-    if (!sharedKey.success) {
-      shareError.value = sharedKey.message
-      return
-    } else {
-      shareLink.value = `${window.location.origin}/share/${sharedKey.data}`
-    }
-  } catch (err) {
-    console.log(err)
-    error.value = (err as FetchError).data.message
-  }
-}
 
 const renameNote = async () => {
   actionPending.value = true

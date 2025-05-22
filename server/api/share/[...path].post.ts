@@ -5,7 +5,9 @@ import type { Result } from '~/types/result'
 import { notePathArrayJoiner } from '~/utils/path-joiner'
 
 export default defineEventHandlerWithNotebookAndNote(
-  async (_event, notebooks, note, fullPath): Promise<Result<string>> => {
+  async (event, notebooks, note, fullPath): Promise<Result<string>> => {
+    const { name } = await readBody(event)
+
     console.log(`Attempting to share note at: ${fullPath}`)
 
     const sharingKey = nanoid(40)
@@ -13,6 +15,7 @@ export default defineEventHandlerWithNotebookAndNote(
     try {
       await db.insert(shared).values({
         key: sharingKey,
+        name,
         path: '/'.concat(notePathArrayJoiner([...notebooks, note]))
       })
 
