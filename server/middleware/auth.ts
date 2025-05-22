@@ -7,7 +7,7 @@ export default defineEventHandler((event) => {
     !event.path.startsWith('/api/') ||
     event.path === '/api/auth/login' ||
     event.path === '/api/health' ||
-    event.path.startsWith('/api/shared')
+    event.path.startsWith('/api/share')
   )
     return
 

@@ -18,7 +18,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     status,
     error
   } = useFetch<NotebookContents>('/api/notebook', {
-    immediate: true,
+    immediate: localStorage.getItem('isLoggedIn') === 'true',
     lazy: false
   })
 

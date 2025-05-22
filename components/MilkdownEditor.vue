@@ -23,13 +23,13 @@ import { dateTimeTextSubs } from '~/milkdown/text-sub'
 const model = defineModel<string>({ required: true })
 const { disabled, isFocus, note, notebooks } = defineProps<{
   disabled: boolean
-  isFocus: boolean
-  note: string
-  notebooks: string[]
+  isFocus?: boolean
+  note?: string
+  notebooks?: string[]
 }>()
 
-const customUploader = createUploader()
-const path = notePathArrayJoiner([...notebooks, note])
+const path = notebooks && note ? notePathArrayJoiner([...notebooks, note]) : null
+const customUploader = path ? createUploader() : null
 
 useEditor((root) => {
   const crepe = new Crepe({
@@ -70,27 +70,29 @@ useEditor((root) => {
         if (model.value.length === 0) ctx.get(editorViewCtx).focus()
       })
 
-      ctx.update(imageBlockConfig.key, (defaultConfig) => ({
-        ...defaultConfig,
-        onUpload: async (file: File) => onUpload(file, path)
-      }))
+      if (path && customUploader) {
+        ctx.update(imageBlockConfig.key, (defaultConfig) => ({
+          ...defaultConfig,
+          onUpload: async (file: File) => onUpload(file, path)
+        }))
 
-      ctx.update(inlineImageConfig.key, (prev) => ({
-        ...prev,
-        onUpload: async (file: File) => onUpload(file, path)
-      }))
+        ctx.update(inlineImageConfig.key, (prev) => ({
+          ...prev,
+          onUpload: async (file: File) => onUpload(file, path)
+        }))
 
-      ctx.update(uploadConfig.key, (prev) => ({
-        ...prev,
-        uploader: customUploader
-      }))
+        ctx.update(uploadConfig.key, (prev) => ({
+          ...prev,
+          uploader: customUploader
+        }))
 
-      ctx.update(filePickerConfig.key, (prev) => ({
-        ...prev,
-        onUpload: async (file: File) => onUpload(file, path),
-        toCheckUpload: async (url: string) => toCheckUploader(url),
-        failedCheckMessage: 'Unable to access file!'
-      }))
+        ctx.update(filePickerConfig.key, (prev) => ({
+          ...prev,
+          onUpload: async (file: File) => onUpload(file, path),
+          toCheckUpload: async (url: string) => toCheckUploader(url),
+          failedCheckMessage: 'Unable to access file!'
+        }))
+      }
 
       ctx.update(editorViewOptionsCtx, (prev) => ({
         ...prev,

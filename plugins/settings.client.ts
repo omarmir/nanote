@@ -3,7 +3,7 @@ import type { Result } from '~/types/result'
 
 export default defineNuxtPlugin(async (_nuxtApp) => {
   const { data: settings, error } = await useFetch('/api/settings/all', {
-    immediate: true,
+    immediate: localStorage.getItem('isLoggedIn') === 'true',
     lazy: false,
     transform: (data: Result<Settings[]> | null) => {
       if (!data) return new Map<string, string>()
