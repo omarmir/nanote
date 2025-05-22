@@ -1,12 +1,17 @@
 <template>
-  <MilkdownProvider>
-    <MilkdownFileEditor v-model="code" />
-  </MilkdownProvider>
+  <div>
+    <NuxtCodeMirror
+      ref="codemirror"
+      v-model="code"
+      :theme="'dark'"
+      style="width: 500px; height: 400px"
+      placeholder="Enter your code here..."
+      :auto-focus="true"
+      :editable="true"
+      :basic-setup="true"
+      :indent-with-tab="true" />
+  </div>
 </template>
-
-<script setup lang="ts">
-import { MilkdownProvider } from '@milkdown/vue'
-import MilkdownFileEditor from '~/components/MilkdownFileEditor.vue'
-
-const code = ref('import { Editor } from "@milkdown/kit/core";')
+<script lang="ts" setup>
+const code = ref('import thing')
 </script>

@@ -21,7 +21,8 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
     '@nuxt/test-utils/module',
-    '@nuxt/icon'
+    '@nuxt/icon',
+    'nuxt-codemirror'
   ],
   tailwindcss: {
     config: {
