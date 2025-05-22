@@ -65,7 +65,7 @@ export type DeleteNotebook = {
   deleted: boolean
 }
 
-export type SavingState = 'pending' | 'saving' | 'success' | 'error'
+export type SavingState = 'pending' | 'saving' | 'success' | 'error' | 'idle'
 
 export type SearchResult = {
   notebook: string[]

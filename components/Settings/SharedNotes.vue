@@ -29,7 +29,7 @@
               class="border-b border-dashed border-neutral-200 last:border-b-0 dark:border-neutral-700">
               <td class="py-3">{{ share.path }}</td>
               <td>{{ share.name }}</td>
-              <td>{{ `${origin}/share/${share.key}` }}</td>
+              <td><a :href="`${origin}/share/${share.key}`" target="_blank">Click Here</a></td>
               <td>
                 <div class="flex gap-4">
                   <CommonCopyButton :link="`${origin}/share/${share.key}`"></CommonCopyButton>
