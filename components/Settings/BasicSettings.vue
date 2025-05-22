@@ -7,13 +7,19 @@
       </h3>
       <div class="my-2">
         <div class="grid grid-cols-2 gap-4">
-          <div>Hide note date and time</div>
+          <div class="flex flex-row items-center gap-2">
+            Hide note date and time
+            <CommonTooltip>Don't show date and time in the user interface when listing notes</CommonTooltip>
+          </div>
           <div class="flex place-content-end">
             <CommonToggleBox v-model="store.settings.isDense">
               <span class="hidden">Hide note date and time</span>
             </CommonToggleBox>
           </div>
-          <div>Space paragraphs</div>
+          <div class="flex flex-row items-center gap-2">
+            Space paragraphs
+            <CommonTooltip>Automatically put some spacing between paragraphs</CommonTooltip>
+          </div>
           <div class="flex place-content-end">
             <CommonToggleBox v-model="store.settings.isParagraphSpaced">
               <span class="hidden">Space paragraphs</span>
