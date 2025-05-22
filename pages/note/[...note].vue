@@ -31,13 +31,18 @@
       </div>
       <CommonDangerAlert v-if="error" class="mb-4">{{ error }}</CommonDangerAlert>
       <MilkdownProvider v-if="note">
-        <Milkdown v-model="md" :note :notebooks="notebooksArray" :disabled="renamePending || isReadOnly" :is-focus />
+        <MilkdownEditor
+          v-model="md"
+          :note
+          :notebooks="notebooksArray"
+          :disabled="renamePending || isReadOnly"
+          :is-focus />
       </MilkdownProvider>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import Milkdown from '~/components/MilkdownEditor.vue'
+import MilkdownEditor from '~/components/MilkdownEditor.vue'
 import { MilkdownProvider } from '@milkdown/vue'
 import { watchDebounced } from '@vueuse/core'
 import type { FetchError } from 'ofetch'
