@@ -11,7 +11,6 @@ export default defineEventHandlerWithNotebookAndNote(
   async (event, notebook, note, fullPath, notebookPath): Promise<RenameNote> => {
     const body = await readBody(event)
 
-    // await waitforme(5000)
     // Validate and decode parameters
     if (!body?.newName) {
       throw createError({

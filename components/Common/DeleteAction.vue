@@ -8,7 +8,9 @@
   </button>
 </template>
 <script lang="ts" setup>
-const { status } = defineProps<{ status: 'pending' | 'error' | 'idle' | 'success' }>()
+import type { SavingState } from '~/types/notebook'
+
+const { status } = defineProps<{ status: SavingState }>()
 
 const isDeleted: Ref<boolean | null> = ref(null)
 

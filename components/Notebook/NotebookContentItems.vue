@@ -25,7 +25,7 @@
           </div>
         </NuxtLink>
         <div v-if="type === 'main'" class="flex flex-row place-content-end items-center gap-4">
-          <NoteDelete :note :notebooks="note.notebook" class="delete-button"></NoteDelete>
+          <NoteDelete :name="note.name" :notebooks="note.notebook" class="delete-button"></NoteDelete>
         </div>
       </div>
     </li>
