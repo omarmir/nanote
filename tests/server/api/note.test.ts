@@ -39,11 +39,12 @@ describe('Note check', async () => {
       headers: { Cookie: authCookie }
     })
     const resp: Note = {
-      name: 'Test',
+      name: 'Test.md',
       createdAt: expect.any(String),
       updatedAt: expect.any(String),
       notebook: ['NoteTest'],
-      size: 11
+      size: 11,
+      isMarkdown: true
     }
     expect(response).toEqual(expect.objectContaining(resp))
   })
@@ -65,11 +66,12 @@ describe('Note check', async () => {
       headers: { Cookie: authCookie }
     })
     const resp: Note = {
-      name: 'Test',
+      name: 'Test.md',
       createdAt: expect.any(String),
       updatedAt: expect.any(String),
       notebook: ['NoteTest', 'Nested'],
-      size: 11
+      size: 11,
+      isMarkdown: true
     }
     expect(response).toEqual(expect.objectContaining(resp))
   })
@@ -84,35 +86,37 @@ describe('Note check', async () => {
    */
 
   it('Response matches note', async () => {
-    const response = await $fetch('/api/note/NoteTest/Test', {
+    const response = await $fetch('/api/note/NoteTest/Test.md', {
       headers: { Cookie: authCookie }
     })
     const resp: Note = {
-      name: 'Test',
+      name: 'Test.md',
       createdAt: expect.any(String),
       updatedAt: expect.any(String),
       notebook: ['NoteTest'],
-      size: 11
+      size: 11,
+      isMarkdown: true
     }
     expect(response).toEqual(expect.objectContaining(resp))
   })
 
-  it('Response matches note', async () => {
-    const response = await $fetch('/api/note/NoteTest/Nested/Test', {
+  it('Response matches nested note', async () => {
+    const response = await $fetch('/api/note/NoteTest/Nested/Test.md', {
       headers: { Cookie: authCookie }
     })
     const resp: Note = {
-      name: 'Test',
+      name: 'Test.md',
       createdAt: expect.any(String),
       updatedAt: expect.any(String),
       notebook: ['NoteTest', 'Nested'],
-      size: 11
+      size: 11,
+      isMarkdown: true
     }
     expect(response).toEqual(expect.objectContaining(resp))
   })
 
   it('Response matches note content', async () => {
-    const response = await $fetch('/api/note/download/NoteTest/Nested/Test', {
+    const response = await $fetch('/api/note/download/NoteTest/Nested/Test.md', {
       headers: { Cookie: authCookie }
     })
     expect(response).toEqual(expect.stringMatching('# Test Note'))
@@ -128,7 +132,7 @@ describe('Note check', async () => {
     formData.append('file', blob, `Test.md`) // The file to upload
     formData.append('filename', `Test.md`) // The filename to use when saving
 
-    const response = await $fetch('/api/note/NoteTest/Nested/Test', {
+    const response = await $fetch('/api/note/NoteTest/Nested/Test.md', {
       method: 'PATCH',
       body: formData,
       headers: { Cookie: authCookie }
@@ -136,7 +140,7 @@ describe('Note check', async () => {
 
     const resp: NoteResponse = {
       notebook: ['NoteTest', 'Nested'],
-      note: 'Test',
+      note: 'Test.md',
       path: join(notesPath, 'NoteTest', 'Nested', 'Test.md'),
       createdAt: expect.any(String),
       updatedAt: expect.any(String),
@@ -150,15 +154,15 @@ describe('Note check', async () => {
    * Rename Note
    */
   it('Response matches renamed note', async () => {
-    const response = await $fetch('/api/note/NoteTest/Test', {
+    const response = await $fetch('/api/note/NoteTest/Test.md', {
       method: 'PUT',
-      body: { newName: 'TestRenamed' },
+      body: { newName: 'TestRenamed.md' },
       headers: { Cookie: authCookie }
     })
 
     const resp: RenameNote = {
-      oldName: 'Test',
-      newName: 'TestRenamed',
+      oldName: 'Test.md',
+      newName: 'TestRenamed.md',
       createdAt: expect.any(String),
       updatedAt: expect.any(String),
       notebook: ['NoteTest']
@@ -179,12 +183,12 @@ describe('Note check', async () => {
    */
 
   it('Response deleted note', async () => {
-    const response = await $fetch('/api/note/NoteTest/Nested/Test', {
+    const response = await $fetch('/api/note/NoteTest/Nested/Test.md', {
       method: 'DELETE',
       headers: { Cookie: authCookie }
     })
     const resp: DeleteNote = {
-      name: 'Test',
+      name: 'Test.md',
       timestamp: expect.any(String),
       notebook: ['NoteTest', 'Nested'],
       deleted: true

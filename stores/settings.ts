@@ -8,7 +8,9 @@ export const useSettingsStore = defineStore('settings', () => {
   const error: Ref<string | null> = ref($settings.error ? ($settings.error ?? 'Unknown error') : null)
   const settings = reactive({
     isDense: $settings.data.get('isDense') === 'true',
-    isParagraphSpaced: $settings.data.get('isParagraphSpaced') === 'true'
+    isParagraphSpaced: $settings.data.get('isParagraphSpaced')
+      ? $settings.data.get('isParagraphSpaced') === 'true'
+      : true
   })
 
   const setSetting = async (insertSetting: InsertSetting): Promise<Result<null>> => {

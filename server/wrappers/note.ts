@@ -1,6 +1,6 @@
 import type { EventHandlerRequest, H3Event } from 'h3'
 import { access, constants } from 'node:fs/promises'
-import { join, resolve } from 'node:path'
+import { join, resolve, extname } from 'node:path'
 import { notesPath } from '~/server/folder'
 import type { APIError } from '~/types/result'
 
@@ -9,7 +9,8 @@ type EventHandlerWithNotebookAndNote<T extends EventHandlerRequest, D> = (
   notebooks: string[],
   note: string,
   fullPath: string,
-  notebookPath: string
+  notebookPath: string,
+  isMarkdown: boolean
 ) => Promise<D>
 
 export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequest, D>(
@@ -19,7 +20,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
   return defineEventHandler(async (event) => {
     // Decode the path and then remove characters we cannot have
     const params = decodeURIComponent(event.context.params?.path ?? '')
-    const path = params.split('/').map((p) => p.replace(/[\\/:*?"<>|.]/g, '')) || []
+    const path = params.split('/').map((p) => p.replace(/[\\/:*?"<>|]/g, '')) || []
     const notebooks = path.slice(0, -1)
     const note = path.at(-1)
 
@@ -33,8 +34,11 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
 
     // Construct paths
     const targetFolder = resolve(join(notesPath, ...notebooks))
-    const filename = `${note}.md`
+    const filename = note
     const fullPath = join(targetFolder, filename)
+
+    const fileExtension = extname(fullPath).toLowerCase()
+    const isMarkdown = fileExtension === '.md'
 
     //Is the name going to exceed limits?
     if (note.length > 255) {
@@ -88,7 +92,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
       })
     }
     try {
-      return await handler(event, notebooks, note, fullPath, targetFolder)
+      return await handler(event, notebooks, note, fullPath, targetFolder, isMarkdown)
     } catch (error) {
       console.log(event, error)
       if ((error as NodeJS.ErrnoException).code === 'ENOENT') {

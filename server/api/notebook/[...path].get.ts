@@ -1,5 +1,5 @@
 import { readdir, stat } from 'node:fs/promises'
-import { join } from 'node:path'
+import { join, extname } from 'node:path'
 import { defineEventHandlerWithNotebook } from '~/server/wrappers/notebook'
 import type { Note, Notebook, NotebookContents } from '~/types/notebook'
 /**
@@ -19,13 +19,14 @@ export default defineEventHandlerWithNotebook(async (_event, notebook, fullPath)
       const filePath = join(fullPath, dirent.name)
       const stats = await stat(filePath)
       const createdAtTime = stats.birthtime.getTime() !== 0 ? stats.birthtime : stats.ctime
-      if (dirent.isFile() && dirent.name.endsWith('.md')) {
+      if (dirent.isFile()) {
         const note = {
-          name: dirent.name.replace(/\.md$/, ''),
+          name: dirent.name,
           notebook: notebook,
           createdAt: createdAtTime.toISOString(),
           updatedAt: stats.mtime.toISOString(),
-          size: stats.size / 1024
+          size: stats.size / 1024,
+          isMarkdown: extname(filePath).toLowerCase() === '.md'
         } satisfies Note
         notebookContents.notes.push(note)
       } else if (dirent.isDirectory()) {

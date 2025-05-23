@@ -1,7 +1,9 @@
 <template>
   <div class="flex flex-row items-center">
     <button class="text-red-500 hover:text-red-700" @click="deleteDialog = true">
-      <Icon name="lucide:file-x" class="size-5" />
+      <slot>
+        <Icon name="lucide:file-x" class="size-5" />
+      </slot>
     </button>
     <CommonBaseDialog
       v-model="deleteDialog"
@@ -10,7 +12,7 @@
       desc="This will delete the note and cannot be undone. Are you sure you want to delete this note?">
       <template #desc>
         This will delete
-        <span class="font-bold text-red-500">{{ note.name }}</span>
+        <span class="font-bold text-red-500">{{ name }}</span>
         and cannot be undone. Are you sure you want to delete this note?
       </template>
       <div class="flex flex-row flex-wrap justify-end gap-4">
@@ -25,22 +27,24 @@
 </template>
 <script lang="ts" setup>
 import { useNotebookStore } from '~/stores/notebooks'
-import type { Note } from '~/types/notebook'
 
 const store = useNotebookStore()
 
-const { note } = defineProps<{ note: Note }>()
+const { name, notebooks } = defineProps<{ name: string; notebooks: string[] }>()
 
 const deleteDialog = ref(false)
 const deletingState = ref(false)
 const error: Ref<string | null> = ref(null)
 
+const emit = defineEmits(['deleted'])
+
 const deleteNote = async () => {
   deletingState.value = true
-  const resp = await store.deleteNote(note.notebook, note.name)
+  const resp = await store.deleteNote(notebooks, name)
   if (resp.success) {
     error.value = null
     deleteDialog.value = true
+    emit('deleted')
   } else {
     error.value = resp.message
   }

@@ -11,6 +11,10 @@ import { checkIfPathExists } from '~/server/utils'
  */
 export default defineEventHandlerWithNotebookAndNote(
   async (event, notebook, note, fullPath): Promise<Note> => {
+    /**
+     * ! By default new creations are Markdown
+     */
+    const mdPath = fullPath.concat('.md')
     let fileContent = Buffer.from('')
 
     // Parse form data if available
@@ -26,7 +30,7 @@ export default defineEventHandlerWithNotebookAndNote(
      * Try to access the note and if it exists throw a specific error (it exists)
      */
     //If folder already exists check
-    const notebookExists = await checkIfPathExists(fullPath)
+    const notebookExists = await checkIfPathExists(mdPath)
     if (notebookExists)
       throw createError({
         statusCode: 409,
@@ -34,16 +38,22 @@ export default defineEventHandlerWithNotebookAndNote(
         message: 'Notebook already exists'
       })
 
-    await writeFile(fullPath, fileContent)
-    const stats = await stat(fullPath)
+    console.log(mdPath)
+    await writeFile(mdPath, fileContent)
+    const stats = await stat(mdPath)
     const createdAtTime = stats.birthtime.getTime() !== 0 ? stats.birthtime : stats.ctime
 
+    /**
+     * ! By default new creations are Markdown
+     */
     return {
       notebook: notebook,
-      name: note,
+      name: `${note}.md`,
       createdAt: createdAtTime.toISOString(),
       updatedAt: stats.mtime.toISOString(),
-      size: stats.size
+      size: stats.size,
+
+      isMarkdown: true
     } satisfies Note
   },
   {

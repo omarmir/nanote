@@ -16,11 +16,14 @@ export const useNotebookStore = defineStore('notebook', () => {
   const {
     data: notebooks,
     status,
-    error
+    error,
+    execute
   } = useFetch<NotebookContents>('/api/notebook', {
-    immediate: true,
-    lazy: false
+    immediate: false,
+    lazy: true
   })
+
+  if (localStorage.getItem('isLoggedIn') === 'true') execute()
 
   const mainOpenNotebooks: Ref<string[]> = ref([])
   const sidebarOpenNotebooks: Ref<string[]> = ref([])

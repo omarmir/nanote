@@ -34,6 +34,7 @@ try {
   console.log(error)
 }
 
-const dbPath = `file:${join(configPath, 'data.db')}`
+const dbSystemPath = join(configPath, 'data.db')
+const dbPath = `file:${dbSystemPath}`
 
-export { notesPath, uploadPath, envNotesPath, envUploadsPath, configPath, dbPath }
+export { notesPath, uploadPath, envNotesPath, envUploadsPath, envConfigPath, configPath, dbPath, dbSystemPath }

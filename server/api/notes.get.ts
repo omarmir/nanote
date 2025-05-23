@@ -9,7 +9,7 @@ export default defineEventHandlerWithError(async (event): Promise<Note[]> => {
   const query = getQuery<{ display: number }>(event)
   const displayCount = Math.min(Math.max(Number(query.display) || 5, 1), 100) // Clamp between 1-100
 
-  const files = await fg('**/*.md', {
+  const files = await fg('**/*', {
     cwd: notesPath,
     absolute: true,
     stats: true,
@@ -26,11 +26,12 @@ export default defineEventHandlerWithError(async (event): Promise<Note[]> => {
       path.dirname(relativePath) !== '.' ? path.dirname(relativePath).split(path.sep).filter(Boolean) : []
 
     return {
-      name: path.basename(file.path, '.md'),
+      name: file.name,
       createdAt: file.stats!.birthtime.toISOString(),
       updatedAt: file.stats!.mtime.toISOString(),
       notebook,
-      size: Math.round(file.stats!.size / 1024)
+      size: Math.round(file.stats!.size / 1024),
+      isMarkdown: path.extname(file.path).toLowerCase() === '.md'
     }
   })
 
