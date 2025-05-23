@@ -4,6 +4,7 @@
       <h1 class="w-full text-5xl">
         <input
           v-model="note"
+          :disabled="savingState === 'pending' || savingState === 'saving'"
           class="w-full bg-transparent text-gray-900 focus:italic focus:outline-none dark:text-gray-200"
           aria-label="Rename name"
           aria-details="Allows you to rename the note" />
@@ -45,16 +46,20 @@
   </div>
 </template>
 <script lang="ts" setup>
+import type { SavingState } from '~/types/notebook'
+
 const {
   name,
   notebooks,
   isFocus = false,
-  isReadOnly = false
+  isReadOnly = false,
+  savingState
 } = defineProps<{
   name: string
   notebooks: string[]
   isFocus?: boolean
   isReadOnly?: boolean
+  savingState: SavingState
 }>()
 
 const notebookAPIPath = notePathArrayJoiner([...notebooks, name])
