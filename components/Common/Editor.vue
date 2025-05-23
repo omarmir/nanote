@@ -30,7 +30,7 @@
         </div>
       </div>
       <CommonDangerAlert v-if="error" class="mb-4">{{ error }}</CommonDangerAlert>
-      <MilkdownProvider v-if="isMD === true">
+      <MilkdownProvider v-if="isMD === true && md">
         <MilkdownEditor
           v-model="md"
           :note
@@ -39,7 +39,7 @@
           :is-focus />
       </MilkdownProvider>
       <NuxtCodeMirror
-        v-else-if="isMD === false"
+        v-else-if="isMD === false && md"
         :key="isDark.toString()"
         ref="codemirror"
         v-model="md"

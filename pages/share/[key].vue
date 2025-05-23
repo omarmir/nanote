@@ -23,9 +23,23 @@
           </div>
         </div>
         <CommonDangerAlert v-if="error" class="mb-4">{{ error }}</CommonDangerAlert>
-        <MilkdownProvider v-if="md">
+        <MilkdownProvider v-if="isMD === true && md">
           <Milkdown v-model="md" :disabled="true" />
         </MilkdownProvider>
+        <NuxtCodeMirror
+          v-else-if="isMD === false && md"
+          :key="isDark.toString()"
+          ref="codemirror"
+          v-model="md"
+          :theme="isDark ? 'dark' : 'light'"
+          class="file-editor mt-4 w-full"
+          placeholder="Enter your content here..."
+          :auto-focus="true"
+          :line-wrapping="true"
+          :editable="false"
+          :basic-setup="true"
+          :extensions="[EditorView.lineWrapping]"
+          :indent-with-tab="true" />
       </div>
     </div>
   </div>
@@ -33,6 +47,9 @@
 <script lang="ts" setup>
 import Milkdown from '~/components/MilkdownEditor.vue'
 import { MilkdownProvider } from '@milkdown/vue'
+import { useDark } from '@vueuse/core'
+import { EditorView } from '@codemirror/view'
+
 setPageLayout('focus')
 const route = useRoute()
 const key = route.params.key as string
@@ -41,6 +58,8 @@ const error: Ref<string | null> = ref(null)
 const updated: Ref<Date | null> = ref(null)
 const md: Ref<string> = ref('')
 const isLoading: Ref<boolean> = ref(true)
+const isMD: Ref<boolean | null> = ref(null)
+const isDark = useDark()
 
 const fetchMarkdown = async () => {
   if (!key || typeof key !== 'string') {
@@ -67,6 +86,11 @@ const fetchMarkdown = async () => {
     if (nameMatch) {
       const { name: noteName } = nameMatch[1] ? getFileNameAndExtension(nameMatch[1]) : { name: key }
       name.value = noteName
+    }
+
+    const contentType = response.headers.get('Content-Type')
+    if (contentType) {
+      isMD.value = contentType === 'text/markdown'
     }
 
     // Create a reader for the stream

@@ -1,6 +1,6 @@
 import { defineEventHandlerWithError } from '../../wrappers/error'
 import { shared } from '~/server/db/schema'
-import { join, resolve } from 'node:path'
+import { join, resolve, extname } from 'node:path'
 import { notesPath } from '~/server/folder'
 import { access, constants, stat } from 'node:fs/promises'
 import { createReadStream } from 'node:fs'
@@ -50,9 +50,14 @@ export default defineEventHandlerWithError(async (event) => {
   const createdAt = createdAtTime.toISOString()
   const updatedAt = stats.mtime.toISOString()
 
+  // Determine content type based on file extension
+  const fileExtension = extname(fullPath).toLowerCase()
+
+  const contentType = fileExtension === '.md' ? 'text/markdown' : 'text/plain'
+
   // Set appropriate headers
   setHeaders(event, {
-    'Content-Type': 'text/markdown',
+    'Content-Type': contentType,
     'Content-Disposition': `attachment; filename="${fullPath.split('/').at(-1)}"`,
     'Cache-Control': 'no-cache',
     'Content-Created': createdAt,

@@ -17,6 +17,7 @@ export default defineEventHandlerWithNotebookAndNote(
 
     // Determine content type based on file extension
     const fileExtension = extname(fullPath).toLowerCase()
+
     const contentType = fileExtension === '.md' ? 'text/markdown' : 'text/plain'
     // Set appropriate headers
     setHeaders(event, {
