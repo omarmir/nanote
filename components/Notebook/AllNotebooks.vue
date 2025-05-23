@@ -36,21 +36,10 @@
           </thead>
           <tbody>
             <tr v-if="notebookStore.status === 'pending'" class="animate-pulse">
-              <td>
-                <div class="mb-2.5 h-2 w-4/5 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-              </td>
-              <td class="hidden lg:table-cell">
-                <div class="mb-2.5 h-2 w-2/5 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-              </td>
-              <td class="hidden lg:table-cell">
-                <div class="mb-2.5 h-2 w-2/5 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-              </td>
-              <td>
-                <div class="mb-2.5 h-2 w-2/5 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-              </td>
-              <td>
-                <div class="mb-2.5 h-2 w-2/5 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-              </td>
+              <td><CommonLoadingIndicator /></td>
+              <td><CommonLoadingIndicator class="place-content-center" /></td>
+              <td><CommonLoadingIndicator class="place-content-center" /></td>
+              <td><CommonLoadingIndicator class="place-content-center" /></td>
             </tr>
             <tr v-else-if="notebookStore.status === 'error'">
               <td colspan="5">

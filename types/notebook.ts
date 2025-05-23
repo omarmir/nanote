@@ -15,6 +15,7 @@ export type Note = {
   updatedAt: string | null
   notebook: string[]
   size?: number
+  isMarkdown: boolean
 }
 
 export type NotebookContents = {
@@ -64,7 +65,7 @@ export type DeleteNotebook = {
   deleted: boolean
 }
 
-export type SavingState = 'pending' | 'saving' | 'success' | 'error'
+export type SavingState = 'pending' | 'saving' | 'success' | 'error' | 'idle'
 
 export type SearchResult = {
   notebook: string[]

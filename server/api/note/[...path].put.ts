@@ -11,7 +11,6 @@ export default defineEventHandlerWithNotebookAndNote(
   async (event, notebook, note, fullPath, notebookPath): Promise<RenameNote> => {
     const body = await readBody(event)
 
-    // await waitforme(5000)
     // Validate and decode parameters
     if (!body?.newName) {
       throw createError({
@@ -23,7 +22,7 @@ export default defineEventHandlerWithNotebookAndNote(
 
     const cleanNewNote = body.newName.replace(/[\\/:*?"<>|]/g, '')
 
-    const newPath = join(notebookPath, `${cleanNewNote}.md`)
+    const newPath = join(notebookPath, cleanNewNote)
 
     try {
       await access(newPath, constants.F_OK)

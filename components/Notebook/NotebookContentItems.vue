@@ -14,7 +14,8 @@
           @click="outsideClick()">
           <div class="flex flex-col gap-1">
             <div class="flex flex-row items-center gap-2">
-              <Icon name="lucide:file" />
+              <Icon v-if="note.isMarkdown" name="lucide:file-text" />
+              <Icon v-else name="lucide:file" />
               <span class="text-sm">{{ note.name }}</span>
             </div>
             <div v-if="type === 'main' || (type === 'sidebar' && !settingsStore.settings.isDense)" class="ml-7 text-xs">
@@ -24,7 +25,7 @@
           </div>
         </NuxtLink>
         <div v-if="type === 'main'" class="flex flex-row place-content-end items-center gap-4">
-          <NoteDelete :note :notebooks="note.notebook" class="delete-button"></NoteDelete>
+          <NoteDelete :name="note.name" :notebooks="note.notebook" class="delete-button"></NoteDelete>
         </div>
       </div>
     </li>

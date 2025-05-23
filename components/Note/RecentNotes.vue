@@ -25,13 +25,21 @@
             </tr>
           </thead>
           <tbody>
+            <tr v-if="status === 'pending'">
+              <td><CommonLoadingIndicator /></td>
+              <td><CommonLoadingIndicator /></td>
+              <td><CommonLoadingIndicator class="place-content-center" /></td>
+              <td><CommonLoadingIndicator class="place-content-center" /></td>
+              <td><CommonLoadingIndicator /></td>
+            </tr>
             <tr
               v-for="note in notes"
               :key="note.notebook + note.name"
               class="border-b border-dashed border-neutral-200 last:border-b-0 dark:border-neutral-700">
               <td class="pr-2">
                 <div class="my-3 flex flex-row items-center gap-2 hover:text-gray-400 dark:hover:text-gray-100">
-                  <Icon name="lucide:file" />
+                  <Icon v-if="note.isMarkdown" name="lucide:file-text" />
+                  <Icon v-else name="lucide:file" />
                   <div class="flex flex-col justify-start">
                     <NuxtLink
                       :to="`/note/${notePathArrayJoiner(note.notebook)}/${note.name}`"
@@ -71,11 +79,15 @@ import type { Note } from '~/types/notebook'
 
 const { display } = defineProps<{ display: number }>()
 
-const { data: notes, execute } = useFetch<Note[]>('/api/notes', {
+const {
+  data: notes,
+  execute,
+  status
+} = useFetch<Note[]>('/api/notes', {
   immediate: false,
   lazy: true,
   query: { display }
 })
 
-await execute()
+execute()
 </script>
