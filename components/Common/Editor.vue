@@ -1,63 +1,73 @@
 <template>
-  <div>
-    <div class="-mx-3 mb-5 flex flex-wrap">
-      <div class="mb-6 w-full max-w-full px-3 sm:flex-none">
-        <div class="flex flex-col gap-2 divide-y divide-gray-300 dark:divide-gray-700">
-          <NoteName
-            v-if="note"
-            v-model="renamePending"
-            :notebooks="notebooksArray"
-            :name="note"
-            :saving-state
-            :is-focus
-            :is-read-only
-            @readonlymode="toggleReadOnlyMode()"
-            @focusmode="toggleFocusMode()"></NoteName>
-          <div class="flex flex-row items-center gap-4 py-2">
-            <div v-if="updated" class="text-sm text-gray-500 dark:text-gray-300">
-              {{
-                updated.toLocaleString('en-CA', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: 'numeric',
-                  minute: 'numeric',
-                  hour12: true
-                })
-              }}
-            </div>
+  <div class="-mx-3 mb-5 flex flex-wrap">
+    <div class="mb-6 w-full max-w-full px-3 sm:flex-none">
+      <div class="flex flex-col gap-2 divide-y divide-gray-300 dark:divide-gray-700">
+        <NoteName
+          v-if="note"
+          v-model="renamePending"
+          :notebooks="notebooksArray"
+          :name="note"
+          :saving-state
+          :is-focus
+          :is-read-only
+          @readonlymode="toggleReadOnlyMode()"
+          @focusmode="toggleFocusMode()"></NoteName>
+        <div class="flex flex-row items-center gap-4 py-2">
+          <div v-if="updated" class="text-sm text-gray-500 dark:text-gray-300">
+            {{
+              updated.toLocaleString('en-CA', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true
+              })
+            }}
           </div>
+          <CommonSavingIndicator :saving-state></CommonSavingIndicator>
         </div>
-        <CommonDangerAlert v-if="error" class="mb-4">{{ error }}</CommonDangerAlert>
-        <NuxtCodeMirror
-          :key="isDark.toString()"
-          ref="codemirror"
-          v-model="md"
-          :theme="isDark ? 'dark' : 'light'"
-          class="file-editor mt-4 w-full"
-          placeholder="Enter your content here..."
-          :auto-focus="true"
-          :line-wrapping="true"
-          :editable="true"
-          :basic-setup="true"
-          :extensions="[EditorView.lineWrapping]"
-          :indent-with-tab="true" />
       </div>
+      <CommonDangerAlert v-if="error" class="mb-4">{{ error }}</CommonDangerAlert>
+      <MilkdownProvider v-if="isMD === true">
+        <MilkdownEditor
+          v-model="md"
+          :note
+          :notebooks="notebooksArray"
+          :disabled="renamePending || isReadOnly"
+          :is-focus />
+      </MilkdownProvider>
+      <NuxtCodeMirror
+        v-else-if="isMD === false"
+        :key="isDark.toString()"
+        ref="codemirror"
+        v-model="md"
+        :theme="isDark ? 'dark' : 'light'"
+        class="file-editor mt-4 w-full"
+        placeholder="Enter your content here..."
+        :auto-focus="true"
+        :line-wrapping="true"
+        :editable="true"
+        :basic-setup="true"
+        :extensions="[EditorView.lineWrapping]"
+        :indent-with-tab="true" />
     </div>
   </div>
 </template>
-<script lang="ts" setup>
+<script setup lang="ts">
+import MilkdownEditor from '~/components/MilkdownEditor.vue'
+import { MilkdownProvider } from '@milkdown/vue'
 import { watchDebounced, useDark } from '@vueuse/core'
 import type { FetchError } from 'ofetch'
-import type { SavingState } from '~/types/notebook'
 import { EditorView } from '@codemirror/view'
+import type { SavingState } from '~/types/notebook'
 
+const { notebookPath } = defineProps<{ notebookPath: string | string[] }>()
+const isMD: Ref<boolean | null> = ref(null)
 const isDark = useDark()
-
-const route = useRoute()
-const note = route.params.file.at(-1) ?? ''
-const notebooksParams = route.params.file.slice(0, -1)
+const note = notebookPath.at(-1) ?? ''
+const notebooksParams = notebookPath.slice(0, -1)
 const notebooksArray = typeof notebooksParams === 'string' ? [notebooksParams] : notebooksParams
 const notebookAPIPath = notePathArrayJoiner([...notebooksArray, note])
 
@@ -92,6 +102,11 @@ const fetchMarkdown = async () => {
       updated.value = new Date(dateUpdated).getTime() !== 0 ? new Date(dateUpdated) : null
     }
 
+    const contentType = response.headers.get('Content-Type')
+    if (contentType) {
+      isMD.value = contentType === 'text/markdown'
+    }
+
     // Create a reader for the stream
     const reader = response.body.getReader()
     // Decode the Uint8Array chunks to text
@@ -120,7 +135,7 @@ watchDebounced(md, () => saveFile(md.value), { debounce: 500, maxWait: 5000 })
 
 const saveFile = async (markdownText: string) => {
   savingState.value = 'saving'
-  const blob = new Blob([markdownText], { type: 'text/markdown' })
+  const blob = new Blob([markdownText], { type: isMD.value ? 'text/markdown' : 'text/plain' })
 
   const formData = new FormData()
   formData.append('file', blob, note) // The file to upload
@@ -157,5 +172,9 @@ const toggleReadOnlyMode = () => (isReadOnly.value = !isReadOnly.value)
 
 .file-editor .cm-activeLine {
   @apply !bg-accent/10 dark:!bg-accent/20;
+}
+
+.file-editor .cm-line {
+  @apply text-base;
 }
 </style>
