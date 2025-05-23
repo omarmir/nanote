@@ -25,6 +25,13 @@
             </tr>
           </thead>
           <tbody>
+            <tr v-if="status === 'pending'">
+              <td><CommonLoadingIndicator /></td>
+              <td><CommonLoadingIndicator /></td>
+              <td><CommonLoadingIndicator /></td>
+              <td><CommonLoadingIndicator /></td>
+              <td><CommonLoadingIndicator /></td>
+            </tr>
             <tr
               v-for="note in notes"
               :key="note.notebook + note.name"
@@ -72,11 +79,15 @@ import type { Note } from '~/types/notebook'
 
 const { display } = defineProps<{ display: number }>()
 
-const { data: notes, execute } = useFetch<Note[]>('/api/notes', {
+const {
+  data: notes,
+  execute,
+  status
+} = useFetch<Note[]>('/api/notes', {
   immediate: false,
   lazy: true,
   query: { display }
 })
 
-await execute()
+execute()
 </script>
