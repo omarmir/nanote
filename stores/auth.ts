@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import type { FetchError } from 'ofetch'
 import type { Result } from '~/types/result'
+import { waitforme } from '~/utils/delay'
 
 export const useAuthStore = defineStore('auth', () => {
   const isLoggingIn: Ref<boolean> = ref(false)
@@ -34,6 +35,7 @@ export const useAuthStore = defineStore('auth', () => {
         body: { key: secretKey }
       })
       localStorage.setItem('isLoggedIn', 'true')
+      await waitforme(500) // TODO: We need to handle this better, we can't rely on a kludgy delay
       await navigateTo('/')
     } catch (err) {
       error.value = (err as FetchError).data?.message ?? 'Login failed'

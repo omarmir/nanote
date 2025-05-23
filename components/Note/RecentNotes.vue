@@ -28,8 +28,8 @@
             <tr v-if="status === 'pending'">
               <td><CommonLoadingIndicator /></td>
               <td><CommonLoadingIndicator /></td>
-              <td><CommonLoadingIndicator /></td>
-              <td><CommonLoadingIndicator /></td>
+              <td><CommonLoadingIndicator class="place-content-center" /></td>
+              <td><CommonLoadingIndicator class="place-content-center" /></td>
               <td><CommonLoadingIndicator /></td>
             </tr>
             <tr

@@ -21,13 +21,18 @@
       </div>
       <p v-if="store.error" class="text-sm font-medium text-red-500">{{ store.error }}</p>
       <div class="mt-2 flex flex-wrap place-content-end">
-        <CommonThemeButton type="submit" class="py-2">Login</CommonThemeButton>
+        <CommonThemeButton :show-loading="true" :is-loading="store.isLoggingIn" type="submit" class="py-2">
+          Login
+        </CommonThemeButton>
       </div>
     </form>
   </CommonBaseCard>
 </template>
 <script lang="ts" setup>
 import { useAuthStore } from '~/stores/auth'
+import { useDark } from '@vueuse/core'
+
+useDark()
 
 definePageMeta({
   layout: 'auth'
