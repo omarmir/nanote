@@ -78,9 +78,10 @@ const error: Ref<string | null> = ref(null)
 
 const md: Ref<string> = ref('')
 const updated: Ref<Date | null> = ref(null)
-const savingState: Ref<SavingState> = ref('success')
+const savingState: Ref<SavingState> = ref('idle')
 
 const fetchMarkdown = async () => {
+  savingState.value = 'pending'
   if (!note || !notebooksParams) {
     error.value = 'Notebook or note not specified'
   }
@@ -118,6 +119,7 @@ const fetchMarkdown = async () => {
       // Append each chunk to the ref value
       md.value += decoder.decode(value)
     }
+    savingState.value = 'success'
   } catch (err) {
     console.error('Download failed:', err)
     error.value = `Error fetching markdown: ${err}`
