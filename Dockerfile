@@ -35,7 +35,7 @@ ENV NODE_ENV=production
 
 WORKDIR /src
 
-RUN mkdir /src/notes
+COPY --from=build /src/server/db/migrations /src/server/db/migrations
 
 # Copy the built application
 COPY --from=build /src/.output /src/.output
