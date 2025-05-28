@@ -30,9 +30,6 @@
 </template>
 <script lang="ts" setup>
 import { useAuthStore } from '~/stores/auth'
-import { useDark } from '@vueuse/core'
-
-useDark()
 
 definePageMeta({
   layout: 'auth'

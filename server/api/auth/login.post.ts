@@ -25,5 +25,8 @@ export default defineEventHandlerWithError(async (event) => {
     path: '/'
   })
 
-  return sendRedirect(event, '/', 303)
+  return {
+    success: true,
+    token
+  }
 })
