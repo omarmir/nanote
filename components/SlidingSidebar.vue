@@ -83,19 +83,17 @@
 </template>
 <script lang="ts" setup>
 import { onClickOutside, useMagicKeys, whenever } from '@vueuse/core'
+import { useAuthStore } from '~/stores/auth'
 const { isSidebarOpen, outsideClick } = useSidebar()
 const input = useTemplateRef('sidebar')
 const showCommandPalette = ref(false)
 const notebookStore = useNotebookStore()
 const settingsStore = useSettingsStore()
+const authStore = useAuthStore()
+
 onClickOutside(input, () => (isSidebarOpen.value = false))
 
-const logout = async () => {
-  await $fetch('/api/auth/logout')
-  outsideClick()
-  localStorage.setItem('isLoggedIn', 'false')
-  navigateTo('/login')
-}
+const logout = async () => authStore.logout()
 
 const { ctrl_k } = useMagicKeys({
   passive: false,

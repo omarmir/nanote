@@ -1,23 +1,24 @@
 import { defineStore } from 'pinia'
 import type { FetchError } from 'ofetch'
 import type { Result } from '~/types/result'
-import { waitforme } from '~/utils/delay'
 
 export const useAuthStore = defineStore('auth', () => {
   const isLoggingIn: Ref<boolean> = ref(false)
   const error: Ref<string | null> = ref(null)
+  const isLoggedIn = ref(false)
 
-  const verify = async () => {
-    const isLoggedId = localStorage.getItem('isLoggedIn') === 'true'
-    if (!isLoggedId) return false
+  const verify = async (): Promise<Result<boolean>> => {
     try {
       const verify = await $fetch<Result<boolean>>('/api/auth/verify')
-      localStorage.setItem('isLoggedIn', verify.success.toString())
-      return verify.success
+      if (verify.success) isLoggedIn.value = verify.data
+      return verify
     } catch (err) {
       console.log(err)
       error.value = (err as FetchError).data.message
-      return false
+      return {
+        success: false,
+        message: error.value ?? ''
+      }
     }
   }
 
@@ -30,13 +31,14 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null // Clear previous errors
 
     try {
-      await $fetch(`/api/auth/login`, {
+      await $fetch.raw(`/api/auth/login`, {
         method: 'POST',
         body: { key: secretKey }
       })
-      localStorage.setItem('isLoggedIn', 'true')
-      await waitforme(500) // TODO: We need to handle this better, we can't rely on a kludgy delay
-      await navigateTo('/')
+
+      isLoggedIn.value = true
+
+      navigateTo('/')
     } catch (err) {
       error.value = (err as FetchError).data?.message ?? 'Login failed'
       localStorage.setItem('isLoggedIn', 'false')
@@ -47,15 +49,33 @@ export const useAuthStore = defineStore('auth', () => {
 
   const logout = async () => {
     await $fetch('/api/auth/logout')
-    localStorage.setItem('isLoggedIn', 'false')
+    isLoggedIn.value = false
     navigateTo('/login')
   }
+
+  const checkAuth = async () => {
+    try {
+      if (isLoggedIn.value) return true
+
+      const verified = await verify()
+
+      if (verified.success) {
+        return verified.data
+      }
+    } catch {
+      return false
+    }
+  }
+
+  watch(isLoggedIn, (newVal) => {
+    localStorage.setItem('isLoggedIn', newVal.toString())
+  })
 
   return {
     isLoggingIn,
     error,
     login,
     logout,
-    verify
+    checkAuth
   }
 })
