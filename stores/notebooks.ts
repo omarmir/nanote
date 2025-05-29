@@ -196,13 +196,14 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
-  const addNote = async (notebook: Notebook, note: string): Promise<Result<Note>> => {
+  const addNote = async (notebook: Notebook, note: string, isManualFile: boolean = false): Promise<Result<Note>> => {
     const notebookPath = [...notebook.notebooks, notebook.name]
     const { apiPath } = getNotePaths(notebookPath, note)
 
     try {
       const resp = await $fetch<Note>(`/api/note/${apiPath}`, {
-        method: 'POST'
+        method: 'POST',
+        body: { isManualFile }
       })
 
       const nb = getNotebookByPathArray(notebookPath, notebooks.value)

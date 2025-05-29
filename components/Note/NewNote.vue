@@ -6,14 +6,26 @@
     </button>
     <Teleport to="body">
       <CommonBaseDialog v-model="isOpen" title="New" :desc="`Add note or notebook inside ${notebook.name}`">
-        <template #desc>
+        <template v-if="!isManualFile" #desc>
           Add note or notebook inside
           <span class="font-bold text-teal-600">{{ notebook.name }}</span>
         </template>
+        <template v-else #desc>
+          Add file manually with the file extension inside
+          <span class="font-bold text-teal-600">{{ notebook.name }}</span>
+        </template>
+        <template #action>
+          <CommonToggleBox v-model="isManualFile">Manual</CommonToggleBox>
+        </template>
         <form class="w-full grow" @submit.prevent="addItem">
           <label for="search" class="sr-only mb-2 text-sm font-medium text-gray-900">Note</label>
-          <div class="w-full">
-            <CommonToggleInput v-model="newItem" v-model:toggle="isNotebook" placeholder="Name" title="Notebook?">
+          <div v-if="!isManualFile" class="w-full">
+            <CommonToggleInput
+              v-model="newItem"
+              v-model:toggle="isNotebook"
+              name="is-notebook"
+              placeholder="Name"
+              title="Notebook?">
               <template #label>
                 <div class="flex flex-row flex-nowrap gap-2">
                   <Icon name="lucide:book" class="text-accent"></Icon>
@@ -25,6 +37,20 @@
                 <Icon v-else name="lucide:file-plus" />
               </template>
             </CommonToggleInput>
+          </div>
+          <div v-else class="w-full">
+            <CommonButtonInput
+              v-model="newItem"
+              name="file-name"
+              placeholder="Full file name with the extension"
+              title="Name">
+              <template #label>
+                <span class="hidden text-sm font-bold">File name</span>
+              </template>
+              <template #icon>
+                <Icon name="lucide:file-plus" />
+              </template>
+            </CommonButtonInput>
           </div>
           <CommonDangerAlert v-if="error" class="mb-0 mr-4 mt-2">{{ error }}</CommonDangerAlert>
         </form>
@@ -42,16 +68,17 @@ const isOpen = ref(false)
 const newItem: Ref<string | null> = ref('')
 const isNotebook: Ref<boolean> = ref(false)
 const error: Ref<string | null> = ref(null)
-
+const isManualFile: Ref<boolean> = ref(false)
 const addItem = async () => {
   if (!newItem.value) {
     error.value = 'Name is required.'
     return
   }
 
-  const resp: Result<Note | Notebook> = isNotebook.value
-    ? await noteBookStore.addNotebook(newItem.value, notebook)
-    : await noteBookStore.addNote(notebook, newItem.value)
+  const resp: Result<Note | Notebook> =
+    isNotebook.value && !isManualFile.value
+      ? await noteBookStore.addNotebook(newItem.value, notebook)
+      : await noteBookStore.addNote(notebook, newItem.value, isManualFile.value)
 
   if (!resp.success) {
     error.value = resp.message

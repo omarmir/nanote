@@ -11,10 +11,10 @@ import { checkIfPathExists } from '~/server/utils'
  */
 export default defineEventHandlerWithNotebookAndNote(
   async (event, notebook, note, fullPath): Promise<Note> => {
-    /**
-     * ! By default new creations are Markdown
-     */
-    const mdPath = fullPath.concat('.md')
+    const body = await readBody(event)
+    const isManualFile = body.isManualFile ?? false
+
+    const mdPath = isManualFile ? fullPath : fullPath.concat('.md')
     let fileContent = Buffer.from('')
 
     // Parse form data if available
@@ -48,7 +48,7 @@ export default defineEventHandlerWithNotebookAndNote(
      */
     return {
       notebook: notebook,
-      name: `${note}.md`,
+      name: isManualFile ? note : `${note}.md`,
       createdAt: createdAtTime.toISOString(),
       updatedAt: stats.mtime.toISOString(),
       size: stats.size,

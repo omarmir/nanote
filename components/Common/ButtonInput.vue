@@ -1,12 +1,13 @@
 <template>
   <div class="flex">
-    <label for="search-dropdown" class="sr-only mb-2 text-sm font-medium text-gray-900 dark:text-white">
+    <label :for="name" class="mb-2 text-nowrap text-sm font-medium text-gray-900 dark:text-white">
       <slot name="label"></slot>
     </label>
     <slot name="indicator"></slot>
     <div class="relative w-full">
       <input
         v-model="model"
+        :name
         :class="leadingIndicator ? 'rounded-e-md' : 'rounded-md'"
         type="text"
         class="rounded-s-gray-100 z-20 block w-full border border-gray-300 bg-gray-50 p-2.5 pe-16 text-sm text-gray-900 focus:border-accent focus:outline-none focus:ring-accent dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-accent"
@@ -21,6 +22,10 @@
   </div>
 </template>
 <script lang="ts" setup>
-const { placeholder, leadingIndicator = false } = defineProps<{ placeholder: string; leadingIndicator?: boolean }>()
+const {
+  placeholder,
+  leadingIndicator = false,
+  name
+} = defineProps<{ placeholder: string; leadingIndicator?: boolean; name: string }>()
 const model = defineModel<string | null>({ required: true })
 </script>

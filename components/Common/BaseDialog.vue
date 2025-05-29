@@ -17,9 +17,14 @@
       class="z-[100] max-h-[85vh] w-[100%] animate-popIn rounded-md bg-white shadow-md focus:outline-none dark:bg-neutral-800 md:max-w-[70%] lg:max-w-[50%] xl:max-w-[40%]">
       <div class="flex flex-col gap-4" :class="isCommand ? 'p-2' : 'p-[25px]'">
         <div v-if="!hideTitleDesc" class="flex flex-col gap-4">
-          <h2 id="title" class="text-md font-medium text-accent" :class="{ 'text-red-600': theme === 'danger' }">
-            {{ title }}
-          </h2>
+          <div class="flex flex-row place-content-between items-center">
+            <h2 id="title" class="text-md font-medium text-accent" :class="{ 'text-red-600': theme === 'danger' }">
+              {{ title }}
+            </h2>
+            <div>
+              <slot name="action"></slot>
+            </div>
+          </div>
           <p id="desc" class="text-sm font-normal text-gray-900 dark:text-gray-400">
             <slot name="desc">
               {{ desc }}
