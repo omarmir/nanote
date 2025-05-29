@@ -7,10 +7,9 @@
       </span>
     </h3>
     <div class="my-2">
-      <h2 class="mt-6 text-base font-semibold">Markdown Cheat Sheet</h2>
-      <pre class="ml-0 whitespace-pre-line text-white">
-        <code>
-        # Heading  
+      <h3 class="text-base font-semibold">Markdown Cheat Sheet</h3>
+      <pre class="whitespace-pre-line py-2 text-white">
+        <code># Heading  
         **Bold**  
         *Italic*  
         - Bullet Item  
@@ -20,10 +19,37 @@
         ```
         // Code block
         console.log("Hello world");
-        ```
-        
-        </code>
-        </pre>
+        ```</code>
+      </pre>
+    </div>
+    <div class="my-2">
+      <h3 class="text-base font-semibold">Nanote specific directives</h3>
+      <div class="mt-2 flex flex-col gap-2">
+        <div>
+          <pre class="inline whitespace-pre-line pr-2 text-white">::file</pre>
+          <span>Create an inline file picker allowing you to upload files</span>
+        </div>
+        <div>
+          <pre class="inline whitespace-pre-line pr-2 text-white">::fileBlock</pre>
+          <span>Create an file block (a larger icon taking up the whole line) picker allowing you to upload files</span>
+        </div>
+        <div>
+          <pre class="inline whitespace-pre-line pr-2 text-white">::today</pre>
+          <span>Will replace the directive with todays's date</span>
+        </div>
+        <div>
+          <pre class="inline whitespace-pre-line pr-2 text-white">::now</pre>
+          <span>Will replace the directive with todays's date and time</span>
+        </div>
+        <div>
+          <pre class="inline whitespace-pre-line pr-2 text-white">::tomorrow</pre>
+          <span>Will replace the directive with tomorrow's date</span>
+        </div>
+        <div>
+          <pre class="inline whitespace-pre-line pr-2 text-white">::yesterday</pre>
+          <span>Will replace the directive with yesterday's date</span>
+        </div>
+      </div>
     </div>
   </CommonBaseCard>
 </template>
