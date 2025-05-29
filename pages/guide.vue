@@ -1,21 +1,29 @@
 <template>
-  <div class="max-w-3xl mx-auto p-6">
-    <h1 class="text-3xl font-bold mb-4">📘 How to Use Nanote</h1>
-    <p class="mb-6">Nanote is a simple, powerful markdown editor. Here's how to get started:</p>
+  <CommonBaseCard class="px-4 pb-2 pt-5 lg:px-9">
+    <h3 class="text-dark m-2 ml-0 flex flex-col items-start justify-center">
+      <span class="mr-3 text-lg font-medium dark:text-gray-300">How to use Nanote</span>
+      <span class="font-base mt-1 text-sm text-gray-600 dark:text-gray-400">
+        Nanote is a simple, powerful markdown editor. Here's how to get started:
+      </span>
+    </h3>
+    <div class="my-2">
+      <h2 class="mt-6 text-base font-semibold">Markdown Cheat Sheet</h2>
+      <pre class="ml-0 whitespace-pre-line text-white">
+        <code>
+        # Heading  
+        **Bold**  
+        *Italic*  
+        - Bullet Item  
+        [Link](https://example.com)  
+        `Inline code`  
 
-    <h2 class="text-xl font-semibold mt-6 mb-2">📝 Markdown Cheat Sheet</h2>
-    <pre class="bg-gray-800 text-white p-4 rounded-md overflow-x-auto">
-<code>
-# Heading  
-**Bold**  
-*Italic*  
-- Bullet Item  
-[Link](https://example.com)  
-`Inline code`  
-
-// Code block
-console.log("Hello world");
-</code>
-</pre>
-  </div>
+        ```
+        // Code block
+        console.log("Hello world");
+        ```
+        
+        </code>
+        </pre>
+    </div>
+  </CommonBaseCard>
 </template>
