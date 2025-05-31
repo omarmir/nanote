@@ -1,5 +1,5 @@
 <template>
-  <CommonButtonInput v-model="model" :placeholder :leading-indicator="true">
+  <CommonButtonInput v-model="model" :name :placeholder :leading-indicator="true">
     <template #indicator>
       <div
         class="z-10 inline-flex shrink-0 items-center rounded-s-md border border-e-0 border-gray-300 bg-gray-100 px-4 py-2.5 text-center text-sm font-medium text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
@@ -26,7 +26,7 @@
 <script lang="ts" setup>
 import { CommonButtonInput } from '#components'
 import { customAlphabet } from 'nanoid'
-const { placeholder, title } = defineProps<{ placeholder: string; title: string }>()
+const { placeholder, title, name } = defineProps<{ placeholder: string; title: string; name: string }>()
 const model = defineModel<string | null>({ required: true })
 const toggle = defineModel<boolean>('toggle', { required: true })
 const nanoid = customAlphabet('abcdefghijklmnop')
