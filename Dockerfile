@@ -44,7 +44,28 @@ COPY --from=build /src/.output /src/.output
 RUN npx puppeteer browsers install chrome
 
 # Install curl
-RUN apt update && apt install -y curl libglib2
+RUN apt update && apt install -y curl \
+  libglib2.0-0 \
+  libnss3 \
+  libx11-6 \
+  libxcomposite1 \
+  libxdamage1 \
+  libxext6 \
+  libxfixes3 \
+  libxrandr2 \
+  libxss1 \
+  libxtst6 \
+  libatk1.0-0 \
+  libatk-bridge2.0-0 \
+  libgtk-3-0 \
+  libasound2 \
+  libpangocairo-1.0-0 \
+  libpango-1.0-0 \
+  libcairo2 \
+  fonts-liberation \
+  ca-certificates \
+  --no-install-recommends && \
+  apt-get clean
 #&& rm -rf /var/lib/apt/lists/*
 
 
