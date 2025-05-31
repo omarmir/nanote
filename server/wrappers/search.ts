@@ -35,12 +35,12 @@ export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(h
     if (platform() === 'win32') {
       // Windows: Use PowerShell's Get-ChildItem to list folders and markdown files
       // We enclose fullPath in single quotes and escape it properly.
-      command = `Get-ChildItem -Path '${fullPath}' -Recurse | Where-Object { $_.PSIsContainer -or $_.Extension -eq '.md' } | ForEach-Object { $_.FullName }`
+      command = `Get-ChildItem -Path '${fullPath}' -Recurse | ForEach-Object { $_.FullName }`
       execOptions.shell = 'powershell.exe'
     } else {
       // Unix (Linux/macOS): Use find to search for directories (-type d) and markdown files (-type f -iname "*.md")
       const searchPath = escape([fullPath])
-      command = `find ${searchPath} \\( -type d -o \\( -type f -iname "*.md" \\) \\)`
+      command = `find ${searchPath} \\( -type d -o -type f \\)`
     }
 
     try {
@@ -56,26 +56,15 @@ export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(h
         const baseName = relativePath[relativePath.length - 1]
         if (!baseName.toLowerCase().includes(queryLower)) continue
 
-        if (baseName.toLowerCase().endsWith('.md')) {
-          // It's a markdown note: remove the extension and treat notebook as parent folder path.
-          const noteName = baseName.replace(/\.md$/i, '')
-          results.push({
-            notebook: relativePath.slice(0, -1),
-            name: noteName,
-            matchType: 'note',
-            snippet: `Note name contains "${rawQuery}"`,
-            score: 2
-          })
-        } else {
-          // It's a folder.
-          results.push({
-            notebook: relativePath,
-            name: baseName,
-            matchType: 'folder',
-            snippet: `Notebook name contains "${rawQuery}"`,
-            score: 1
-          })
-        }
+        const isFolder = line.endsWith('/') || !line.includes('.')
+
+        results.push({
+          notebook: relativePath.slice(0, -1),
+          name: baseName,
+          matchType: isFolder ? 'folder' : 'note',
+          snippet: `${isFolder ? 'Folder' : 'File'} name contains "${rawQuery}"`,
+          score: isFolder ? 1 : 2
+        })
       }
     } catch (error) {
       console.error(error)

@@ -9,7 +9,7 @@
         <Icon v-else-if="result.matchType === 'note'" name="lucide:file" class="size-5 grow-0" />
         <Icon v-else name="lucide:text" class="size-5 grow-0" />
         <div class="flex flex-col gap-1">
-          <span>{{ [...result.notebook, result.name].join('/') }}</span>
+          <span>{{ [...result.notebook, result.name?.replace(/\.md$/, '')].join('/') }}</span>
           <span class="italic">{{ result.snippet }}</span>
         </div>
       </button>

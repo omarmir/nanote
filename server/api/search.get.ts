@@ -5,7 +5,7 @@ import { execSync } from 'node:child_process'
 import escape from 'shell-escape'
 import type { SearchResult } from '~/types/notebook'
 import { notesPath } from '~/server/folder'
-import { defineEventHandlerWithSearch } from '~/server/wrappers/search'
+import { defineEventHandlerWithSearch } from '../wrappers/search'
 import { defineEventHandlerWithError } from '../wrappers/error'
 
 const CONTEXT_CHARS = 50
@@ -30,14 +30,14 @@ export default defineEventHandlerWithError(async (event): Promise<SearchResult[]
       const searchPath = escape([fullPath])
 
       if (osPlatform === 'linux') {
-        command = `grep -r -i -m1 -P -oH ".{0,${CONTEXT_CHARS}}${query}.{0,${CONTEXT_CHARS}}" --include="*.md" ${searchPath} || true`
+        command = `grep -r -i -m1 -P -oH ".{0,${CONTEXT_CHARS}}${query}.{0,${CONTEXT_CHARS}}" --binary-files=without-match ${searchPath} || true`
       } else if (osPlatform === 'darwin') {
-        command = `grep -r -i -m1 -E -oH ".{0,${CONTEXT_CHARS}}${query}.{0,${CONTEXT_CHARS}}" --include="*.md" ${searchPath} || true`
+        command = `grep -r -i -m1 -E -oH ".{0,${CONTEXT_CHARS}}${query}.{0,${CONTEXT_CHARS}}" --binary-files=without-match ${searchPath} || true`
       } else {
         // Windows fallback using PowerShell (slower but works)
         const escapedQuery = rawQuery.replace(/"/g, '""')
         command =
-          `Get-ChildItem -Path ${searchPath} -Recurse -Filter *.md | ` +
+          `Get-ChildItem -Path ${searchPath} -Recurse -File | ` +
           `Select-String -Pattern "${escapedQuery}" -CaseSensitive:$false | ` +
           `Select-Object -First ${MAX_RESULTS} | ` +
           `ForEach-Object { "$($_.Path)|~|$($_.Line)" }`
@@ -76,7 +76,7 @@ export default defineEventHandlerWithError(async (event): Promise<SearchResult[]
 
           return {
             notebook: relativePath.slice(0, relativePath.length - 1),
-            name: relativePath[1]?.replace(/\.md$/, ''),
+            name: relativePath[1],
             snippet: snippet.trim().slice(0, CONTEXT_CHARS * 2),
             score: 3,
             matchType: 'content'
