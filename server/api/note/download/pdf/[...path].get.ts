@@ -5,7 +5,7 @@ import contentDisposition from 'content-disposition'
 import { defineEventHandlerWithNotebookAndNote } from '~/server/wrappers/note'
 // @ts-expect-error type error
 import { convert } from 'mdpdf'
-import { tempPath, defaultPath } from '~/server/folder'
+import { defaultPath, tempPath } from '~/server/folder'
 import { customAlphabet } from 'nanoid'
 import { unlink } from 'node:fs/promises'
 
@@ -22,7 +22,11 @@ const deletePDF = async (filePath: string) => {
 
 export default defineEventHandlerWithNotebookAndNote(
   async (event, _cleanNotebook, cleanNote, fullPath): Promise<void> => {
-    const stylePath = join(defaultPath, 'public', 'pdf.css')
+    // TODO: Find a cleaner way to do this
+    const stylePath = import.meta.dev
+      ? join(defaultPath, 'public', 'pdf.css')
+      : join(defaultPath, '.output', 'public', 'pdf.css')
+
     const nanoid = customAlphabet('abcdefghijklmnop')
 
     const options = {

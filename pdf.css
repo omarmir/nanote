@@ -1,0 +1,18 @@
+@media print {
+  @page {
+    margin: 1cm 1.5cm; /* top-bottom, left-right */
+  }
+
+  body {
+    /* Optional: avoid extra spacing issues */
+    margin: 0;
+  }
+}
+
+html {
+  font-family: sans-serif;
+}
+
+img {
+  width: 100%;
+}
