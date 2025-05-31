@@ -5,12 +5,12 @@ services:
     ports:
       - '3030:3000'
     environment:
-      - NOTES_PATH=/notes
-      - UPLOAD_PATH=/uploads
+      - NOTES_PATH=/nanote/notes
+      - UPLOAD_PATH=/nanote/uploads
+      - CONFIG_PATH=/nanote/config
       - SECRET_KEY=<yourkey>
     volumes:
-      - /path/to/local/folder:/notes
-      - /path/to/local/uploads:/uploads
+      - /path/to/local/uploads/nanote/volume:/nanote
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:3000/api/health']
       interval: 30s # Check every 30 seconds

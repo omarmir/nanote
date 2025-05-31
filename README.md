@@ -62,12 +62,12 @@ Edit the compose file (specifically the volume mount point and environment varia
 
 ```yml
 environment:
-  - NOTES_PATH=/notes
-  - UPLOAD_PATH=/uploads
+  - NOTES_PATH=/nanote/notes
+  - UPLOAD_PATH=/nanote/uploads
+  - CONFIG_PATH=/nanote/config
   - SECRET_KEY=<yourkey>
 volumes:
-  - /path/to/local/folder:/notes
-  - /path/to/local/uploads:/uploads
+  - /path/to/local/uploads/nanote/volume:/nanote
 ```
 
 If these are not set then the app will save files locally within itself. The notes environment variable is where it will save your notes, and uploads is where any attachments are stored.
