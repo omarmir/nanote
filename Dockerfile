@@ -40,6 +40,9 @@ COPY --from=build /src/server/db/migrations /src/server/db/migrations
 # Copy the built application
 COPY --from=build /src/.output /src/.output
 
+# install puppeteer chrome
+RUN npx puppeteer browsers install chrome
+
 # Install curl
 RUN apt update && apt install -y curl
 #&& rm -rf /var/lib/apt/lists/*
