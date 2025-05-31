@@ -22,7 +22,7 @@ const deletePDF = async (filePath: string) => {
 
 export default defineEventHandlerWithNotebookAndNote(
   async (event, _cleanNotebook, cleanNote, fullPath): Promise<void> => {
-    const stylePath = join(defaultPath, 'pdf.css')
+    const stylePath = join(defaultPath, 'public', 'pdf.css')
     const nanoid = customAlphabet('abcdefghijklmnop')
 
     const options = {
