@@ -39,15 +39,16 @@ export default defineEventHandlerWithNotebookAndNote(
     }
 
     const pdfPath: string = await convert(options)
+    // Schedule the PDF deletion as soon as the path is known.
+    // This ensures cleanup is attempted even if subsequent stream/send operations fail.
+    event.waitUntil(deletePDF(pdfPath))
 
     // Set appropriate headers
     setHeaders(event, {
-      'Content-Type': 'pdf',
+      'Content-Type': 'application/pdf',
       'Content-Disposition': contentDisposition(`${cleanNote}.pdf`, { type: 'attachment' }),
       'Cache-Control': 'no-cache'
     })
-
-    event.waitUntil(deletePDF(pdfPath))
 
     // Return file stream
     return sendStream(event, createReadStream(pdfPath))
