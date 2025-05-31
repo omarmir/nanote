@@ -44,7 +44,7 @@ COPY --from=build /src/.output /src/.output
 RUN npx puppeteer browsers install chrome
 
 # Install curl
-RUN apt update && apt install -y curl
+RUN apt update && apt install -y curl libglib2
 #&& rm -rf /var/lib/apt/lists/*
 
 
