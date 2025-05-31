@@ -2,9 +2,10 @@ import { join } from 'node:path'
 import { existsSync, mkdirSync } from 'node:fs'
 
 // Define the default path (e.g., a "notes" folder in your project directory)
-const defaultNotesPath = join(process.cwd(), 'notes')
-const defaultUploadsPath = join(process.cwd(), 'uploads')
-const defaultConfigPath = join(process.cwd(), 'config')
+const defaultPath = process.cwd()
+const defaultNotesPath = join(defaultPath, 'notes')
+const defaultUploadsPath = join(defaultPath, 'uploads')
+const defaultConfigPath = join(defaultPath, 'config')
 // Get the environment variable value (if any)
 const envNotesPath = process.env.NOTES_PATH
 const envUploadsPath = process.env.UPLOAD_PATH
@@ -37,4 +38,18 @@ try {
 const dbSystemPath = join(configPath, 'data.db')
 const dbPath = `file:${dbSystemPath}`
 
-export { notesPath, uploadPath, envNotesPath, envUploadsPath, envConfigPath, configPath, dbPath, dbSystemPath }
+const tempPath = join(configPath, 'temp')
+if (!existsSync(tempPath)) mkdirSync(tempPath, { recursive: true })
+
+export {
+  notesPath,
+  uploadPath,
+  envNotesPath,
+  envUploadsPath,
+  envConfigPath,
+  configPath,
+  dbPath,
+  dbSystemPath,
+  tempPath,
+  defaultPath
+}

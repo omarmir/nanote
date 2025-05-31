@@ -45,6 +45,7 @@
     "focus-trap": "7.6.4",
     "jsonwebtoken": "^9.0.2",
     "material-file-icons": "^2.4.0",
+    "mdpdf": "^3.1.0",
     "milkdown-plugin-file": "0.2.1",
     "mime": "^4.0.7",
     "nanoid": "^5.1.5",
