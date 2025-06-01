@@ -1,4 +1,7 @@
 import { access, constants } from 'node:fs/promises'
+import jwt from 'jsonwebtoken'
+import SECRET_KEY from '~/server/key'
+import type { Result } from '~/types/result'
 
 export function waitforme(millisec: number) {
   return new Promise((resolve) => {
@@ -17,5 +20,17 @@ export const checkIfPathExists = async (fullPath: string): Promise<boolean> => {
       return false // Folder does not exist
     }
     throw error // Some other error occurred
+  }
+}
+
+export const checkLogin = (cookie?: string): Result<null> => {
+  if (!cookie) return { success: false, message: 'Please login first' }
+
+  try {
+    jwt.verify(cookie, SECRET_KEY)
+    return { success: true, data: null }
+  } catch (err) {
+    console.log(err)
+    return { success: false, message: 'Unable to verify authentication.' }
   }
 }
