@@ -23,12 +23,17 @@ export const checkIfPathExists = async (fullPath: string): Promise<boolean> => {
   }
 }
 
-export const checkLogin = (cookie?: string): Result<null> => {
+export const checkLogin = (
+  cookie?: string,
+  options?: jwt.VerifyOptions & {
+    complete?: false
+  }
+): Result<string | jwt.JwtPayload> => {
   if (!cookie) return { success: false, message: 'Please login first' }
 
   try {
-    jwt.verify(cookie, SECRET_KEY)
-    return { success: true, data: null }
+    const decoded = jwt.verify(cookie, SECRET_KEY, options ?? undefined)
+    return { success: true, data: decoded }
   } catch (err) {
     console.log(err)
     return { success: false, message: 'Unable to verify authentication.' }
