@@ -5,20 +5,18 @@ import type { SearchResult } from '~/types/notebook'
 
 export function useSearch() {
   const search: Ref<string | null> = ref(null)
-
+  const query: Ref<{ q: string | null }> = ref({ q: null })
   const debounced = useDebounce(search, 300)
 
   const {
     data: results,
     error,
     status,
-    refresh,
     clear
   } = useFetch<SearchResult[]>('/api/search', {
     immediate: false,
     lazy: true,
-    query: { q: debounced },
-    watch: false,
+    query,
     transform: (searchRes) => {
       return searchRes.map((res) => {
         return {
@@ -31,7 +29,7 @@ export function useSearch() {
 
   watch(debounced, () => {
     if (debounced.value && debounced.value?.length > 0) {
-      refresh()
+      query.value = { q: debounced.value }
     } else {
       clear()
     }
@@ -88,7 +86,6 @@ export function useSearch() {
     error,
     status,
     results,
-    clear,
     noResults,
     debounced
   }

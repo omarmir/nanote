@@ -53,13 +53,12 @@ import type { SearchResult } from '~/types/notebook'
 const router = useRouter()
 const isShown = defineModel<boolean>({ required: true })
 const searchInput = useTemplateRef('searchInput')
-const { search, clearSearch, results, clear, noResults, status, error, debounced } = useSearch()
+const { search, clearSearch, results, noResults, status, error, debounced } = useSearch()
 
 watch(isShown, async () => {
   await nextTick()
   if (!isShown.value) {
-    clear()
-    search.value = ''
+    clearSearch()
   } else {
     searchInput.value?.focus()
   }

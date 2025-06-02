@@ -12,10 +12,6 @@ type EventHandlerWithSearch<T extends EventHandlerRequest, D> = (
   searchResults: SearchResult[]
 ) => Promise<D>
 
-/**
- * For now we are going to keep the search specific to md files to keep it fast
- */
-
 export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(handler: EventHandlerWithSearch<T, D>) {
   return defineEventHandler(async (event) => {
     const fullPath = resolve(notesPath)
@@ -35,12 +31,14 @@ export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(h
     if (platform() === 'win32') {
       // Windows: Use PowerShell's Get-ChildItem to list folders and markdown files
       // We enclose fullPath in single quotes and escape it properly.
-      command = `Get-ChildItem -Path '${fullPath}' -Recurse | ForEach-Object { $_.FullName }`
+      // command = `Get-ChildItem -Path '${fullPath}' -Recurse | ForEach-Object { $_.FullName }`
+      command = `Get-ChildItem -Path '${fullPath}' -Recurse | ForEach-Object { if ($_.PSIsContainer) { "dir:$($_.FullName)" } else { "file:$($_.FullName)" } }`
       execOptions.shell = 'powershell.exe'
     } else {
-      // Unix (Linux/macOS): Use find to search for directories (-type d) and markdown files (-type f -iname "*.md")
+      // Unix (Linux/macOS): Use find to search for directories (-type d)
       const searchPath = escape([fullPath])
-      command = `find ${searchPath} \\( -type d -o -type f \\)`
+      command = `find ${searchPath} -type d -printf "dir:%p\n" -o -type f -printf "file:%p\n"`
+      // command = `find ${searchPath} \\( -type d -o -type f \\)`
     }
 
     try {
@@ -48,15 +46,16 @@ export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(h
       const lines = output.split('\n').filter((line) => line.trim() !== '')
 
       for (const line of lines) {
-        // Compute a relative path array by removing the fullPath prefix.
-        const relativePath = line.replace(fullPath, '').split(/[/\\]/).filter(Boolean)
+        const [type, full] = line.split(':', 2)
+        if (!type || !full) continue
+
+        const relativePath = full.replace(fullPath, '').split(/[/\\]/).filter(Boolean)
         if (relativePath.length === 0) continue
 
-        // The last segment is the base name (either a folder or a file)
         const baseName = relativePath[relativePath.length - 1]
         if (!baseName.toLowerCase().includes(queryLower)) continue
 
-        const isFolder = line.endsWith('/') || !line.includes('.')
+        const isFolder = type === 'dir'
 
         results.push({
           notebook: relativePath.slice(0, -1),
