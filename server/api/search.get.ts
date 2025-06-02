@@ -76,7 +76,7 @@ export default defineEventHandlerWithError(async (event): Promise<SearchResult[]
 
           return {
             notebook: relativePath.slice(0, relativePath.length - 1),
-            name: relativePath[1],
+            name: relativePath.at(-1) as string,
             snippet: snippet.trim().slice(0, CONTEXT_CHARS * 2),
             score: 3,
             matchType: 'content'
