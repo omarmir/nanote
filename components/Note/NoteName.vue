@@ -40,13 +40,13 @@
           <Icon name="lucide:house" class="size-6" />
           Home
         </NuxtLink>
-        <a
+        <!-- <a
           :href="`/api/note/download/pdf/${notebookAPIPath}`"
           target="_blank"
           class="flex flex-row items-center gap-2 text-gray-900 hover:text-accent-hover dark:text-gray-400 dark:hover:text-accent">
           <Icon name="carbon:generate-pdf" class="size-6" />
           PDF
-        </a>
+        </a> -->
       </div>
     </div>
     <CommonDangerAlert v-if="error" class="mb-4 w-full">{{ error }}</CommonDangerAlert>
