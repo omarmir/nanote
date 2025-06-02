@@ -21,7 +21,7 @@ export default defineEventHandlerWithError(async (event): Promise<SearchResult[]
     }
 
     const results: SearchResult[] = []
-    const query = escape([rawQuery.replace(/[^\w\- ]/g, '')])
+    const query = rawQuery.replace(/[^\w\- ]/g, '').replace(/([.*+?^${}()|[\]\\])/g, '\\$1') // escape regex special chars
     const osPlatform = platform()
 
     // 3. Optimized content search
