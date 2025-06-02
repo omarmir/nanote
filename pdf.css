@@ -3,16 +3,20 @@
     margin: 1cm 1.5cm; /* top-bottom, left-right */
   }
 
+  html {
+    font-family: sans-serif;
+  }
+
   body {
     /* Optional: avoid extra spacing issues */
     margin: 0;
   }
-}
 
-html {
-  font-family: sans-serif;
-}
-
-img {
-  width: 100%;
+  img {
+    width: 600px;
+    height: auto;
+    display: block;
+    margin: 2em auto;
+    page-break-inside: avoid;
+  }
 }

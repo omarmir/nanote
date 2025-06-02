@@ -14,9 +14,8 @@ export function defineEventHandlerWithAttachmentAuthError<T extends EventHandler
     const cookie = getCookie(event, 'token')
     const verifyResult = checkLogin(cookie)
     if (verifyResult.success) return await handler(event)
-
     // pdf export
-    const { q: token } = getQuery(event)
+    const { token } = getQuery(event)
     if (token && typeof token === 'string') {
       const file = event.context.params?.file
 

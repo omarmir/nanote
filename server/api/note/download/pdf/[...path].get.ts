@@ -8,26 +8,28 @@ import { convert } from 'mdpdf'
 import { defaultPath, tempPath } from '~/server/folder'
 import { customAlphabet } from 'nanoid'
 import { unlink } from 'node:fs/promises'
-import SECRET_KEY from '~/server/key'
 import jwt from 'jsonwebtoken'
+import SECRET_KEY from '~/server/key'
 
-const deletePDF = async (filePath: string) => {
+const deletePDF = async (pdfPath: string, tempMDPath: string) => {
   // Wait 1 minute (60,000 milliseconds)
   await new Promise((resolve) => setTimeout(resolve, 60000))
 
   try {
-    if (existsSync(filePath)) await unlink(filePath)
+    if (existsSync(pdfPath)) await unlink(pdfPath)
+    if (existsSync(tempMDPath)) await unlink(tempMDPath)
   } catch (error) {
-    console.error(`Error deleting file ${filePath}:`, error)
+    console.error(`Error deleting file ${pdfPath}:`, error)
   }
 }
 
-const appendTokenToUrl = (url: string) => {
-  const token = jwt.sign({ sub: url, exp: Math.floor(Date.now() / 1000) + 60 * 5 }, SECRET_KEY) // expires in 5 mins
+const appendTokenToUrl = (url: string, origin: string) => {
+  const fileName = url.split('/').at(-1)
+  const token = jwt.sign({ sub: fileName, exp: Math.floor(Date.now() / 1000) + 60 * 5 }, SECRET_KEY) // expires in 5 mins
   if (url.includes('?')) {
-    return `${url}&token=${token}`
+    return `${origin}${url}&token=${token}`
   } else {
-    return `${url}?token=${token}`
+    return `${origin}${url}?token=${token}`
   }
 }
 
@@ -38,6 +40,8 @@ export default defineEventHandlerWithNotebookAndNote(
       ? join(defaultPath, 'public', 'pdf.css')
       : join(defaultPath, '.output', 'public', 'pdf.css')
 
+    const { origin } = getRequestURL(event)
+
     const nanoid = customAlphabet('abcdefghijklmnop')
 
     const content = readFileSync(fullPath, 'utf8')
@@ -45,7 +49,7 @@ export default defineEventHandlerWithNotebookAndNote(
     const urlRegex = /(?<=\()\/?api\/attachment\/[^\s"')]+(?=\))/g // only for images since files wouldn't work anyway
 
     const newContent = content.replace(urlRegex, (matchedUrl) => {
-      const newUrlWithToken = appendTokenToUrl(matchedUrl)
+      const newUrlWithToken = appendTokenToUrl(matchedUrl, origin)
       return newUrlWithToken
     })
 
@@ -68,7 +72,7 @@ export default defineEventHandlerWithNotebookAndNote(
     const pdfPath: string = await convert(options)
     // Schedule the PDF deletion as soon as the path is known.
     // This ensures cleanup is attempted even if subsequent stream/send operations fail.
-    event.waitUntil(deletePDF(pdfPath))
+    event.waitUntil(deletePDF(pdfPath, tempNotePath))
 
     // Set appropriate headers
     setHeaders(event, {
