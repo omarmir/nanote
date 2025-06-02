@@ -6,6 +6,7 @@ settings:
 
 overrides:
   mdast-util-gfm-autolink-literal: github:omarmir/mdast-util-gfm-autolink-literal
+  milkdown-plugin-file: github:omarmir/milkdown-plugin-file
 
 importers:
 
@@ -96,8 +97,8 @@ importers:
         specifier: ^3.1.0
         version: 3.1.0(typescript@5.8.3)
       milkdown-plugin-file:
-        specifier: 0.2.1
-        version: 0.2.1(@codemirror/language@6.11.0)(@codemirror/state@6.5.2)(@codemirror/view@6.36.8)(@milkdown/core@7.10.1)(@milkdown/prose@7.10.1)(typescript@5.8.3)
+        specifier: github:omarmir/milkdown-plugin-file
+        version: https://codeload.github.com/omarmir/milkdown-plugin-file/tar.gz/4e5cca9845285e01f0c29da8c29eeb22b6973000(@codemirror/language@6.11.0)(@codemirror/state@6.5.2)(@codemirror/view@6.36.8)(@milkdown/core@7.10.1)(@milkdown/prose@7.10.1)(typescript@5.8.3)
       mime:
         specifier: ^4.0.7
         version: 4.0.7
@@ -4733,8 +4734,9 @@ packages:
     resolution: {integrity: sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==}
     engines: {node: '>=8.6'}
 
-  milkdown-plugin-file@0.2.1:
-    resolution: {integrity: sha512-b+ZH3M8ffBv12UK9I76FlWJY51HzkvoVLsbc/ZfZquaMQ4XCKnFO3pYDjPpDht7LkcYHQwIROLfUue6f0oz9ww==}
+  milkdown-plugin-file@https://codeload.github.com/omarmir/milkdown-plugin-file/tar.gz/4e5cca9845285e01f0c29da8c29eeb22b6973000:
+    resolution: {tarball: https://codeload.github.com/omarmir/milkdown-plugin-file/tar.gz/4e5cca9845285e01f0c29da8c29eeb22b6973000}
+    version: 0.2.1
     peerDependencies:
       '@milkdown/core': ^7.6.3
       '@milkdown/prose': ^7.6.3
@@ -12722,7 +12724,7 @@ snapshots:
       braces: 3.0.3
       picomatch: 2.3.1
 
-  milkdown-plugin-file@0.2.1(@codemirror/language@6.11.0)(@codemirror/state@6.5.2)(@codemirror/view@6.36.8)(@milkdown/core@7.10.1)(@milkdown/prose@7.10.1)(typescript@5.8.3):
+  milkdown-plugin-file@https://codeload.github.com/omarmir/milkdown-plugin-file/tar.gz/4e5cca9845285e01f0c29da8c29eeb22b6973000(@codemirror/language@6.11.0)(@codemirror/state@6.5.2)(@codemirror/view@6.36.8)(@milkdown/core@7.10.1)(@milkdown/prose@7.10.1)(typescript@5.8.3):
     dependencies:
       '@milkdown/core': 7.10.1
       '@milkdown/ctx': 7.10.1

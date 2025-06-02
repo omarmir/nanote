@@ -10,6 +10,7 @@
           :saving-state
           :is-focus
           :is-read-only
+          @pdfexport="pdfExport()"
           @readonlymode="toggleReadOnlyMode()"
           @focusmode="toggleFocusMode()"></NoteName>
         <div class="flex flex-row items-center gap-4 py-2">
@@ -32,6 +33,7 @@
       <CommonDangerAlert v-if="error" class="mb-4">{{ error }}</CommonDangerAlert>
       <MilkdownProvider v-if="isMD === true && !error">
         <MilkdownEditor
+          ref="editor"
           v-model="md"
           :note
           :notebooks="notebooksArray"
@@ -79,6 +81,10 @@ const error: Ref<string | null> = ref(null)
 const md: Ref<string> = ref('')
 const updated: Ref<Date | null> = ref(null)
 const savingState: Ref<SavingState> = ref('idle')
+
+const editor = useTemplateRef('editor')
+
+const pdfExport = () => editor.value?.retrieveEditorContent()
 
 const fetchMarkdown = async () => {
   savingState.value = 'pending'

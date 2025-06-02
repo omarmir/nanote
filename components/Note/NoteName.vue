@@ -47,6 +47,12 @@
           <Icon name="carbon:generate-pdf" class="size-6" />
           PDF
         </a> -->
+        <button
+          class="flex flex-row items-center gap-2 text-gray-900 hover:text-accent-hover dark:text-gray-400 dark:hover:text-accent"
+          @click="emit('pdfexport')">
+          <Icon name="carbon:generate-pdf" class="size-6" />
+          PDF
+        </button>
       </div>
     </div>
     <CommonDangerAlert v-if="error" class="mb-4 w-full">{{ error }}</CommonDangerAlert>
@@ -78,5 +84,5 @@ const error: Ref<string | null> = ref(null)
 
 const noteDeleted = () => navigateTo('/')
 
-defineEmits(['focusmode', 'readonlymode'])
+const emit = defineEmits(['focusmode', 'readonlymode', 'pdfexport'])
 </script>

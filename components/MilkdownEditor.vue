@@ -19,6 +19,7 @@ import '@milkdown/crepe/theme/nord.css'
 import '@milkdown/crepe/theme/nord-dark.css'
 import { filePicker, filePickerNodeBlock, filePickerConfig, clearContentAndAddBlockType } from 'milkdown-plugin-file' //'@/utils/md-plugins/milkdown-plugin-file/src'
 import { dateTimeTextSubs } from '~/milkdown/text-sub'
+import { getHTML } from '@milkdown/utils'
 
 const model = defineModel<string>({ required: true })
 const { disabled, isFocus, note, notebooks } = defineProps<{
@@ -31,7 +32,7 @@ const { disabled, isFocus, note, notebooks } = defineProps<{
 const path = notebooks && note ? notePathArrayJoiner([...notebooks, note]) : null
 const customUploader = path ? createUploader() : null
 
-useEditor((root) => {
+const editor = useEditor((root) => {
   const crepe = new Crepe({
     root,
     defaultValue: model.value,
@@ -107,6 +108,15 @@ useEditor((root) => {
     .use(dateTimeTextSubs)
   return crepe
 })
+
+const retrieveEditorContent = () => {
+  const htmlContent = editor.get()?.action(getHTML())
+  console.log(htmlContent)
+  // Now you have the HTML string of your editor's content
+}
+
+defineExpose({ retrieveEditorContent })
+
 const settingsStore = useSettingsStore()
 </script>
 <style lang="postcss">
