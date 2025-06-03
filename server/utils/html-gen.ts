@@ -2,6 +2,8 @@
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remarkHtml from 'remark-html'
+import jwt from 'jsonwebtoken'
+import SECRET_KEY from '~/server/key'
 
 export const convertMarkdownToHtml = async (markdownContent: string) => {
   try {
@@ -16,32 +18,12 @@ export const convertMarkdownToHtml = async (markdownContent: string) => {
     throw error
   }
 }
-
-// --- Example Usage ---
-// const markdownString = `
-// # Welcome to Remark Example!
-
-// This is a paragraph with **bold text** and *italic text*.
-
-// ## Features:
-// * Lists are easy.
-// * Code blocks too:
-//     \`\`\`javascript
-//     const message = "Hello, Remark!";
-//     console.log(message);
-//     \`\`\`
-
-// \`Inline code\` is also supported.
-
-// [Remark's GitHub Repository](https://github.com/remarkjs/remark)
-// `
-
-// convertMarkdownToHtml(markdownString)
-//   .then((htmlOutput) => {
-//     console.log('--- Converted HTML ---')
-//     console.log(htmlOutput)
-//     console.log('----------------------')
-//   })
-//   .catch((error) => {
-//     console.error('Failed to convert Markdown:', error)
-//   })
+export const appendTokenToUrl = (url: string, origin: string) => {
+  const fileName = url.split('/').at(-1)
+  const token = jwt.sign({ sub: fileName, exp: Math.floor(Date.now() / 1000) + 60 * 5 }, SECRET_KEY) // expires in 5 mins
+  if (url.includes('?')) {
+    return `${origin}${url}&token=${token}`
+  } else {
+    return `${origin}${url}?token=${token}`
+  }
+}

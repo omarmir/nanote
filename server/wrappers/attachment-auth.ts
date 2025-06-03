@@ -16,6 +16,7 @@ export function defineEventHandlerWithAttachmentAuthError<T extends EventHandler
     if (verifyResult.success) return await handler(event)
     // pdf export
     const { token } = getQuery(event)
+
     if (token && typeof token === 'string') {
       const file = event.context.params?.file
 
@@ -27,7 +28,7 @@ export function defineEventHandlerWithAttachmentAuthError<T extends EventHandler
         })
       }
 
-      const verifyPDF = checkLogin(token, { subject: file }) as Result<jwt.JwtPayload>
+      const verifyPDF = checkLogin(token, { subject: decodeURI(file) }) as Result<jwt.JwtPayload>
       if (verifyPDF.success) return await handler(event)
     }
 
