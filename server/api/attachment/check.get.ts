@@ -1,9 +1,10 @@
 import { access, constants } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { uploadPath } from '~/server/folder'
-import { defineEventHandlerWithError } from '~/server/wrappers/error'
+import { defineEventHandlerWithAttachmentAuthError } from '~/server/wrappers/attachment-auth'
 
-export default defineEventHandlerWithError(async (event) => {
+// This route is used by the milkdown plugin to see if the attachment is accessible
+export default defineEventHandlerWithAttachmentAuthError(async (event) => {
   const query = getQuery(event)
   const fileURL = query.url as string
 
