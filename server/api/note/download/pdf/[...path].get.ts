@@ -1,13 +1,10 @@
 // import { sendStream, setHeaders } from 'h3'
-import { readFileSync, writeFileSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import contentDisposition from 'content-disposition'
 import { defineEventHandlerWithNotebookAndNote } from '~/server/wrappers/note'
-import { customAlphabet } from 'nanoid'
 import { appendTokenToUrl, convertMarkdownToHtml } from '~/server/utils/html-gen'
 import { blockRegex, regex as inlineRegex } from 'milkdown-plugin-file/regex'
 import puppeteer from 'puppeteer'
-import { tempPath } from '~/server/folder'
-import { join } from 'node:path'
 import { getIcon } from 'material-file-icons'
 import { settings } from '~/server/db/schema'
 
@@ -57,7 +54,7 @@ export default defineEventHandlerWithNotebookAndNote(
   async (event, _cleanNotebook, cleanNote, fullPath): Promise<Uint8Array<ArrayBufferLike> | undefined> => {
     const { origin } = getRequestURL(event)
 
-    const nanoid = customAlphabet('abcdefghijklmnop')
+    // const nanoid = customAlphabet('abcdefghijklmnop')
 
     const content = readFileSync(fullPath, 'utf8')
     // const urlRegex = /(?<=\()\/?api\/attachment\/[^\s"')]+(?=\))/g // only for images since files wouldn't work anyway
@@ -73,8 +70,8 @@ export default defineEventHandlerWithNotebookAndNote(
     htmlContent = replaceFileContent(htmlContent, blockRegex)
     htmlContent = replaceFileContent(htmlContent, inlineRegex)
 
-    const tempNotePath = join(tempPath, `${nanoid()}_${cleanNote}.html`)
-    writeFileSync(tempNotePath, htmlContent, 'utf8')
+    // const tempNotePath = join(tempPath, `${nanoid()}_${cleanNote}.html`)
+    // writeFileSync(tempNotePath, htmlContent, 'utf8')
 
     const pdf = await printPDF(htmlContent)
 
