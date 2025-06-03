@@ -40,13 +40,13 @@
           <Icon name="lucide:house" class="size-6" />
           Home
         </NuxtLink>
-        <a
-          :href="`/api/note/download/pdf/${notebookAPIPath}`"
-          target="_blank"
-          class="flex flex-row items-center gap-2 text-gray-900 hover:text-accent-hover dark:text-gray-400 dark:hover:text-accent">
-          <Icon name="carbon:generate-pdf" class="size-6" />
+        <button
+          class="flex flex-row items-center gap-2 text-gray-900 hover:text-accent-hover dark:text-gray-400 dark:hover:text-accent"
+          @click="exportPDF()">
+          <Icon v-if="isExporting" name="lucide:loader-circle" class="size-6 animate-spin text-amber-500"></Icon>
+          <Icon v-else name="carbon:generate-pdf" class="size-6" />
           PDF
-        </a>
+        </button>
       </div>
     </div>
     <CommonDangerAlert v-if="error" class="mb-4 w-full">{{ error }}</CommonDangerAlert>
@@ -79,4 +79,30 @@ const error: Ref<string | null> = ref(null)
 const noteDeleted = () => navigateTo('/')
 
 defineEmits(['focusmode', 'readonlymode'])
+
+const isExporting = ref(false)
+
+const exportPDF = async () => {
+  isExporting.value = true
+  try {
+    // Fetch binary PDF data from your API endpoint as ArrayBuffer
+    const pdfArrayBuffer = await $fetch<ArrayBuffer>(`/api/note/download/pdf/${notebookAPIPath}`, {
+      responseType: 'arrayBuffer'
+    })
+
+    // Create a Blob from the ArrayBuffer with PDF mime type
+    const pdfBlob = new Blob([pdfArrayBuffer], { type: 'application/pdf' })
+
+    // Optionally convert Blob to File if your downloadFile function expects File
+    // (Blob works fine for URL.createObjectURL too)
+    const pdfFile = new File([pdfBlob], `${noteName}.pdf`, { type: 'application/pdf' })
+
+    // Download the file using your helper
+    downloadFile(pdfFile)
+  } catch (error) {
+    console.error('Failed to export PDF:', error)
+  } finally {
+    isExporting.value = false
+  }
+}
 </script>

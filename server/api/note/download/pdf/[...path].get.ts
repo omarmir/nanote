@@ -13,7 +13,25 @@ const printPDF = async (html: string) => {
   try {
     const page = await browser.newPage()
     await page.setContent(html, { waitUntil: 'networkidle0' })
-    await page.addStyleTag({ content: 'img {max-width: 100%;} html { margin: 2rem; font-family: sans-serif; }' })
+    await page.addStyleTag({
+      content: `@media print {
+        @page {
+          margin: 1cm 1.5cm; /* top-bottom, left-right */
+        }
+        html {
+          font-family: sans-serif;
+        }
+
+        img {
+          max-width: 100%;
+        }
+
+        body {
+          /* Optional: avoid extra spacing issues */
+          margin: 0;
+        }
+      }`
+    })
 
     const paraSpacing = await db.query.settings.findFirst({
       where: eq(settings.setting, 'isParagraphSpaced')
@@ -29,6 +47,7 @@ const printPDF = async (html: string) => {
   } catch (error) {
     console.log(error)
     await browser.close()
+    throw new Error(`PDF generation failed: ${error instanceof Error ? error.message : String(error)}`)
   }
 }
 
@@ -40,8 +59,8 @@ const replaceFileContent = (htmlContent: string, regex: RegExp) => {
     const icon = getIcon(title)
     if (title) {
       return `
-            <span style="display:flex; flex-direction: row; align-items: center; gap: 0.25rem">
-              File: [<span style="width: 1rem; height: 1rem">${icon.svg}</span> ${title.trim()}]
+            <span style="display: inline-flex; flex-direction: row; align-items: center; gap: 0.25rem;">
+            ${regex === blockRegex ? 'File: ' : ''}[<span style="display: inline-block; width: 1rem; height: 1rem;">${icon.svg}</span> ${title.trim()}]
             </span>
             ` // .trim() to remove any potential leading/trailing spaces within the quotes
     }
@@ -50,38 +69,36 @@ const replaceFileContent = (htmlContent: string, regex: RegExp) => {
   return htmlContent
 }
 
-export default defineEventHandlerWithNotebookAndNote(
-  async (event, _cleanNotebook, cleanNote, fullPath): Promise<Uint8Array<ArrayBufferLike> | undefined> => {
-    const { origin } = getRequestURL(event)
+export default defineEventHandlerWithNotebookAndNote(async (event, _cleanNotebook, cleanNote, fullPath) => {
+  const { origin } = getRequestURL(event)
 
-    // const nanoid = customAlphabet('abcdefghijklmnop')
+  // const nanoid = customAlphabet('abcdefghijklmnop')
 
-    const content = readFileSync(fullPath, 'utf8')
-    // const urlRegex = /(?<=\()\/?api\/attachment\/[^\s"')]+(?=\))/g // only for images since files wouldn't work anyway
-    const urlRegex = /(?<=\(<|\()\/api\/attachment\/.*?(?=[)>])/g
+  const content = readFileSync(fullPath, 'utf8')
+  // const urlRegex = /(?<=\()\/?api\/attachment\/[^\s"')]+(?=\))/g // only for images since files wouldn't work anyway
+  const urlRegex = /(?<=\(<|\()\/api\/attachment\/.*?(?=[)>])/g
 
-    let newContent = ''
-    newContent = content.replace(urlRegex, (matchedUrl) => {
-      const newUrlWithToken = appendTokenToUrl(matchedUrl, origin)
-      return newUrlWithToken
-    })
+  let newContent = ''
+  newContent = content.replace(urlRegex, (matchedUrl) => {
+    const newUrlWithToken = appendTokenToUrl(matchedUrl, origin)
+    return newUrlWithToken
+  })
 
-    let htmlContent: string = await convertMarkdownToHtml(newContent)
-    htmlContent = replaceFileContent(htmlContent, blockRegex)
-    htmlContent = replaceFileContent(htmlContent, inlineRegex)
+  let htmlContent: string = await convertMarkdownToHtml(newContent)
+  htmlContent = replaceFileContent(htmlContent, blockRegex)
+  htmlContent = replaceFileContent(htmlContent, inlineRegex)
 
-    // const tempNotePath = join(tempPath, `${nanoid()}_${cleanNote}.html`)
-    // writeFileSync(tempNotePath, htmlContent, 'utf8')
+  // const tempNotePath = join(tempPath, `${nanoid()}_${cleanNote}.html`)
+  // writeFileSync(tempNotePath, htmlContent, 'utf8')
 
-    const pdf = await printPDF(htmlContent)
+  const pdf = await printPDF(htmlContent)
 
-    // Set appropriate headers
-    setHeaders(event, {
-      'Content-Type': 'application/pdf',
-      'Content-Disposition': contentDisposition(`${cleanNote}.pdf`, { type: 'attachment' }),
-      'Cache-Control': 'no-cache'
-    })
+  // Set appropriate headers
+  setHeaders(event, {
+    'Content-Type': 'application/pdf',
+    'Content-Disposition': contentDisposition(`${cleanNote}.pdf`, { type: 'attachment' }),
+    'Cache-Control': 'no-cache'
+  })
 
-    return pdf
-  }
-)
+  return send(event, pdf)
+})
