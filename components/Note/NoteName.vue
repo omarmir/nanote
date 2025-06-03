@@ -9,7 +9,7 @@
           aria-label="Rename name"
           aria-details="Allows you to rename the note" />
       </h1>
-      <div class="flex flex-row gap-4">
+      <div class="flex flex-row flex-wrap gap-4 md:flex-nowrap">
         <NoteRename v-model="note" :name :notebooks></NoteRename>
         <NoteDelete :name :notebooks @deleted="noteDeleted">
           <div
@@ -40,13 +40,13 @@
           <Icon name="lucide:house" class="size-6" />
           Home
         </NuxtLink>
-        <!-- <a
+        <a
           :href="`/api/note/download/pdf/${notebookAPIPath}`"
           target="_blank"
           class="flex flex-row items-center gap-2 text-gray-900 hover:text-accent-hover dark:text-gray-400 dark:hover:text-accent">
           <Icon name="carbon:generate-pdf" class="size-6" />
           PDF
-        </a> -->
+        </a>
       </div>
     </div>
     <CommonDangerAlert v-if="error" class="mb-4 w-full">{{ error }}</CommonDangerAlert>

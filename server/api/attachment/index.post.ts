@@ -4,10 +4,10 @@ import path from 'node:path'
 import { access, existsSync } from 'node:fs'
 import { uploadPath } from '~/server/folder'
 import type { MultiPartData } from '~/types/upload'
-import { defineEventHandlerWithError } from '~/server/wrappers/error'
+import { defineEventHandlerWithAttachmentAuthError } from '~/server/wrappers/attachment-auth'
 // import { waitforme } from '~/server/utils'
 
-export default defineEventHandlerWithError(async (event) => {
+export default defineEventHandlerWithAttachmentAuthError(async (event) => {
   const formData = await readMultipartFormData(event)
   if (!formData) {
     throw createError({

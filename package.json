@@ -45,14 +45,17 @@
     "focus-trap": "7.6.4",
     "jsonwebtoken": "^9.0.2",
     "material-file-icons": "^2.4.0",
-    "mdpdf": "^3.1.0",
     "milkdown-plugin-file": "0.2.1",
     "mime": "^4.0.7",
     "nanoid": "^5.1.5",
     "nuxt": "^3.17.2",
     "nuxt-codemirror": "0.0.16",
     "pinia": "3.0.2",
+    "puppeteer": "^24.10.0",
+    "remark-html": "^16.0.1",
+    "remark-parse": "^11.0.0",
     "shell-escape": "^0.2.0",
+    "unified": "^11.0.5",
     "view": "link:@milkdown/prose/view",
     "vue": "latest",
     "vue-router": "latest"
@@ -86,7 +89,8 @@
   },
   "pnpm": {
     "overrides": {
-      "mdast-util-gfm-autolink-literal": "github:omarmir/mdast-util-gfm-autolink-literal"
+      "mdast-util-gfm-autolink-literal": "github:omarmir/mdast-util-gfm-autolink-literal",
+      "milkdown-plugin-file": "github:omarmir/milkdown-plugin-file"
     }
   }
 }

@@ -1,5 +1,4 @@
-import jwt from 'jsonwebtoken'
-import SECRET_KEY from '~/server/key'
+import { checkLogin } from '../utils'
 
 export default defineEventHandler((event) => {
   // return // bypass for dev
@@ -7,28 +6,19 @@ export default defineEventHandler((event) => {
     !event.path.startsWith('/api/') ||
     event.path === '/api/auth/login' ||
     event.path === '/api/health' ||
-    event.path.startsWith('/api/share')
+    event.path.startsWith('/api/share') ||
+    event.path.startsWith('/api/attachment/') // Attachment has its own auth logic
   )
     return
 
   const cookie = getCookie(event, 'token')
 
-  if (!cookie) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: 'Unauthorized',
-      message: 'Please login first'
-    })
-  }
+  const verifyResult = checkLogin(cookie)
 
-  try {
-    jwt.verify(cookie, SECRET_KEY)
-  } catch (err) {
-    console.log(err)
+  if (!verifyResult.success)
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized',
-      message: 'Unable to verify authentication.'
+      message: verifyResult.message
     })
-  }
 })

@@ -1,36 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
 export default defineNuxtConfig({
-  nitro: {
-    hooks: {
-      'build:before': async (nitro) => {
-        // Copy necessary files to the server output directory
-        const fs = await import('node:fs/promises')
-        const path = await import('node:path')
-        const srcAssets = path.resolve('node_modules/mdpdf/dist/src/assets')
-        const srcLayouts = path.resolve('node_modules/mdpdf/dist/src/layouts')
-
-        const destAssets = path.resolve(
-          nitro.options.output.serverDir,
-          'node_modules',
-          'mdpdf',
-          'dist',
-          'src',
-          'assets'
-        )
-        const destLayouts = path.resolve(
-          nitro.options.output.serverDir,
-          'node_modules',
-          'mdpdf',
-          'dist',
-          'src',
-          'layouts'
-        )
-        await fs.cp(srcAssets, destAssets, { recursive: true })
-        await fs.cp(srcLayouts, destLayouts, { recursive: true })
-      }
-    }
-  },
   app: {
     head: {
       title: 'Nanote', // default fallback title
