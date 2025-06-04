@@ -6,7 +6,7 @@ import { readdir, rm, unlink, lstat } from 'node:fs/promises'
 let authCookie: string
 
 export async function authenticate() {
-  const token = jwt.sign({ app: 'nanote' }, 'nanote', { expiresIn: '7d' })
+  const token = jwt.sign({ app: 'nanote' }, 'nanote', { expiresIn: '7d', audience: 'authorized' })
   authCookie = `token=${token}`
 }
 

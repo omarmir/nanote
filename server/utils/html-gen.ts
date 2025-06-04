@@ -44,7 +44,7 @@ export const replaceFileContent = (htmlContent: string, isBlock: boolean, regex:
 }
 
 export const printPDF = async (html: string, origin: string, hostname: string) => {
-  const token = jwt.sign({ app: 'nanote' }, SECRET_KEY, { expiresIn: '7d' })
+  const token = jwt.sign({ app: 'nanote' }, SECRET_KEY, { expiresIn: '7d', audience: 'authorized' })
 
   const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] })
   // Create a new browser context
