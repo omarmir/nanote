@@ -14,7 +14,7 @@ export default defineEventHandlerWithError(async (event): Promise<Result<boolean
   }
 
   try {
-    jwt.verify(cookie, SECRET_KEY)
+    jwt.verify(cookie, SECRET_KEY, { audience: 'authorized' })
     return {
       success: true,
       data: true

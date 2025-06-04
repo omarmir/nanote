@@ -3,7 +3,10 @@ import { shared } from '~/server/db/schema'
 import { join, resolve, extname } from 'node:path'
 import { notesPath } from '~/server/folder'
 import { access, constants, stat } from 'node:fs/promises'
-import { createReadStream } from 'node:fs'
+import { readFileSync } from 'node:fs'
+import { fullRegex } from '~/server/utils/html-gen'
+import jwt from 'jsonwebtoken'
+import SECRET_KEY from '~/server/key'
 
 // import type { Note } from '~/types/notebook'
 
@@ -29,8 +32,6 @@ export default defineEventHandlerWithError(async (event) => {
 
   const fullPath = resolve(join(notesPath, ...note.path.split('/')))
 
-  console.log(fullPath)
-
   try {
     // Verify notebook and note exist and is read/write allowed
     await access(fullPath, constants.R_OK | constants.W_OK)
@@ -55,6 +56,20 @@ export default defineEventHandlerWithError(async (event) => {
 
   const contentType = fileExtension === '.md' ? 'text/markdown' : 'text/plain'
 
+  const content = readFileSync(fullPath, 'utf8')
+
+  const result = content.matchAll(fullRegex)
+  const attachments = Array.from(result, (match) => match[0].split('/').at(-1))
+
+  const token = jwt.sign({ app: 'nanote', attachments }, SECRET_KEY, { expiresIn: '1d', audience: 'shared' })
+
+  setCookie(event, 'token', token, {
+    httpOnly: true,
+    sameSite: 'strict',
+    maxAge: 3600 * 24 * 1, // 1 day
+    path: '/'
+  })
+
   // Set appropriate headers
   setHeaders(event, {
     'Content-Type': contentType,
@@ -65,5 +80,5 @@ export default defineEventHandlerWithError(async (event) => {
   })
 
   // Return file stream
-  return sendStream(event, createReadStream(fullPath))
+  return send(event, content)
 })
