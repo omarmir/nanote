@@ -2,16 +2,34 @@
 import { readFileSync } from 'node:fs'
 import contentDisposition from 'content-disposition'
 import { defineEventHandlerWithNotebookAndNote } from '~/server/wrappers/note'
-import { appendTokenToUrl, convertMarkdownToHtml } from '~/server/utils/html-gen'
+import { convertMarkdownToHtml } from '~/server/utils/html-gen'
 import { blockRegex, regex as inlineRegex } from 'milkdown-plugin-file/regex'
 import puppeteer from 'puppeteer'
 import { getIcon } from 'material-file-icons'
 import { settings } from '~/server/db/schema'
+import jwt from 'jsonwebtoken'
+import SECRET_KEY from '~/server/key'
 
-const printPDF = async (html: string) => {
+const printPDF = async (html: string, origin: string, hostname: string) => {
+  const token = jwt.sign({ app: 'nanote' }, SECRET_KEY, { expiresIn: '7d' })
+
   const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] })
+  // Create a new browser context
+  const context = await browser.createBrowserContext()
+  context.setCookie({
+    httpOnly: true,
+    name: 'token',
+    value: token,
+    domain: hostname,
+    sameSite: 'Strict',
+    expires: Math.floor(Date.now() / 1000) + 60 * 5, // expires in 5 minutes
+    path: '/'
+  })
+
   try {
-    const page = await browser.newPage()
+    const page = await context.newPage()
+    await page.goto(origin)
+
     await page.setContent(html, { waitUntil: 'networkidle0' })
     await page.addStyleTag({
       content: `@media print {
@@ -70,28 +88,19 @@ const replaceFileContent = (htmlContent: string, regex: RegExp) => {
 }
 
 export default defineEventHandlerWithNotebookAndNote(async (event, _cleanNotebook, cleanNote, fullPath) => {
-  const { origin } = getRequestURL(event)
-
+  const { origin, host } = getRequestURL(event)
   // const nanoid = customAlphabet('abcdefghijklmnop')
 
   const content = readFileSync(fullPath, 'utf8')
-  // const urlRegex = /(?<=\()\/?api\/attachment\/[^\s"')]+(?=\))/g // only for images since files wouldn't work anyway
   const urlRegex = /(?<=\(<|\()\/api\/attachment\/.*?(?=[)>])/g
-
   let newContent = ''
-  newContent = content.replace(urlRegex, (matchedUrl) => {
-    const newUrlWithToken = appendTokenToUrl(matchedUrl, origin)
-    return newUrlWithToken
-  })
+  newContent = content.replace(urlRegex, (matchedUrl) => `${origin}${matchedUrl}`)
 
   let htmlContent: string = await convertMarkdownToHtml(newContent)
   htmlContent = replaceFileContent(htmlContent, blockRegex)
   htmlContent = replaceFileContent(htmlContent, inlineRegex)
 
-  // const tempNotePath = join(tempPath, `${nanoid()}_${cleanNote}.html`)
-  // writeFileSync(tempNotePath, htmlContent, 'utf8')
-
-  const pdf = await printPDF(htmlContent)
+  const pdf = await printPDF(htmlContent, origin, host)
 
   // Set appropriate headers
   setHeaders(event, {
