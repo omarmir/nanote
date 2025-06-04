@@ -12,7 +12,8 @@ export function defineEventHandlerWithAttachmentAuthError<T extends EventHandler
   return defineEventHandlerWithError(async (event) => {
     // Just a regular user session
     const cookie = getCookie(event, 'token')
-    const verifyResult = checkLogin(cookie)
+    const verifyResult = checkLogin(cookie, { audience: 'shared' })
+    console.log(verifyResult)
     if (verifyResult.success) return await handler(event)
     // pdf export
     const { token } = getQuery(event)
