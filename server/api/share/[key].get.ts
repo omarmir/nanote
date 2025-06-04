@@ -32,8 +32,6 @@ export default defineEventHandlerWithError(async (event) => {
 
   const fullPath = resolve(join(notesPath, ...note.path.split('/')))
 
-  console.log(fullPath)
-
   try {
     // Verify notebook and note exist and is read/write allowed
     await access(fullPath, constants.R_OK | constants.W_OK)
@@ -60,14 +58,15 @@ export default defineEventHandlerWithError(async (event) => {
 
   const content = readFileSync(fullPath, 'utf8')
 
-  const attachments = [...content.matchAll(fullRegex)]
+  const result = content.matchAll(fullRegex)
+  const attachments = Array.from(result, (match) => match[0].split('/').at(-1))
 
   const token = jwt.sign({ app: 'nanote', attachments }, SECRET_KEY, { expiresIn: '1d', audience: 'shared' })
 
   setCookie(event, 'token', token, {
     httpOnly: true,
     sameSite: 'strict',
-    maxAge: 3600 * 24 * 7, // 7 days
+    maxAge: 3600 * 24 * 1, // 1 day
     path: '/'
   })
 

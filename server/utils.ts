@@ -34,8 +34,7 @@ export const checkLogin = (
   try {
     const decoded = jwt.verify(cookie, SECRET_KEY, options ?? undefined)
     return { success: true, data: decoded }
-  } catch (err) {
-    console.log(err)
+  } catch {
     return { success: false, message: 'Unable to verify authentication.' }
   }
 }
