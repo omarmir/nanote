@@ -49,7 +49,7 @@
 </template>
 <script lang="ts" setup>
 import { useSearch } from '~/composables/useSearch'
-import type { SearchResult } from '~/types/notebook'
+import type { USearchResult } from '~/types/ugrep'
 const router = useRouter()
 const isShown = defineModel<boolean>({ required: true })
 const searchInput = useTemplateRef('searchInput')
@@ -64,7 +64,7 @@ watch(isShown, async () => {
   }
 })
 
-const navigate = (result: SearchResult) => {
+const navigate = (result: USearchResult) => {
   const route =
     result.matchType === 'folder'
       ? `/notebook/${result.notebook.join('/')}`

@@ -42,7 +42,23 @@ export default defineEventHandlerWithError(async (event): Promise<USearchResult[
         maxBuffer: 1024 * 1024 * 100 // 100MB buffer
       }
 
-      const output = execSync(command, execOptions)
+      let output: string
+      try {
+        output = execSync(command, execOptions)
+      } catch (error) {
+        // ugrep returns exit code 1 if no matches, but still outputs valid JSON
+        if (error.stdout && error.stdout.trim().startsWith('[')) {
+          output = error.stdout
+        } else {
+          console.dir(error, { depth: null })
+          throw createError({
+            statusCode: 500,
+            statusMessage: 'Internal Server Error',
+            data: error,
+            message: 'Unable to search. Check console for details.'
+          })
+        }
+      }
 
       const jsonOutput = JSON.parse(output.toString()) as UgrepResult[]
 
@@ -65,6 +81,7 @@ export default defineEventHandlerWithError(async (event): Promise<USearchResult[
 
       results.push(...contentResults.filter((r) => r.notebook))
     } catch (error) {
+      console.dir(error, { depth: null })
       throw createError({
         statusCode: 500,
         statusMessage: 'Internal Server Error',

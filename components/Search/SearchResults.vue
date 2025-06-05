@@ -9,20 +9,24 @@
         <Icon v-else-if="result.matchType === 'note'" name="lucide:file" class="size-5 grow-0" />
         <Icon v-else name="lucide:text" class="size-5 grow-0" />
         <div class="flex flex-col gap-1">
-          <span>{{ [...result.notebook, result.name?.replace(/\.md$/, '')].join('/') }}</span>
-          <span class="italic">{{ result.snippet }}</span>
+          <span>
+            {{ [...result.notebook, result.name?.replace(/\.md$/, '')].join('/') }}
+          </span>
+          <span class="italic">
+            {{ result.snippet }}
+          </span>
         </div>
       </button>
     </li>
   </ul>
 </template>
 <script lang="ts" setup>
-import type { SearchResult } from '~/types/notebook'
-const { results } = defineProps<{ results: SearchResult[] | null }>()
+import type { USearchResult } from '~/types/ugrep'
+const { results } = defineProps<{ results: USearchResult[] | null }>()
 
 const emit = defineEmits<{
-  (e: 'navigate', payload: SearchResult): void
+  (e: 'navigate', payload: USearchResult): void
 }>()
 
-const navigate = (result: SearchResult) => emit('navigate', result)
+const navigate = (result: USearchResult) => emit('navigate', result)
 </script>
