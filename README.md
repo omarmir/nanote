@@ -50,7 +50,7 @@ omarmir/nanote
 
 OR
 
-You can clone the repo, build the image and run the compose file.
+You can clone the repo, build the image and run the compose file. You will need ugrep installed/added to path.
 
 ```bash
 git clone https://github.com/omarmir/nanote.git
