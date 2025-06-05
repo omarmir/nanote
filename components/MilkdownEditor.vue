@@ -17,8 +17,9 @@ import { createUploader, onUpload, toCheckUploader } from '~/utils/uploader'
 import '@milkdown/crepe/theme/common/style.css'
 import '@milkdown/crepe/theme/nord.css'
 import '@milkdown/crepe/theme/nord-dark.css'
-import { filePicker, filePickerNodeBlock, filePickerConfig, clearContentAndAddBlockType } from 'milkdown-plugin-file' //'@/utils/md-plugins/milkdown-plugin-file/src'
+import { filePicker, filePickerNodeBlock, filePickerConfig, clearContentAndAddBlockType } from 'milkdown-plugin-file'
 import { dateTimeTextSubs } from '~/milkdown/text-sub'
+import type { EditorView } from '@milkdown/prose/view' // Import EditorView from ProseMirror
 
 const model = defineModel<string>({ required: true })
 const { disabled, isFocus, note, notebooks } = defineProps<{
@@ -30,6 +31,9 @@ const { disabled, isFocus, note, notebooks } = defineProps<{
 
 const path = notebooks && note ? notePathArrayJoiner([...notebooks, note]) : null
 const customUploader = path ? createUploader() : null
+
+// Define the line number you want to jump to (e.g., 5th line)
+const targetLineNumber = 9 // You can make this a prop or a ref if it needs to be dynamic
 
 useEditor((root) => {
   const crepe = new Crepe({
@@ -67,7 +71,17 @@ useEditor((root) => {
       })
 
       listener.mounted((ctx) => {
-        if (model.value.length === 0) ctx.get(editorViewCtx).focus()
+        const view = ctx.get(editorViewCtx) as EditorView // Cast to EditorView for type safety
+
+        if (view) {
+          console.log('ProseMirror Document Structure:', view.state.doc.toJSON())
+        }
+
+        if (model.value.length === 0) {
+          view.focus()
+        } else {
+          jumpToMilkdownBlockLine(view, targetLineNumber)
+        }
       })
 
       if (path && customUploader) {

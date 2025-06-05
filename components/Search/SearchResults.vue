@@ -11,10 +11,9 @@
         <div class="flex flex-col gap-1">
           <span>
             {{ [...result.notebook, result.name?.replace(/\.md$/, '')].join('/') }}
+            <span v-if="result.matchType === 'content'">[{{ result.lineNum }} | {{ result.score }}]</span>
           </span>
-          <span class="italic">
-            {{ result.snippet }}
-          </span>
+          <span class="italic">{{ result.snippet }}</span>
         </div>
       </button>
     </li>
