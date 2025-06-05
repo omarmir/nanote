@@ -67,12 +67,4 @@ export type DeleteNotebook = {
 
 export type SavingState = 'pending' | 'saving' | 'success' | 'error' | 'idle'
 
-export type SearchResult = {
-  notebook: string[]
-  name: string | null
-  matchType: 'folder' | 'note' | 'content'
-  snippet: string
-  score: number
-}
-
 export type NotebookDisplay = 'main' | 'sidebar' | 'other'
