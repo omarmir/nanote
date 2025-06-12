@@ -9,12 +9,16 @@
       </button>
       <button
         draggable="true"
-        :class="{ 'text-gray-400 hover:text-gray-100': type === 'sidebar', 'hover:text-gray-500': type === 'main' }"
+        :class="{
+          'text-gray-400 hover:text-gray-100': type === 'sidebar',
+          'hover:text-gray-500': type === 'main',
+          'rounded-md bg-teal-600/20 ring-2 ring-teal-600': isDragOver
+        }"
         class="flex flex-row items-center gap-2 dark:hover:text-gray-100"
-        @dragend="notebookStore.endItemDrag()"
-        @dragstart="notebookStore.startItemDrag(localNotebook)"
-        @dragover="console.log('dragover')"
-        @drop="notebookStore.dropItem()"
+        @dragstart="onDragStart"
+        @dragleave="onDragLeave"
+        @dragover="onDragOver"
+        @drop="onDrop"
         @click="toggleNotebook()">
         <Icon name="lucide:book" />
         <div class="flex flex-col justify-start text-left text-sm font-semibold">
@@ -58,6 +62,7 @@ const renameWrapper = useTemplateRef('rename-wrapper')
 const error: Ref<string | null> = ref(null)
 const renameState = ref(false)
 const notebookStore = useNotebookStore()
+const { onDragLeave, onDragOver, onDragStart, onDrop, isDragOver } = useDragItem(localNotebook)
 
 onClickOutside(renameWrapper, () => {
   isRenaming.value = false

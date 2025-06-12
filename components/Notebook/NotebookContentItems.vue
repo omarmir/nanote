@@ -8,24 +8,7 @@
           'text-gray-900 hover:text-gray-400 dark:text-gray-400 dark:hover:text-gray-100': type === 'main'
         }"
         class="flex w-full flex-row justify-between text-gray-400 hover:text-gray-200 has-[.delete-button:hover]:!text-red-500">
-        <NuxtLink
-          draggable="true"
-          :to="`/note/${notePathArrayJoiner(note.notebook)}/${note.name}`"
-          exact-active-class="text-teal-600"
-          @dragend="notebookStore.endItemDrag()"
-          @dragstart="notebookStore.startItemDrag(note)"
-          @click="outsideClick()">
-          <div class="flex flex-col gap-1">
-            <div class="flex flex-row items-center gap-2">
-              <Icon v-if="note.isMarkdown" name="lucide:file-text" />
-              <Icon v-else name="lucide:file" />
-              <span class="text-sm">{{ note.name }}</span>
-            </div>
-            <div v-if="type === 'main' || (type === 'sidebar' && !settingsStore.settings.isDense)" class="ml-7 text-xs">
-              Created: {{ formatNoteDate(note.createdAt, settingsStore.settings.isISODate) }}
-            </div>
-          </div>
-        </NuxtLink>
+        <NoteListName :note :type></NoteListName>
         <div v-if="type === 'main'" class="flex flex-row place-content-end items-center gap-4">
           <NoteDelete :name="note.name" :notebooks="note.notebook" class="delete-button"></NoteDelete>
         </div>
@@ -49,10 +32,6 @@
 </template>
 <script lang="ts" setup>
 import type { NotebookContents, NotebookDisplay } from '~/types/notebook'
-const { outsideClick } = useSidebar()
-
-const settingsStore = useSettingsStore()
-const notebookStore = useNotebookStore()
 
 const { notebookContents, type } = defineProps<{
   notebookContents: NotebookContents | null | undefined
