@@ -38,7 +38,7 @@ export const useAuthStore = defineStore('auth', () => {
 
       isLoggedIn.value = true
 
-      navigateTo('/')
+      window.location.href = '/'
     } catch (err) {
       error.value = (err as FetchError).data?.message ?? 'Login failed'
       localStorage.setItem('isLoggedIn', 'false')

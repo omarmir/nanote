@@ -71,6 +71,7 @@ RUN apt-get update && \
   fonts-liberation \
   lsb-release \
   xdg-utils \
+  ugrep \
   wget && \
   rm -rf /var/lib/apt/lists/*
 

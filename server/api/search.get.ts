@@ -1,18 +1,15 @@
 import { resolve } from 'node:path'
-import { platform } from 'node:os'
-import type { ExecSyncOptionsWithStringEncoding } from 'node:child_process'
+import type { ExecException, ExecSyncOptionsWithStringEncoding } from 'node:child_process'
 import { execSync } from 'node:child_process'
 import escape from 'shell-escape'
-import type { SearchResult } from '~/types/notebook'
 import { notesPath } from '~/server/folder'
 import { defineEventHandlerWithSearch } from '../wrappers/search'
 import { defineEventHandlerWithError } from '../wrappers/error'
+import { CONTEXT_CHARS, MAX_RESULTS, type UgrepResult, type USearchResult } from '~/types/ugrep'
+import { matchScore, splitWords } from '../utils/search'
 
-const CONTEXT_CHARS = 50
-const MAX_RESULTS = 5
-
-export default defineEventHandlerWithError(async (event): Promise<SearchResult[]> => {
-  return defineEventHandlerWithSearch(async (_event, searchResults): Promise<SearchResult[]> => {
+export default defineEventHandlerWithError(async (event): Promise<USearchResult[]> => {
+  return defineEventHandlerWithSearch(async (_event, searchResults): Promise<USearchResult[]> => {
     const fullPath = resolve(notesPath)
     const { q: rawQuery } = getQuery(event)
 
@@ -20,72 +17,79 @@ export default defineEventHandlerWithError(async (event): Promise<SearchResult[]
       throw createError({ statusCode: 400, message: 'Missing query.' })
     }
 
-    const results: SearchResult[] = []
-    const query = rawQuery.replace(/[^\w\- ]/g, '').replace(/([.*+?^${}()|[\]\\])/g, '\\$1') // escape regex special chars
-    const osPlatform = platform()
+    const results: USearchResult[] = []
+    const queryWords = splitWords(rawQuery)
 
-    // 3. Optimized content search
+    // 3. Optimized content search using ugrep
     try {
-      let command: string
       const searchPath = escape([fullPath])
+      // const ugrepPattern = queryWords.map((q) => `-e ${escape([q])}`).join(' ')
+      // const lookaheads = queryWords.map((word) => `(?=.*\\b${escape([word])}\\b)`).join('')
+      const lookaheads = queryWords.map((word) => `(?=.*${escape([word])})`).join('')
 
-      if (osPlatform === 'linux') {
-        command = `grep -r -i -m1 -P -oH ".{0,${CONTEXT_CHARS}}${query}.{0,${CONTEXT_CHARS}}" --binary-files=without-match ${searchPath} || true`
-      } else if (osPlatform === 'darwin') {
-        command = `grep -r -i -m1 -E -oH ".{0,${CONTEXT_CHARS}}${query}.{0,${CONTEXT_CHARS}}" --binary-files=without-match ${searchPath} || true`
-      } else {
-        // Windows fallback using PowerShell (slower but works)
-        const escapedQuery = rawQuery.replace(/"/g, '""')
-        command =
-          `Get-ChildItem -Path ${searchPath} -Recurse -File | ` +
-          `Select-String -Pattern "${escapedQuery}" -CaseSensitive:$false | ` +
-          `Select-Object -First ${MAX_RESULTS} | ` +
-          `ForEach-Object { "$($_.Path)|~|$($_.Line)" }`
-      }
+      // Combine them into the full pattern
+      const ugrepPattern = `-P '^${lookaheads}.*$'`
+
+      const command = [
+        'ugrep',
+        '-r', // recursive
+        '-n', // adds line numbers
+        '-I', // ignore binary
+        `-C${Math.floor(CONTEXT_CHARS)}`, // contenxt chars (even division before and after)
+        '--json', // JSON output
+        '--ignore-case', // case insensitive
+        '--format=json',
+        '--max-files=2000', //if this is too big, then it ends up causing issues
+        ugrepPattern,
+        searchPath
+      ].join(' ')
 
       const execOptions: ExecSyncOptionsWithStringEncoding = {
         encoding: 'utf-8',
-        maxBuffer: 1024 * 1024 * 10 // 10MB buffer
+        maxBuffer: 1024 * 1024 * 600 // 600MB buffer
       }
 
-      // When on Windows, use PowerShell as the shell
-      if (osPlatform === 'win32') {
-        execOptions.shell = 'powershell.exe'
+      let output: string
+      try {
+        output = execSync(command, execOptions)
+      } catch (err) {
+        // ugrep returns exit code 1 if no matches, but still outputs valid JSON
+        const error = err as ExecException
+        if (error.stdout && error.stdout.trim().startsWith('[')) {
+          output = error.stdout
+        } else {
+          console.dir(error, { depth: null })
+          throw createError({
+            statusCode: 500,
+            statusMessage: 'Internal Server Error',
+            data: error,
+            message: 'Unable to search. Check console for details.'
+          })
+        }
       }
 
-      const output = execSync(command, execOptions)
+      const jsonOutput = JSON.parse(output.toString()) as UgrepResult[]
 
-      // Parse results
-      const contentResults = output
-        .split('\n')
-        .filter((line) => line.trim())
-        .map((line) => {
-          let filePath, snippet
-          if (osPlatform === 'win32' && line.includes('|~|')) {
-            // Windows output (custom delimiter)
-            ;[filePath, snippet] = line.split('|~|')
-          } else {
-            // Linux/macOS output (colon-delimited)
-            const [p, ...rest] = line.split(':')
-            filePath = p
-            snippet = rest.join(':')
-          }
+      const contentResults = jsonOutput.flatMap(({ file, matches }) => {
+        const relativePath = file.replace(fullPath, '').split(/[/\\]/).filter(Boolean)
 
-          // Split paths on both forward and backslashes
-          const relativePath = filePath.replace(fullPath, '').split(/[/\\]/).filter(Boolean)
+        return matches.map(({ match, line }) => {
+          const score = matchScore(queryWords, match)
 
           return {
-            notebook: relativePath.slice(0, relativePath.length - 1),
+            notebook: relativePath.slice(0, -1),
             name: relativePath.at(-1) as string,
-            snippet: snippet.trim().slice(0, CONTEXT_CHARS * 2),
-            score: 3,
-            matchType: 'content'
-          } satisfies SearchResult
+            snippet: match.trim().slice(0, CONTEXT_CHARS * 2),
+            score,
+            matchType: 'content',
+            lineNum: line
+          } satisfies USearchResult
         })
+      })
 
       results.push(...contentResults.filter((r) => r.notebook))
     } catch (error) {
-      console.log(error)
+      console.dir(error, { depth: null })
       throw createError({
         statusCode: 500,
         statusMessage: 'Internal Server Error',
@@ -94,13 +98,29 @@ export default defineEventHandlerWithError(async (event): Promise<SearchResult[]
       })
     }
 
-    // Deduplicate and sort
-    const contentResults = Array.from(new Set(results.map((r) => JSON.stringify(r))))
-      .map((r) => JSON.parse(r) as SearchResult)
+    // const searchSortedResults = Array.from(new Set(results))
+
+    const seen = new Set<string>()
+    const dedupedResults = results.filter((r) => {
+      const key = `${r.notebook.join('')}|${r.name}|${r.lineNum}`
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+    const sortedContentResults = [
+      ...dedupedResults,
+      ...searchResults.map((r) => ({ ...r, lineNum: 0, score: r.score ?? 0 }))
+    ]
       .sort((a, b) => b.score - a.score)
       .slice(0, MAX_RESULTS)
 
-    contentResults.push(...searchResults)
-    return contentResults
+    // Deduplicate and sort
+    // const sortedContentResults = Array.from(new Set(results.map((r) => JSON.stringify(r))))
+    //   .map((r) => JSON.parse(r) as USearchResult)
+    //   .sort((a, b) => b.score - a.score)
+    //   .slice(0, MAX_RESULTS)
+
+    // sortedContentResults.push(...searchResults.map((r) => ({ ...r, lineNum: 0, score: r.score ?? 0 }))) // Folders returned from search wrapper have no line number, we can fix this later
+    return sortedContentResults
   })(event)
 })

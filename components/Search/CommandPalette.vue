@@ -20,7 +20,7 @@
           placeholder="Search content"
           name="search"
           class="w-full rounded-sm border border-accent py-2 pe-10 ps-10 text-sm focus-visible:outline-none" />
-        <button class="absolute right-8 mt-5 -translate-y-1/2 leading-none" @click="clearSearch()">
+        <button class="absolute right-5 mt-5 -translate-y-1/2 leading-none" @click="clearSearch()">
           <Icon name="lucide:x" class="size-4 text-gray-600" />
         </button>
       </div>
@@ -33,7 +33,7 @@
         aria-live="polite"
         aria-details="Loading search results" />
     </div>
-    <div v-if="!debounced" class="w-full text-center">
+    <div v-if="!search" class="w-full text-center">
       <p class="text-sm text-gray-900 dark:text-gray-400">Begin typing to search content</p>
     </div>
     <div v-if="error && status === 'error'">
@@ -49,11 +49,11 @@
 </template>
 <script lang="ts" setup>
 import { useSearch } from '~/composables/useSearch'
-import type { SearchResult } from '~/types/notebook'
+import type { USearchResult } from '~/types/ugrep'
 const router = useRouter()
 const isShown = defineModel<boolean>({ required: true })
 const searchInput = useTemplateRef('searchInput')
-const { search, clearSearch, results, noResults, status, error, debounced } = useSearch()
+const { search, clearSearch, results, noResults, status, error } = useSearch()
 
 watch(isShown, async () => {
   await nextTick()
@@ -64,11 +64,11 @@ watch(isShown, async () => {
   }
 })
 
-const navigate = (result: SearchResult) => {
+const navigate = (result: USearchResult) => {
   const route =
     result.matchType === 'folder'
       ? `/notebook/${result.notebook.join('/')}`
-      : `/note/${result.notebook.join('/')}/${result.name}`
+      : `/note/${result.notebook.join('/')}/${result.name}?ln=${result.lineNum}`
   router.push(route)
   isShown.value = false
 }

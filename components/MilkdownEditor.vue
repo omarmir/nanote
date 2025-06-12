@@ -17,15 +17,17 @@ import { createUploader, onUpload, toCheckUploader } from '~/utils/uploader'
 import '@milkdown/crepe/theme/common/style.css'
 import '@milkdown/crepe/theme/nord.css'
 import '@milkdown/crepe/theme/nord-dark.css'
-import { filePicker, filePickerNodeBlock, filePickerConfig, clearContentAndAddBlockType } from 'milkdown-plugin-file' //'@/utils/md-plugins/milkdown-plugin-file/src'
+import { filePicker, filePickerNodeBlock, filePickerConfig, clearContentAndAddBlockType } from 'milkdown-plugin-file'
 import { dateTimeTextSubs } from '~/milkdown/text-sub'
+import type { EditorView } from '@milkdown/prose/view' // Import EditorView from ProseMirror
 
 const model = defineModel<string>({ required: true })
-const { disabled, isFocus, note, notebooks } = defineProps<{
+const { disabled, isFocus, note, notebooks, ln } = defineProps<{
   disabled: boolean
   isFocus?: boolean
   note?: string
   notebooks?: string[]
+  ln?: number
 }>()
 
 const path = notebooks && note ? notePathArrayJoiner([...notebooks, note]) : null
@@ -66,8 +68,20 @@ useEditor((root) => {
         }
       })
 
+      // listener.selectionUpdated((ctx) => {
+      //   const view = ctx.get(editorViewCtx) as EditorView // Cast to EditorView for type safety
+      //   console.log('updated', view)
+      // })
+
       listener.mounted((ctx) => {
-        if (model.value.length === 0) ctx.get(editorViewCtx).focus()
+        const view = ctx.get(editorViewCtx) as EditorView // Cast to EditorView for type safety
+
+        if (model.value.length === 0) view.focus()
+
+        if (ln)
+          setTimeout(() => {
+            jumpToMarkdownLine(view, model.value, 35)
+          }, 2)
       })
 
       if (path && customUploader) {

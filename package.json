@@ -90,7 +90,8 @@
   "pnpm": {
     "overrides": {
       "mdast-util-gfm-autolink-literal": "github:omarmir/mdast-util-gfm-autolink-literal",
-      "milkdown-plugin-file": "github:omarmir/milkdown-plugin-file"
+      "milkdown-plugin-file": "github:omarmir/milkdown-plugin-file",
+      "@codemirror/view": "6.37.1"
     }
   }
 }

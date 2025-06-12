@@ -34,6 +34,7 @@
         <MilkdownEditor
           v-model="md"
           :note
+          :ln
           :notebooks="notebooksArray"
           :disabled="renamePending || isReadOnly"
           :is-focus />
@@ -51,7 +52,8 @@
         :editable="true"
         :basic-setup="true"
         :extensions="[EditorView.lineWrapping]"
-        :indent-with-tab="true" />
+        :indent-with-tab="true"
+        @on-create-editor="({ view, state }) => cmCreated(view, state)" />
     </div>
   </div>
 </template>
@@ -62,6 +64,12 @@ import { watchDebounced, useDark } from '@vueuse/core'
 import type { FetchError } from 'ofetch'
 import { EditorView } from '@codemirror/view'
 import type { SavingState } from '~/types/notebook'
+import { useRouter } from 'vue-router'
+import type { EditorState } from '@codemirror/state'
+
+const router = useRouter()
+
+const queryParams = router.currentRoute.value.query
 
 const { notebookPath } = defineProps<{ notebookPath: string | string[] }>()
 const isMD: Ref<boolean | null> = ref(null)
@@ -79,6 +87,25 @@ const error: Ref<string | null> = ref(null)
 const md: Ref<string> = ref('')
 const updated: Ref<Date | null> = ref(null)
 const savingState: Ref<SavingState> = ref('idle')
+const ln: number | undefined = queryParams.ln && Number.isInteger(+queryParams.ln) ? +queryParams.ln : undefined
+
+const cmCreated = (view: EditorView, state: EditorState) => {
+  if (ln && Number.isInteger(+ln)) {
+    const line = state.doc.line(+ln)
+
+    view.dispatch({
+      selection: { head: line.from, anchor: line.to }
+    })
+    setTimeout(() => {
+      const { top } = view.lineBlockAt(line.from)
+      window.scrollTo({
+        top,
+        left: 0,
+        behavior: 'smooth'
+      })
+    }, 2)
+  }
+}
 
 const fetchMarkdown = async () => {
   savingState.value = 'pending'

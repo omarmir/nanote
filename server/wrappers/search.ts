@@ -4,12 +4,12 @@ import { execSync } from 'node:child_process'
 import { resolve } from 'node:path'
 import { platform } from 'node:os'
 import escape from 'shell-escape'
-import type { SearchResult } from '~/types/notebook'
+import { MAX_RESULTS, type USearchResult } from '~/types/ugrep'
 import { notesPath } from '~/server/folder'
 
 type EventHandlerWithSearch<T extends EventHandlerRequest, D> = (
   event: H3Event<T>,
-  searchResults: SearchResult[]
+  searchResults: USearchResult[]
 ) => Promise<D>
 
 export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(handler: EventHandlerWithSearch<T, D>) {
@@ -21,7 +21,7 @@ export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(h
       throw createError({ statusCode: 400, message: 'Missing query.' })
     }
 
-    const results: SearchResult[] = []
+    const results: USearchResult[] = []
     const queryLower = rawQuery.toLowerCase()
 
     // Prepare command based on platform:
@@ -57,12 +57,15 @@ export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(h
 
         const isFolder = type === 'dir'
 
+        const queryWords = splitWords(rawQuery)
+        const score = matchScore(queryWords, baseName)
         results.push({
           notebook: relativePath.slice(0, -1),
           name: baseName,
           matchType: isFolder ? 'folder' : 'note',
           snippet: `${isFolder ? 'Folder' : 'File'} name contains "${rawQuery}"`,
-          score: isFolder ? 1 : 2
+          score: score,
+          lineNum: undefined
         })
       }
     } catch (error) {
@@ -76,10 +79,10 @@ export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(h
     }
 
     // Deduplicate and sort by score (descending), and limit to MAX_RESULTS (here, 5)
-    const searchResults: SearchResult[] = Array.from(new Set(results.map((r) => JSON.stringify(r))))
-      .map((r) => JSON.parse(r) as SearchResult)
+    const searchResults: USearchResult[] = Array.from(new Set(results.map((r) => JSON.stringify(r))))
+      .map((r) => JSON.parse(r) as USearchResult)
       .sort((a, b) => b.score - a.score)
-      .slice(0, 5)
+      .slice(0, MAX_RESULTS)
 
     return await handler(event, searchResults)
   })

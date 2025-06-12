@@ -17,12 +17,12 @@
   </ul>
 </template>
 <script lang="ts" setup>
-import type { SearchResult } from '~/types/notebook'
-const { results } = defineProps<{ results: SearchResult[] | null }>()
+import type { USearchResult } from '~/types/ugrep'
+const { results } = defineProps<{ results: USearchResult[] | null }>()
 
 const emit = defineEmits<{
-  (e: 'navigate', payload: SearchResult): void
+  (e: 'navigate', payload: USearchResult): void
 }>()
 
-const navigate = (result: SearchResult) => emit('navigate', result)
+const navigate = (result: USearchResult) => emit('navigate', result)
 </script>

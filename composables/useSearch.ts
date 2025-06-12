@@ -1,19 +1,18 @@
-import { useDebounce } from '@vueuse/core'
+import { watchDebounced } from '@vueuse/core'
 import { ref } from 'vue'
 import type { Ref } from 'vue'
-import type { SearchResult } from '~/types/notebook'
+import type { USearchResult } from '~/types/ugrep'
 
 export function useSearch() {
   const search: Ref<string | null> = ref(null)
   const query: Ref<{ q: string | null }> = ref({ q: null })
-  const debounced = useDebounce(search, 300)
 
   const {
     data: results,
     error,
     status,
     clear
-  } = useFetch<SearchResult[]>('/api/search', {
+  } = useFetch<USearchResult[]>('/api/search', {
     immediate: false,
     lazy: true,
     query,
@@ -27,13 +26,17 @@ export function useSearch() {
     }
   })
 
-  watch(debounced, () => {
-    if (debounced.value && debounced.value?.length > 0) {
-      query.value = { q: debounced.value }
-    } else {
-      clear()
-    }
-  })
+  watchDebounced(
+    search,
+    () => {
+      if (search.value && search.value?.length > 0) {
+        query.value = { q: search.value }
+      } else {
+        clear()
+      }
+    },
+    { debounce: 500 }
+  )
 
   const noResults = computed(() => status.value === 'success' && (results.value?.length === 0 || !results.value))
 
@@ -86,7 +89,6 @@ export function useSearch() {
     error,
     status,
     results,
-    noResults,
-    debounced
+    noResults
   }
 }
