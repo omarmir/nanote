@@ -86,7 +86,6 @@ const addItem = async () => {
   }
 
   newItem.value = null
-  isNotebook.value = false
   error.value = null
   isOpen.value = false
 
@@ -95,5 +94,7 @@ const addItem = async () => {
     const url = `/note/${notePathArrayJoiner(newNote.notebook)}/${newNote.name}`
     router.push(url)
   }
+
+  isNotebook.value = false
 }
 </script>
