@@ -10,7 +10,8 @@ export const useSettingsStore = defineStore('settings', () => {
     isDense: $settings.data.get('isDense') === 'true',
     isParagraphSpaced: $settings.data.get('isParagraphSpaced')
       ? $settings.data.get('isParagraphSpaced') === 'true'
-      : true
+      : true,
+    isISODate: $settings.data.get('isISODate') === 'true'
   })
 
   const setSetting = async (insertSetting: InsertSetting): Promise<Result<null>> => {
@@ -25,38 +26,31 @@ export const useSettingsStore = defineStore('settings', () => {
     return resp
   }
 
-  /**
-   * Dense list
-   */
-  const setDenseMode = async () => {
-    const setting: InsertSetting = {
-      setting: 'isDense',
-      value: settings.isDense.toString()
-    }
-    setSetting(setting)
-  }
   const toggleDenseMode = () => (settings.isDense = !settings.isDense)
 
-  /**
-   * Paragraph spacing
-   */
-  const setParagraphSpacing = async () => {
-    const setting: InsertSetting = {
-      setting: 'isParagraphSpaced',
-      value: settings.isParagraphSpaced.toString()
-    }
-    setSetting(setting)
-  }
   const toggleParagraphSpacing = () => (settings.isParagraphSpaced = !settings.isParagraphSpaced)
+
+  const setSettingValue = async (setting: string, value: string) => {
+    const newSetting: InsertSetting = {
+      setting,
+      value
+    }
+    setSetting(newSetting)
+  }
 
   watch(
     () => settings.isDense,
-    () => setDenseMode()
+    () => setSettingValue('isDense', settings.isDense.toString())
   )
 
   watch(
     () => settings.isParagraphSpaced,
-    () => setParagraphSpacing()
+    () => setSettingValue('isParagraphSpaced', settings.isDense.toString())
+  )
+
+  watch(
+    () => settings.isISODate,
+    () => setSettingValue('isISODate', settings.isISODate.toString())
   )
 
   return {

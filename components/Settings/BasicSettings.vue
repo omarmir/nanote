@@ -7,6 +7,7 @@
       </h3>
       <div class="my-2">
         <div class="grid grid-cols-2 gap-4">
+          <!--Setting-->
           <div class="flex flex-row items-center gap-2">
             Hide note date and time
             <CommonTooltip>Don't show date and time in the user interface when listing notes</CommonTooltip>
@@ -16,6 +17,17 @@
               <span class="hidden">Hide note date and time</span>
             </CommonToggleBox>
           </div>
+          <!--Setting-->
+          <div class="flex flex-row items-center gap-2">
+            Use ISO standard date and time
+            <CommonTooltip>Dates as YYYY-MM-DD and time using 24 hour clock as Thh:mm:ss</CommonTooltip>
+          </div>
+          <div class="flex place-content-end">
+            <CommonToggleBox v-model="store.settings.isISODate">
+              <span class="hidden">Hide note date and time</span>
+            </CommonToggleBox>
+          </div>
+          <!--Setting-->
           <div class="flex flex-row items-center gap-2">
             Space paragraphs
             <CommonTooltip>Automatically put some spacing between paragraphs</CommonTooltip>
