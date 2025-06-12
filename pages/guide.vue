@@ -58,6 +58,10 @@
             <pre class="inline whitespace-pre-line pr-2 text-white">::yesterday</pre>
             <span>Will replace the directive with yesterday's date</span>
           </div>
+          <div>
+            <pre class="inline whitespace-pre-line pr-2 text-white">::time</pre>
+            <span>Will replace the directive with the current time</span>
+          </div>
         </div>
       </div>
     </CommonBaseCard>

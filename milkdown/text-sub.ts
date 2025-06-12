@@ -7,13 +7,15 @@ export const timeNow = /::time/
 export const yesterday = /::yesterday/
 export const tomorrow = /::tomorrow/
 
+const settingsStore = useSettingsStore()
+
 export const todayInputRule = $inputRule(
   (_ctx) =>
     new InputRule(today, (state, _match, start, end) => {
-      const currentDate = new Date().toLocaleDateString()
+      const { date } = getSplitISO(new Date().toString(), settingsStore.settings.isISODate)
       const { tr } = state
       tr.deleteRange(start, end)
-      tr.insertText(currentDate)
+      tr.insertText(date)
       return tr
     })
 )
@@ -21,7 +23,7 @@ export const todayInputRule = $inputRule(
 export const nowInputRule = $inputRule(
   (_ctx) =>
     new InputRule(now, (state, _match, start, end) => {
-      const currentDate = new Date().toLocaleString()
+      const currentDate = formatNoteDate(new Date().toString(), settingsStore.settings.isISODate)
       const { tr } = state
       tr.deleteRange(start, end)
       tr.insertText(currentDate)
@@ -31,22 +33,22 @@ export const nowInputRule = $inputRule(
 export const timeNowInputRule = $inputRule(
   (_ctx) =>
     new InputRule(timeNow, (state, _match, start, end) => {
-      const currentDate = new Date().toLocaleTimeString()
+      const { time } = getSplitISO(new Date().toString(), settingsStore.settings.isISODate)
       const { tr } = state
       tr.deleteRange(start, end)
-      tr.insertText(currentDate)
+      tr.insertText(time)
       return tr
     })
 )
 export const yesterdayInputRule = $inputRule(
   (_ctx) =>
     new InputRule(yesterday, (state, _match, start, end) => {
-      const date = new Date()
-      date.setDate(date.getDate() - 1)
-      const currentDate = date.toLocaleDateString()
+      const yesterday = new Date()
+      yesterday.setDate(yesterday.getDate() - 1)
+      const { date } = getSplitISO(yesterday.toString(), settingsStore.settings.isISODate)
       const { tr } = state
       tr.deleteRange(start, end)
-      tr.insertText(currentDate)
+      tr.insertText(date)
       return tr
     })
 )
@@ -54,12 +56,12 @@ export const yesterdayInputRule = $inputRule(
 export const tomorrowInputRule = $inputRule(
   (_ctx) =>
     new InputRule(tomorrow, (state, _match, start, end) => {
-      const date = new Date()
-      date.setDate(date.getDate() + 1)
-      const currentDate = date.toLocaleDateString()
+      const tomorrow = new Date()
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      const { date } = getSplitISO(tomorrow.toString(), settingsStore.settings.isISODate)
       const { tr } = state
       tr.deleteRange(start, end)
-      tr.insertText(currentDate)
+      tr.insertText(date)
       return tr
     })
 )

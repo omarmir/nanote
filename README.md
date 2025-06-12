@@ -29,6 +29,7 @@ If you type in certain commands in text, they will be handled by the UI:
 - `::now` will show todays's date and time
 - `::tomorrow` will show tomorrow's date
 - `::yesterday` will show yesterday's date
+- `::time` will show the time right now
 
 ### Pending
 

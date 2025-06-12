@@ -19,7 +19,7 @@
               <span class="text-sm">{{ note.name }}</span>
             </div>
             <div v-if="type === 'main' || (type === 'sidebar' && !settingsStore.settings.isDense)" class="ml-7 text-xs">
-              Created: {{ formatNoteDate(note.createdAt) }}
+              Created: {{ formatNoteDate(note.createdAt, settingsStore.settings.isISODate) }}
             </div>
           </div>
         </NuxtLink>
@@ -54,14 +54,4 @@ const { notebookContents, type } = defineProps<{
   notebookContents: NotebookContents | null | undefined
   type: NotebookDisplay
 }>()
-
-const formatNoteDate = (dateStr: string) => {
-  const date = new Date(dateStr)
-  if (settingsStore.settings.isISODate) {
-    const [isoDate, isoTime] = date.toISOString().split('T')
-    return `${isoDate} @ ${isoTime.split('.')[0]}`
-  } else {
-    return `${date.toLocaleDateString()} @ ${date.toLocaleTimeString()}`
-  }
-}
 </script>
