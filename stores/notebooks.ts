@@ -27,6 +27,7 @@ export const useNotebookStore = defineStore('notebook', () => {
 
   const mainOpenNotebooks: Ref<string[]> = ref([])
   const sidebarOpenNotebooks: Ref<string[]> = ref([])
+  const movingItem: Ref<Note | Notebook | null> = ref(null)
 
   const getNotebookPaths = (notebook: Notebook): { apiPath: string; notebookPath: string[] } => {
     const apiPath = notebookPathArrayJoiner(notebook)
@@ -248,6 +249,20 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
+  const startItemDrag = (item: Note | Notebook) => {
+    movingItem.value = item
+    console.log('starting drag', item)
+  }
+
+  const endItemDrag = () => {
+    console.log('end drag')
+    movingItem.value = null
+  }
+
+  const dropItem = () => {
+    console.log('drop', movingItem.value)
+  }
+
   return {
     toggleNotebook,
     notebooks,
@@ -264,6 +279,10 @@ export const useNotebookStore = defineStore('notebook', () => {
     // Note
     deleteNote,
     renameNote,
-    addNote
+    addNote,
+    // Drag
+    startItemDrag,
+    endItemDrag,
+    dropItem
   }
 })

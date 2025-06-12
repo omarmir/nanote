@@ -9,8 +9,11 @@
         }"
         class="flex w-full flex-row justify-between text-gray-400 hover:text-gray-200 has-[.delete-button:hover]:!text-red-500">
         <NuxtLink
+          draggable="true"
           :to="`/note/${notePathArrayJoiner(note.notebook)}/${note.name}`"
           exact-active-class="text-teal-600"
+          @dragend="notebookStore.endItemDrag()"
+          @dragstart="notebookStore.startItemDrag(note)"
           @click="outsideClick()">
           <div class="flex flex-col gap-1">
             <div class="flex flex-row items-center gap-2">
@@ -49,6 +52,7 @@ import type { NotebookContents, NotebookDisplay } from '~/types/notebook'
 const { outsideClick } = useSidebar()
 
 const settingsStore = useSettingsStore()
+const notebookStore = useNotebookStore()
 
 const { notebookContents, type } = defineProps<{
   notebookContents: NotebookContents | null | undefined

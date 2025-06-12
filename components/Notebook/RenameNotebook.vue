@@ -8,8 +8,13 @@
         <Icon name="gg:rename" class="size-6" />
       </button>
       <button
+        draggable="true"
         :class="{ 'text-gray-400 hover:text-gray-100': type === 'sidebar', 'hover:text-gray-500': type === 'main' }"
         class="flex flex-row items-center gap-2 dark:hover:text-gray-100"
+        @dragend="notebookStore.endItemDrag()"
+        @dragstart="notebookStore.startItemDrag(localNotebook)"
+        @dragover="console.log('dragover')"
+        @drop="notebookStore.dropItem()"
         @click="toggleNotebook()">
         <Icon name="lucide:book" />
         <div class="flex flex-col justify-start text-left text-sm font-semibold">
