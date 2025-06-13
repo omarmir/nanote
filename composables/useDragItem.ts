@@ -10,6 +10,32 @@ export function useDragItem(
   const status: Ref<SavingState> = ref('idle')
   const error: Ref<string | null> = ref(null)
 
+  const isSameFolder = (payload: Note | Notebook): boolean => {
+    const thisBook = unref(item)
+    if (!('path' in thisBook)) return false
+
+    if ('path' in payload) {
+      return payload.path === thisBook.path
+    }
+
+    if (payload.notebook.join('/') === thisBook.path) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  const clearStatus = () => {
+    status.value = 'idle'
+    error.value = null
+  }
+
+  const setError = (msg: string) => {
+    status.value = 'error'
+    error.value = msg
+    setTimeout(() => clearStatus(), 10000)
+  }
+
   const onDragOver = (e: DragEvent) => {
     e.preventDefault()
     if (e.dataTransfer) e.dataTransfer.dropEffect = 'move'
@@ -21,10 +47,25 @@ export function useDragItem(
   }
 
   const onDrop = async (e: DragEvent) => {
+    clearStatus()
+
+    if (!e.dataTransfer) return
+    const dropped = JSON.parse(e.dataTransfer?.getData('item')) as Note | Notebook
+
+    const sameFolder = isSameFolder(dropped)
+    if (sameFolder) {
+      if ('path' in dropped) {
+        setError('Notebooks cannot be dropped into themselves.')
+        return
+      } else {
+        setError('Note is already in this folder.')
+      }
+      return
+    }
+
     isDragOver.value = false
     const thisItem = unref(item)
-    if (!e.dataTransfer) return
-    const dropped = JSON.parse(e.dataTransfer?.getData('item'))
+
     if (!('path' in thisItem)) return // Notebooks have path, notes don't
 
     if (!callback) return
