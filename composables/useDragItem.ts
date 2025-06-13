@@ -18,7 +18,8 @@ export function useDragItem(
       return payload.path === thisBook.path
     }
 
-    if (payload.notebook.join('/') === thisBook.path) {
+    if (payload.notebook.join('/') === notebookPathArrayJoiner(thisBook)) {
+      console.log(payload.notebook)
       return true
     } else {
       return false
@@ -52,6 +53,7 @@ export function useDragItem(
     if (!e.dataTransfer) return
     const dropped = JSON.parse(e.dataTransfer?.getData('item')) as Note | Notebook
 
+    isDragOver.value = false
     const sameFolder = isSameFolder(dropped)
     if (sameFolder) {
       if ('path' in dropped) {
@@ -63,7 +65,6 @@ export function useDragItem(
       return
     }
 
-    isDragOver.value = false
     const thisItem = unref(item)
 
     if (!('path' in thisItem)) return // Notebooks have path, notes don't
