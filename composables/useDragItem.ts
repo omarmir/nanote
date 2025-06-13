@@ -18,8 +18,7 @@ export function useDragItem(
       return payload.path === thisBook.path
     }
 
-    if (payload.notebook.join('/') === notebookPathArrayJoiner(thisBook)) {
-      console.log(payload.notebook)
+    if (notePathArrayJoiner(payload.notebook) === notebookPathArrayJoiner(thisBook)) {
       return true
     } else {
       return false
