@@ -18,6 +18,7 @@
         @dragstart="onDragStart"
         @dragleave="onDragLeave"
         @dragover="onDragOver"
+        @dragend="onDragEnd"
         @drop="onDrop"
         @click="toggleNotebook()">
         <Icon name="lucide:book" />
@@ -62,7 +63,7 @@ const renameWrapper = useTemplateRef('rename-wrapper')
 const error: Ref<string | null> = ref(null)
 const renameState = ref(false)
 const notebookStore = useNotebookStore()
-const { onDragLeave, onDragOver, onDragStart, onDrop, isDragOver } = useDragItem(localNotebook)
+const { onDragLeave, onDragOver, onDragStart, onDrop, isDragOver, onDragEnd } = useDragItem(localNotebook)
 
 onClickOutside(renameWrapper, () => {
   isRenaming.value = false
