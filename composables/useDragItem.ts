@@ -12,6 +12,7 @@ export function useDragItem(
 
   const onDragOver = (e: DragEvent) => {
     e.preventDefault()
+    if (e.dataTransfer) e.dataTransfer.dropEffect = 'move'
     isDragOver.value = true
   }
 
@@ -24,7 +25,7 @@ export function useDragItem(
     const thisItem = unref(item)
     if (!e.dataTransfer) return
     const dropped = JSON.parse(e.dataTransfer?.getData('item'))
-    if (!('path' in thisItem)) return
+    if (!('path' in thisItem)) return // Notebooks have path, notes don't
 
     if (!callback) return
 
@@ -41,10 +42,19 @@ export function useDragItem(
   const onDragStart = (e: DragEvent) => {
     if (e.dataTransfer) {
       e.dataTransfer.setData('item', JSON.stringify(unref(item)))
+      e.dataTransfer.effectAllowed = 'move'
     }
   }
 
-  const onDragEnd = () => {}
+  const onDragEnd = (e: DragEvent) => {
+    isDragOver.value = false
+    if (e.dataTransfer) {
+      e.dataTransfer.dropEffect = 'none' // Explicitly set to none when leaving
+    }
+    setTimeout(() => {
+      document.body.style.cursor = 'auto'
+    }, 50) // Try 50ms, or even 100ms if needed
+  }
 
   return {
     onDragLeave,

@@ -2,6 +2,7 @@
   <NuxtLink
     class="cursor-pointer"
     :to="`/note/${notePathArrayJoiner(note.notebook)}/${note.name}`"
+    draggable="true"
     exact-active-class="text-teal-600"
     @dragstart="onDragStart"
     @dragleave="onDragLeave"
