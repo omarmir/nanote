@@ -20,7 +20,7 @@
       class="flex flex-col items-start gap-2">
       <div
         class="flex w-full flex-row justify-between has-[.delete-button:hover]:text-red-500 has-[.manage-button:hover]:text-blue-500">
-        <NotebookRenameNotebook :type :notebook="nestedNotebook" :hide-rename="false" />
+        <NotebookRenameNotebook :type :notebook="nestedNotebook" class="flex-grow" />
         <div v-if="type === 'main'" class="flex flex-row place-content-end items-center gap-4">
           <NotebookDelete class="delete-button" :notebook="nestedNotebook" />
           <NotebookManage class="manage-button" :notebook="nestedNotebook" />

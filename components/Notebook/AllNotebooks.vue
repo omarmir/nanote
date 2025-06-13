@@ -53,10 +53,7 @@
             <template v-for="notebook in notebookStore.notebooks?.notebooks" v-else :key="notebook.name">
               <tr class="space-y-4 has-[.delete-button:hover]:text-red-500 has-[.manage-button:hover]:text-blue-500">
                 <td class="py-2 align-middle">
-                  <NotebookRenameNotebook
-                    type="main"
-                    :notebook="notebook"
-                    :hide-rename="false"></NotebookRenameNotebook>
+                  <NotebookRenameNotebook type="main" :notebook="notebook"></NotebookRenameNotebook>
                 </td>
                 <td class="hidden py-2 align-middle lg:table-cell">
                   <div class="text-sm font-medium text-gray-900 dark:text-gray-400">
