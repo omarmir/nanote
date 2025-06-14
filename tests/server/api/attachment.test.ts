@@ -1,18 +1,17 @@
-import { fileURLToPath } from 'node:url'
-import { beforeAll, describe, expect, it } from 'vitest'
-import { setup, $fetch } from '@nuxt/test-utils'
+// @vitest-environment nuxt
+import { beforeAll, expect, it } from 'vitest'
+import { $fetch, setup } from '@nuxt/test-utils'
 import { getAuthCookie } from '~/tests/setup'
 import { access, constants, mkdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { notesPath, uploadPath } from '~/server/folder'
+import { describe } from 'node:test'
 
 let authCookie = ''
 let apiFilePath = ''
+
 describe('Attachments upload and view', async () => {
-  await setup({
-    rootDir: fileURLToPath(new URL('..', import.meta.url)),
-    server: true
-  })
+  await setup({})
 
   beforeAll(async () => {
     authCookie = await getAuthCookie()
