@@ -159,8 +159,8 @@ importers:
         specifier: ^2.6.6
         version: 2.6.6(magicast@0.3.5)
       '@nuxt/test-utils':
-        specifier: 3.19.0
-        version: 3.19.0(@types/node@24.0.1)(@vue/test-utils@2.4.6)(happy-dom@17.6.3)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.53.1)(terser@5.42.0)(typescript@5.8.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.0.1)(happy-dom@17.6.3)(jiti@2.4.2)(terser@5.42.0)(yaml@2.8.0))(yaml@2.8.0)
+        specifier: 3.18.0
+        version: 3.18.0(@types/node@24.0.1)(@vue/test-utils@2.4.6)(happy-dom@17.6.3)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.53.1)(terser@5.42.0)(typescript@5.8.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.0.1)(happy-dom@17.6.3)(jiti@2.4.2)(terser@5.42.0)(yaml@2.8.0))(yaml@2.8.0)
       '@nuxtjs/eslint-module':
         specifier: ^4.1.0
         version: 4.1.0(eslint@9.29.0(jiti@2.4.2))(magicast@0.3.5)(vite@6.3.5(@types/node@24.0.1)(jiti@2.4.2)(terser@5.42.0)(yaml@2.8.0))(webpack@5.99.9(esbuild@0.25.5))
@@ -1301,8 +1301,8 @@ packages:
     engines: {node: '>=18.12.0'}
     hasBin: true
 
-  '@nuxt/test-utils@3.19.0':
-    resolution: {integrity: sha512-rhy01aH1Gioh1uCiiESpeI5m6ZCk4k+0FHwooV01NAGtIY2hJaFxgKf0s+6vjiSvHqoIDMzjaQ9g3SoccDJ4kA==}
+  '@nuxt/test-utils@3.18.0':
+    resolution: {integrity: sha512-i/kF1zc4YMT+tp3eBu5fTk1qxiQeQfjkCBl0Jta/O7s2x61pb0hiOGmX/ZTU3w0JFTXtTkqVMPqJuqFb+F5jCg==}
     engines: {node: ^18.20.5 || ^20.9.0 || ^22.0.0 || >=23.0.0}
     peerDependencies:
       '@cucumber/cucumber': ^10.3.1 || ^11.0.0
@@ -8634,7 +8634,7 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  '@nuxt/test-utils@3.19.0(@types/node@24.0.1)(@vue/test-utils@2.4.6)(happy-dom@17.6.3)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.53.1)(terser@5.42.0)(typescript@5.8.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.0.1)(happy-dom@17.6.3)(jiti@2.4.2)(terser@5.42.0)(yaml@2.8.0))(yaml@2.8.0)':
+  '@nuxt/test-utils@3.18.0(@types/node@24.0.1)(@vue/test-utils@2.4.6)(happy-dom@17.6.3)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.53.1)(terser@5.42.0)(typescript@5.8.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.0.1)(happy-dom@17.6.3)(jiti@2.4.2)(terser@5.42.0)(yaml@2.8.0))(yaml@2.8.0)':
     dependencies:
       '@nuxt/kit': 3.17.5(magicast@0.3.5)
       '@nuxt/schema': 3.17.5
@@ -14612,7 +14612,7 @@ snapshots:
 
   vitest-environment-nuxt@1.0.1(@types/node@24.0.1)(@vue/test-utils@2.4.6)(happy-dom@17.6.3)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.53.1)(terser@5.42.0)(typescript@5.8.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.0.1)(happy-dom@17.6.3)(jiti@2.4.2)(terser@5.42.0)(yaml@2.8.0))(yaml@2.8.0):
     dependencies:
-      '@nuxt/test-utils': 3.19.0(@types/node@24.0.1)(@vue/test-utils@2.4.6)(happy-dom@17.6.3)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.53.1)(terser@5.42.0)(typescript@5.8.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.0.1)(happy-dom@17.6.3)(jiti@2.4.2)(terser@5.42.0)(yaml@2.8.0))(yaml@2.8.0)
+      '@nuxt/test-utils': 3.18.0(@types/node@24.0.1)(@vue/test-utils@2.4.6)(happy-dom@17.6.3)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.53.1)(terser@5.42.0)(typescript@5.8.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.0.1)(happy-dom@17.6.3)(jiti@2.4.2)(terser@5.42.0)(yaml@2.8.0))(yaml@2.8.0)
     transitivePeerDependencies:
       - '@cucumber/cucumber'
       - '@jest/globals'
