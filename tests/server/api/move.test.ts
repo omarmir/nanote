@@ -1,5 +1,5 @@
 import { fileURLToPath } from 'node:url'
-import { beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { setup, $fetch } from '@nuxt/test-utils'
 import { join } from 'node:path'
 import { notesPath } from '~/server/folder'
