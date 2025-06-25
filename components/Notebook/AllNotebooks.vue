@@ -16,7 +16,7 @@
       {{ notebookAddedError }}
     </CommonDangerAlert>
     <div class="block flex-auto pt-6">
-      <div class="overflow-x-auto">
+      <div>
         <table class="text-dark my-0 w-full border-neutral-200 align-middle">
           <thead class="align-bottom">
             <tr class="text-secondary-dark text-[0.95rem]">
