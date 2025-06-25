@@ -136,7 +136,8 @@ export default defineEventHandlerWithError(async (event): Promise<Result<boolean
       message: 'A file or notebook with the same name already exists in the destination.'
     })
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') throw error
+    // File doesn't exist, fine to move
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error
   }
 
   // Move operation
