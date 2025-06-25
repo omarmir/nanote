@@ -63,7 +63,7 @@ export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(h
           notebook: relativePath.slice(0, -1),
           name: baseName,
           matchType: isFolder ? 'folder' : 'note',
-          snippet: `${isFolder ? 'Folder' : 'File'} name contains "${rawQuery}"`,
+          snippet: `${isFolder ? 'Notebook' : 'Note'} name contains "${rawQuery}"`,
           score: score,
           lineNum: undefined
         })

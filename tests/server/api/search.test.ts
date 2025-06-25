@@ -6,8 +6,9 @@ import { join } from 'node:path'
 import { notesPath } from '~/server/folder'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { nanoid } from 'nanoid'
-import type { SearchResult } from '~/types/notebook'
-describe('Health check', async () => {
+import type { USearchResult } from '~/types/ugrep'
+
+describe('Fuzzy searching', async () => {
   await setup({
     rootDir: fileURLToPath(new URL('..', import.meta.url)),
     server: true
@@ -35,13 +36,14 @@ describe('Health check', async () => {
       query: { q: nanoidString },
       headers: { Cookie: authCookie }
     })
-    const resp: SearchResult[] = [
+    const resp: USearchResult[] = [
       {
         notebook: [notebookName],
-        name: fileName,
+        name: `${fileName}.md`,
         matchType: 'content',
         snippet: nanoidString,
-        score: 3
+        score: 100,
+        lineNum: 1
       }
     ]
 
@@ -53,13 +55,14 @@ describe('Health check', async () => {
       query: { q: fileName },
       headers: { Cookie: authCookie }
     })
-    const resp: SearchResult[] = [
+    const resp: USearchResult[] = [
       {
         notebook: [notebookName],
-        name: fileName,
+        name: `${fileName}.md`,
         matchType: 'note',
         snippet: `Note name contains "${fileName}"`,
-        score: 2
+        score: 100,
+        lineNum: 0
       }
     ]
 
@@ -71,13 +74,14 @@ describe('Health check', async () => {
       query: { q: notebookName },
       headers: { Cookie: authCookie }
     })
-    const resp: SearchResult[] = [
+    const resp: USearchResult[] = [
       {
-        notebook: [notebookName],
+        notebook: [],
         name: notebookName,
         matchType: 'folder',
+        lineNum: 0,
         snippet: `Notebook name contains "${notebookName}"`,
-        score: 1
+        score: 100
       }
     ]
 
