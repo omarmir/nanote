@@ -6,7 +6,8 @@ import { db } from '~/server/utils/drizzle'
 import { createError } from 'h3' // ← This import is mandatory
 
 export default defineNitroPlugin(async (app) => {
-  if (process.env.NODE_ENV === 'development') {
+  // @ts-expect-error env exists
+  if (process.env.NODE_ENV === 'development' || import.meta.env.MODE === 'test') {
     console.log('Skipping automatic migrations in development mode.')
     return
   }
