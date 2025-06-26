@@ -22,12 +22,12 @@ export const useMoveStore = defineStore('move', () => {
 
   const onDragOver = (e: DragEvent, notebook: Notebook) => {
     e.preventDefault()
-    if (
-      currentMovementItem.value &&
-      'path' in currentMovementItem.value &&
-      sameNotebook(notebook, currentMovementItem.value)
-    ) {
-      return
+    if (!currentMovementItem.value) return
+
+    if ('path' in currentMovementItem.value) {
+      if (sameNotebook(notebook, currentMovementItem.value)) return
+    } else {
+      if (noteInSameNotebook(currentMovementItem.value, notebook)) return
     }
     currentDragOverItem.value = notebook
   }
