@@ -2,9 +2,9 @@
   <div class="flex-grow">
     <div class="flex flex-grow flex-row items-center gap-2">
       <template v-if="type === 'main'">
-        <Icon v-if="moveStatus === 'pending'" name="line-md:loading-twotone-loop" class="text-teal-600"></Icon>
-        <Icon v-if="moveStatus === 'error'" name="lucide:circle-x" class="text-red-500"></Icon>
-        <button v-else class="flex items-center text-teal-600 hover:text-teal-800" @click="isRenaming = !isRenaming">
+        <!-- <Icon v-if="moveStatus === 'pending'" name="line-md:loading-twotone-loop" class="text-teal-600"></Icon>
+        <Icon v-if="moveStatus === 'error'" name="lucide:circle-x" class="text-red-500"></Icon> -->
+        <button class="flex items-center text-teal-600 hover:text-teal-800" @click="isRenaming = !isRenaming">
           <Icon name="gg:rename" class="size-6" />
         </button>
       </template>
@@ -14,14 +14,14 @@
         :class="{
           'text-gray-400 hover:text-gray-100': type === 'sidebar',
           'hover:text-gray-500': type === 'main',
-          'rounded-sm bg-amber-500/20 ring-2 ring-amber-500': isDragOver
+          'rounded-sm bg-amber-500/20 ring-2 ring-amber-500': sameNotebook(moveStore.currentDragOverItem, notebook)
         }"
         class="mr-2 flex flex-grow flex-row items-center gap-2 dark:hover:text-gray-100"
-        @dragstart="onDragStart"
-        @dragleave="onDragLeave"
-        @dragover="onDragOver"
-        @dragend="onDragEnd"
-        @drop="onDrop"
+        @dragstart="(e) => moveStore.onDragStart(e, notebook)"
+        @dragleave="moveStore.onDragLeave()"
+        @dragover="(e) => moveStore.onDragOver(e, notebook)"
+        @dragend="moveStore.onDragEnd"
+        @drop="(e) => moveStore.onDrop(e, notebook)"
         @click="toggleNotebook()">
         <Icon name="lucide:book" />
         <div class="flex flex-col justify-start text-left text-sm font-semibold">
@@ -47,7 +47,7 @@
       </form>
     </div>
     <CommonDangerAlert v-if="error" class="mb-4 ml-6 mt-1">{{ error }}</CommonDangerAlert>
-    <CommonDangerAlert v-if="moveError" class="mb-4 ml-6 mt-1">{{ moveError }}</CommonDangerAlert>
+    <!-- <CommonDangerAlert v-if="moveError" class="mb-4 ml-6 mt-1">{{ moveError }}</CommonDangerAlert> -->
     <CommonDangerAlert v-if="openError" class="mb-4 ml-6 mt-1">
       {{ openError }}
     </CommonDangerAlert>
@@ -66,16 +66,8 @@ const renameWrapper = useTemplateRef('rename-wrapper')
 const error: Ref<string | null> = ref(null)
 const renameState = ref(false)
 const notebookStore = useNotebookStore()
-const {
-  onDragLeave,
-  onDragOver,
-  onDragStart,
-  onDrop,
-  isDragOver,
-  onDragEnd,
-  error: moveError,
-  status: moveStatus
-} = useDragItem(localNotebook)
+
+const moveStore = useMoveStore()
 
 onClickOutside(renameWrapper, () => {
   isRenaming.value = false

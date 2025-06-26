@@ -5,8 +5,8 @@ export const notebookPathArrayJoiner = (notebook: Notebook) =>
 
 export const notePathArrayJoiner = (notebooks: string[]) => notebooks.filter((path) => path !== '').join('/')
 
-export const arraysEqual = (arr1: string[], arr2: string[]) =>
-  arr1.length === arr2.length && arr1.every((value, index) => value === arr2[index])
+export const sameNotebook = (nb1?: Notebook | null, nb2?: Notebook | null) =>
+  nb1 && nb2 && nb1.name === nb2.name && nb1.notebooks.every((val, idx) => val === nb2.notebooks[idx])
 
 export const getNotebookByPathArray = (path: string[], contents: NotebookContents | null): Notebook | undefined => {
   if (!contents) return undefined
