@@ -2,12 +2,8 @@
   <NuxtLink
     class="cursor-pointer"
     :to="`/note/${notePathArrayJoiner(note.notebook)}/${note.name}`"
-    draggable="true"
+    draggable="false"
     exact-active-class="text-teal-600"
-    @dragstart="onDragStart"
-    @dragleave="onDragLeave"
-    @dragover="onDragOver"
-    @drop="onDrop"
     @click="outsideClick()">
     <div class="flex flex-col gap-1">
       <div class="flex flex-row items-center gap-2">
@@ -26,8 +22,6 @@ import type { Note, NotebookDisplay } from '~/types/notebook'
 const { outsideClick } = useSidebar()
 
 const { note, type } = defineProps<{ note: Note; type: NotebookDisplay }>()
-const { onDragLeave, onDragOver, onDragStart, onDrop } = useDragItem(note)
 
 const settingsStore = useSettingsStore()
-// const notebookStore = useNotebookStore()
 </script>

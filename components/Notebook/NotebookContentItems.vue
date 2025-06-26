@@ -2,7 +2,7 @@
   <ul
     v-if="notebookContents && (notebookContents.notes.length > 0 || notebookContents.notebooks)"
     class="flex flex-col gap-2">
-    <li v-for="note in notebookContents.notes" :key="note.name">
+    <CommonListItem v-for="note in notebookContents.notes" :key="note.name" :item="note">
       <div
         :class="{
           'text-gray-900 hover:text-gray-400 dark:text-gray-400 dark:hover:text-gray-100': type === 'main'
@@ -13,10 +13,11 @@
           <NoteDelete :name="note.name" :notebooks="note.notebook" class="delete-button"></NoteDelete>
         </div>
       </div>
-    </li>
-    <li
+    </CommonListItem>
+    <CommonListItem
       v-for="nestedNotebook in notebookContents.notebooks"
       :key="nestedNotebook.path"
+      :item="nestedNotebook"
       class="flex flex-col items-start gap-2">
       <div
         class="flex w-full flex-row justify-between has-[.delete-button:hover]:text-red-500 has-[.manage-button:hover]:text-blue-500">
@@ -27,7 +28,7 @@
         </div>
       </div>
       <NotebookContents :notebook="nestedNotebook" :show-childre="true" :type></NotebookContents>
-    </li>
+    </CommonListItem>
   </ul>
 </template>
 <script lang="ts" setup>
