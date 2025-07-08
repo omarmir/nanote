@@ -31,7 +31,7 @@ const { disabled, isFocus, note, notebooks, ln } = defineProps<{
 }>()
 
 const path = notebooks && note ? notePathArrayJoiner([...notebooks, note]) : null
-const customUploader = path ? createUploader() : null
+const customUploader = path ? createUploader(path) : null
 
 useEditor((root) => {
   const crepe = new Crepe({

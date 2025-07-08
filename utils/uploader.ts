@@ -23,11 +23,12 @@ const toCheckUploader = async (fileURL: string) => {
   return resp
 }
 
-const createUploader = () => {
+const createUploader = (path: string | null) => {
+  if (!path) return
   const uploader: Uploader = async (files, schema) => {
     const nodes: Node[] = await Promise.all(
       Array.from(files).map(async (file) => {
-        const src = onUpload
+        const src = await onUpload(file, path)
 
         // Handle image files
         if (file.type.includes('image')) {
