@@ -8,7 +8,7 @@
         </span>
       </h3>
       <div>
-        <pre class="whitespace-pre-line py-2 text-white">
+        <pre class="whitespace-pre-line py-2 text-gray-900 dark:text-white">
         <code># Heading  
         **Bold**  
         *Italic*  
@@ -33,33 +33,33 @@
         </h3>
         <div class="mt-4 flex flex-col gap-2">
           <div>
-            <pre class="inline whitespace-pre-line pr-2 text-white">::file</pre>
+            <pre class="inline whitespace-pre-line pr-2 text-gray-900 dark:text-white">::file</pre>
             <span>Create an inline file picker allowing you to upload files</span>
           </div>
           <div>
-            <pre class="inline whitespace-pre-line pr-2 text-white">::fileBlock</pre>
+            <pre class="inline whitespace-pre-line pr-2 text-gray-900 dark:text-white">::fileBlock</pre>
             <span>
               Create an file block (a larger icon taking up the whole line) picker allowing you to upload files
             </span>
           </div>
           <div>
-            <pre class="inline whitespace-pre-line pr-2 text-white">::today</pre>
+            <pre class="inline whitespace-pre-line pr-2 text-gray-900 dark:text-white">::today</pre>
             <span>Will replace the directive with todays's date</span>
           </div>
           <div>
-            <pre class="inline whitespace-pre-line pr-2 text-white">::now</pre>
+            <pre class="inline whitespace-pre-line pr-2 text-gray-900 dark:text-white">::now</pre>
             <span>Will replace the directive with todays's date and time</span>
           </div>
           <div>
-            <pre class="inline whitespace-pre-line pr-2 text-white">::tomorrow</pre>
+            <pre class="inline whitespace-pre-line pr-2 text-gray-900 dark:text-white">::tomorrow</pre>
             <span>Will replace the directive with tomorrow's date</span>
           </div>
           <div>
-            <pre class="inline whitespace-pre-line pr-2 text-white">::yesterday</pre>
+            <pre class="inline whitespace-pre-line pr-2 text-gray-900 dark:text-white">::yesterday</pre>
             <span>Will replace the directive with yesterday's date</span>
           </div>
           <div>
-            <pre class="inline whitespace-pre-line pr-2 text-white">::time</pre>
+            <pre class="inline whitespace-pre-line pr-2 text-gray-900 dark:text-white">::time</pre>
             <span>Will replace the directive with the current time</span>
           </div>
         </div>
