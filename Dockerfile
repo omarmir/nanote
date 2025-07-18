@@ -73,10 +73,8 @@ RUN apt-get update && \
   xdg-utils \
   ugrep \
   wget && \
+  chromium-browser \
   rm -rf /var/lib/apt/lists/*
-
-# Install Puppeteer Chrome only (no Puppeteer lib)
-RUN npx puppeteer browsers install chrome
 
 # Copy only needed files from build
 COPY --from=build /src/.output /src/.output
