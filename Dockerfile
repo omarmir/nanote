@@ -35,6 +35,7 @@ WORKDIR /src
 RUN apt-get update && \
   apt-get install -y --no-install-recommends \
   curl \
+  chromium \
   libasound2 \
   libatk1.0-0 \
   libatk-bridge2.0-0 \
@@ -73,7 +74,6 @@ RUN apt-get update && \
   xdg-utils \
   ugrep \
   wget && \
-  chromium-browser \
   rm -rf /var/lib/apt/lists/*
 
 # Copy only needed files from build

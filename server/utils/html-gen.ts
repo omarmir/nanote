@@ -48,7 +48,7 @@ export const printPDF = async (html: string, origin: string, hostname: string) =
 
   const browser = await puppeteer.launch({
     headless: true,
-    executablePath: '/usr/bin/chromium-browser',
+    executablePath: '/usr/bin/chromium',
     args: ['--no-sandbox', '--disable-setuid-sandbox']
   })
   // Create a new browser context
