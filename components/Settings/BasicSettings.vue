@@ -37,6 +37,17 @@
               <span class="hidden">Space paragraphs</span>
             </CommonToggleBox>
           </div>
+          <!--Setting-->
+          <div class="flex flex-row items-center gap-2">
+            Use code view for all files?
+            <CommonTooltip>Use a plain text editor view for all files including markdown files?</CommonTooltip>
+          </div>
+          <div class="flex place-content-end">
+            <CommonToggleBox v-model="store.settings.isCodeViewAllFiles">
+              <span class="hidden">Use code view</span>
+            </CommonToggleBox>
+          </div>
+          <!-- /settings -->
         </div>
       </div>
     </CommonBaseCard>

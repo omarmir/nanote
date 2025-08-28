@@ -11,7 +11,8 @@ export const useSettingsStore = defineStore('settings', () => {
     isParagraphSpaced: $settings.data.get('isParagraphSpaced')
       ? $settings.data.get('isParagraphSpaced') === 'true'
       : true,
-    isISODate: $settings.data.get('isISODate') === 'true'
+    isISODate: $settings.data.get('isISODate') === 'true',
+    isCodeViewAllFiles: $settings.data.get('isCodeViewAllFiles') === 'true'
   })
 
   const setSetting = async (insertSetting: InsertSetting): Promise<Result<null>> => {
@@ -51,6 +52,11 @@ export const useSettingsStore = defineStore('settings', () => {
   watch(
     () => settings.isISODate,
     () => setSettingValue('isISODate', settings.isISODate.toString())
+  )
+
+  watch(
+    () => settings.isCodeViewAllFiles,
+    () => setSettingValue('isCodeViewAllFiles', settings.isCodeViewAllFiles.toString())
   )
 
   return {
