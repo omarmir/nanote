@@ -18,7 +18,7 @@ import '@milkdown/crepe/theme/common/style.css'
 import '@milkdown/crepe/theme/nord.css'
 import '@milkdown/crepe/theme/nord-dark.css'
 import { filePicker, filePickerNodeBlock, filePickerConfig, clearContentAndAddBlockType } from 'milkdown-plugin-file'
-import { dateTimeTextSubs } from '~/milkdown/text-sub'
+import { dateTimeTextSubsPlugin } from '~/milkdown/text-sub'
 import type { EditorView } from '@milkdown/prose/view' // Import EditorView from ProseMirror
 
 const model = defineModel<string>({ required: true })
@@ -32,6 +32,9 @@ const { disabled, isFocus, note, notebooks, ln } = defineProps<{
 
 const path = notebooks && note ? notePathArrayJoiner([...notebooks, note]) : null
 const customUploader = path ? createUploader(path) : null
+
+const settingsStore = useSettingsStore()
+const dateTimeTextSubs = dateTimeTextSubsPlugin(settingsStore.settings.isISODate)
 
 useEditor((root) => {
   const crepe = new Crepe({
@@ -121,7 +124,6 @@ useEditor((root) => {
     .use(dateTimeTextSubs)
   return crepe
 })
-const settingsStore = useSettingsStore()
 </script>
 <style lang="postcss">
 .milkdown-editor .milkdown {
