@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1747615199469,
+      "tag": "0000_ambiguous_taskmaster",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1747615677779,
+      "tag": "0001_confused_blade",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1747876545801,
+      "tag": "0002_silent_deadpool",
+      "breakpoints": true
+    }
+  ]
+}
