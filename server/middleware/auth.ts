@@ -1,4 +1,4 @@
-import { checkLogin } from '../utils'
+// import { checkLogin } from '../utils'
 
 export default defineEventHandler((event) => {
   return // bypass for dev
