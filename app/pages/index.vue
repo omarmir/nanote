@@ -7,8 +7,9 @@
         </template>
       </UDashboardNavbar>
     </template>
-
-    <template #body></template>
+    <template #body>
+      <NotebooksAll></NotebooksAll>
+    </template>
   </UDashboardPanel>
 </template>
 <script lang="ts" setup></script>

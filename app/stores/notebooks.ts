@@ -18,12 +18,12 @@ export const useNotebookStore = defineStore('notebook', () => {
     status,
     error,
     execute
-  } = useFetch<NotebookContents>('/api/notebook', {
+  } = useFetch<NotebookContents>('/api/notebook/*', {
     immediate: false,
     lazy: true
   })
 
-  if (localStorage.getItem('isLoggedIn') === 'true') execute()
+  execute()
 
   const mainOpenNotebooks: Ref<string[]> = ref([])
   const sidebarOpenNotebooks: Ref<string[]> = ref([])
@@ -155,7 +155,7 @@ export const useNotebookStore = defineStore('notebook', () => {
 
       const nb = getNotebookByPathArray(notebookPath, notebooks.value)
       if (nb?.contents) {
-        nb.contents.notes = nb.contents.notes.filter((item) => item.name !== note)
+        nb.contents.notes = nb.contents.notes.filter((item: Note) => item.name !== note)
       }
 
       return {
@@ -177,7 +177,7 @@ export const useNotebookStore = defineStore('notebook', () => {
 
       const nb = getNotebookByPathArray(notebookPath, notebooks.value)
       if (nb?.contents) {
-        const idx = nb.contents.notes.findIndex((item) => item.name === rename.oldName)
+        const idx = nb.contents.notes.findIndex((item: Note) => item.name === rename.oldName)
         if (idx >= 0) {
           nb.contents.notes[idx].name = rename.newName
         }
