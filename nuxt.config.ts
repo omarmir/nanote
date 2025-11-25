@@ -26,5 +26,14 @@ export default defineNuxtConfig({
   i18n: {
     defaultLocale: 'en',
     locales: [{ code: 'en', name: 'English', file: 'en.json' }]
+  },
+
+  icon: {
+    customCollections: [
+      {
+        prefix: 'custom',
+        dir: './app/assets/icons'
+      }
+    ]
   }
 })

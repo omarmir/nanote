@@ -3,7 +3,7 @@
     <UDashboardSidebar collapsible>
       <template #header="{ collapsed }">
         <div class="flex flex-row items-center gap-4">
-          <UIcon name="i-marketeq-notebook" class="text-primary mx-auto size-8" :class="{ 'size-6': collapsed }" />
+          <UIcon name="i-custom-app" class="text-primary mx-auto size-8" :class="{ 'size-6': collapsed }" />
           <h1 class="text-xl font-bold text-gray-900 dark:text-white" :class="{ invisible: collapsed }">
             {{ t('appName') }}
           </h1>
