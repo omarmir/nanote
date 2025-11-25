@@ -10,7 +10,7 @@
 
       <template #default="{ collapsed }">
         <UButton
-          :label="collapsed ? undefined : 'Search...'"
+          :label="collapsed ? undefined : t('search')"
           icon="i-lucide-search"
           color="neutral"
           variant="outline"
@@ -32,24 +32,25 @@
 </template>
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
+const { t } = useI18n()
 
 const items: Ref<NavigationMenuItem[]> = ref([
   [
     {
-      label: 'Home',
+      label: t('navigation.home'),
       icon: 'i-lucide-house',
       active: true
     },
     {
-      label: 'Settings',
+      label: t('navigation.settings'),
       icon: 'i-lucide-settings'
     },
     {
-      label: 'Guide',
+      label: t('navigation.guide'),
       icon: 'i-lucide-circle-question-mark'
     },
     {
-      label: 'Logout',
+      label: t('navigation.logout'),
       icon: 'i-lucide-log-out'
     }
   ]

@@ -1,0 +1,10 @@
+{
+  "appName": "nanote",
+  "search": "Search...",
+  "navigation": {
+    "home": "Home",
+    "settings": "Settings",
+    "guide": "Guide",
+    "logout": "Logout"
+  }
+}
