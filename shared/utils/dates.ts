@@ -8,8 +8,8 @@ export const getSplitISO = (dateStr: string, isISODate: boolean): { date: string
   if (isISODate) {
     const [isoDate, isoTime] = date.toISOString().split('T')
     return {
-      date: isoDate,
-      time: isoTime.split('.')[0]
+      date: isoDate as string,
+      time: isoTime?.split('.')[0] as string
     }
   } else {
     return {
