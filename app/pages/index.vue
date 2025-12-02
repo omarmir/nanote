@@ -16,6 +16,9 @@
       </Suspense>
       <Suspense>
         <NotesRecent></NotesRecent>
+        <template #fallback>
+          <SkeletonsRecentNotes></SkeletonsRecentNotes>
+        </template>
       </Suspense>
     </template>
   </UDashboardPanel>

@@ -32,7 +32,7 @@
 </template>
 <script lang="ts" setup>
 const { t } = useI18n()
-const { data: notes } = useFetch<Note[]>('/api/notes', {
+const { data: notes } = await useFetch<Note[]>('/api/notes', {
   immediate: true,
   lazy: true,
   query: { display: 4 }
