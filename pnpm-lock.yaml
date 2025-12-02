@@ -20,11 +20,8 @@ importers:
         specifier: 6.37.1
         version: 6.37.1
       '@iconify-json/lucide':
-        specifier: ^1.2.74
-        version: 1.2.74
-      '@iconify-json/simple-icons':
-        specifier: ^1.2.59
-        version: 1.2.59
+        specifier: ^1.2.77
+        version: 1.2.77
       '@libsql/client':
         specifier: ^0.15.4
         version: 0.15.15
@@ -809,11 +806,8 @@ packages:
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
 
-  '@iconify-json/lucide@1.2.74':
-    resolution: {integrity: sha512-vDoGHcDZdWgUbt9J3TCJlxFzX/Mw0vUIAoZdkfI2mINOi1/cgVZHivgZ8QtiGlepskTL3PcG8t93Ky/vtQgXGA==}
-
-  '@iconify-json/simple-icons@1.2.59':
-    resolution: {integrity: sha512-fYx/InyQsWFW4wVxWka3CGDJ6m/fXoTqWBSl+oA3FBXO5RhPAb6S3Y5bRgCPnrYevErH8VjAL0TZevIqlN2PhQ==}
+  '@iconify-json/lucide@1.2.77':
+    resolution: {integrity: sha512-FF3Z+np6Ksb0MaoQymhCHZ4xs5Oo8992Fw7By7bCgVCbBCClYV3wxpF8KzsI1FlxHD4ZXR42NVmXuqdW8YQGgA==}
 
   '@iconify/collections@1.0.610':
     resolution: {integrity: sha512-HFIv5V09CIb3ZylZbaZhUfGZfoHPwtEcEg8RmTIFABRTTtCI4olYjaVkQuvF1m3hnz+skbdeD0DeGnd+wP0vLg==}
@@ -7136,11 +7130,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@iconify-json/lucide@1.2.74':
-    dependencies:
-      '@iconify/types': 2.0.0
-
-  '@iconify-json/simple-icons@1.2.59':
+  '@iconify-json/lucide@1.2.77':
     dependencies:
       '@iconify/types': 2.0.0
 

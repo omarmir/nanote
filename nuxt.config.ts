@@ -36,6 +36,10 @@ export default defineNuxtConfig({
         prefix: 'custom',
         dir: './app/assets/icons'
       }
-    ]
+    ],
+    provider: 'server',
+    clientBundle: {
+      scan: true
+    }
   }
 })

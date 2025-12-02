@@ -5,7 +5,7 @@
       <li v-for="note in notes" :key="note.notebook + note.name" class="flex">
         <UCard class="flex-1">
           <h3 class="flex flex-row items-center gap-x-2 font-bold">
-            <UIcon name="i-quill:markdown" class="text-primary size-6" v-if="note.isMarkdown"></UIcon>
+            <UIcon name="i-custom-quill-markdown" class="text-primary size-6" v-if="note.isMarkdown"></UIcon>
             <span v-if="note.isMarkdown">
               {{ note.name.replace(/\.[^.]+$/, '') }}
             </span>

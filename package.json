@@ -13,8 +13,7 @@
   "dependencies": {
     "@codemirror/state": "^6.5.2",
     "@codemirror/view": "^6.36.8",
-    "@iconify-json/lucide": "^1.2.74",
-    "@iconify-json/simple-icons": "^1.2.59",
+    "@iconify-json/lucide": "^1.2.77",
     "@libsql/client": "^0.15.4",
     "@milkdown/core": "^7.10.1",
     "@milkdown/crepe": "^7.10.1",
