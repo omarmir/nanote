@@ -1,3 +1,5 @@
+import type { TreeItem } from '@nuxt/ui'
+
 export type Notebook = {
   name: string
   createdAt: string
@@ -17,6 +19,16 @@ export type Note = {
   size?: number
   isMarkdown: boolean
   preview?: string
+}
+
+export type NotebookTreeItem = Omit<TreeItem, 'children'> & {
+  pathArray: string[]
+  path: string
+  children?: NotebookTreeItem[]
+  createdAt?: string
+  updatedAt?: string | null
+  noteCount?: number
+  notebookCount?: number
 }
 
 export type NotebookContents = {

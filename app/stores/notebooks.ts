@@ -18,7 +18,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     status,
     error,
     execute
-  } = useFetch<NotebookContents>('/api/notebook/*', {
+  } = useFetch<NotebookContents>('/api/notebook', {
     immediate: false,
     lazy: true
   })

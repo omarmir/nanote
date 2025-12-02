@@ -1,14 +1,18 @@
 import { readdir, stat } from 'node:fs/promises'
 import { join, extname } from 'node:path'
 import { defineEventHandlerWithNotebook } from '~~/server/wrappers/notebook'
-import type { Note, Notebook, NotebookTreeItem } from '#shared/types/notebook'
+import type { Note, Notebook, NotebookContents } from '#shared/types/notebook'
 /**
  * Returns contents for a specific notebook
  */
-export default defineEventHandlerWithNotebook(async (_event, notebook, fullPath): Promise<NotebookTreeItem[]> => {
+export default defineEventHandlerWithNotebook(async (_event, notebook, fullPath): Promise<NotebookContents> => {
   // Read directory contents
   const files = await readdir(fullPath, { withFileTypes: true })
-  const notebookContents: NotebookTreeItem[] = [{ children: [], path: fullPath, pathArray: notebook }]
+  const notebookContents: NotebookContents = {
+    notes: [] as Note[],
+    path: fullPath,
+    pathArray: notebook
+  }
   // Process files concurrently
   await Promise.all(
     files.map(async (dirent) => {
@@ -22,10 +26,9 @@ export default defineEventHandlerWithNotebook(async (_event, notebook, fullPath)
           createdAt: createdAtTime.toISOString(),
           updatedAt: stats.mtime.toISOString(),
           size: stats.size / 1024,
-          isMarkdown: extname(filePath).toLowerCase() === '.md',
-          path:
-        } satisfies NotebookTreeItem
-        notebookContents.push(note)
+          isMarkdown: extname(filePath).toLowerCase() === '.md'
+        } satisfies Note
+        notebookContents.notes.push(note)
       } else if (dirent.isDirectory()) {
         const notebookPath = join(fullPath, dirent.name)
         const notebookFiles = await readdir(notebookPath, { withFileTypes: true })
