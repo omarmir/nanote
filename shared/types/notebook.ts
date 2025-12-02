@@ -16,6 +16,7 @@ export type Note = {
   notebook: string[]
   size?: number
   isMarkdown: boolean
+  preview?: string
 }
 
 export type NotebookContents = {

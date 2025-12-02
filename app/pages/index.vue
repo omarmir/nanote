@@ -8,7 +8,15 @@
       </UDashboardNavbar>
     </template>
     <template #body>
-      <NotebooksAll></NotebooksAll>
+      <Suspense>
+        <NotebooksAll></NotebooksAll>
+        <template #fallback>
+          <SkeletonsAllNotebooks></SkeletonsAllNotebooks>
+        </template>
+      </Suspense>
+      <Suspense>
+        <NotesRecent></NotesRecent>
+      </Suspense>
     </template>
   </UDashboardPanel>
 </template>

@@ -8,7 +8,7 @@
           </div>
           <div>
             <h3 class="font-bold">{{ notebook.name }}</h3>
-            <div class="flex flex-row items-center text-gray-400">
+            <div class="flex flex-row items-center text-neutral-400">
               <small>{{ notebook.noteCount }} {{ t('note', notebook.noteCount === 1 ? 1 : 2) }}</small>
               <span class="mx-1 font-extrabold">&middot;</span>
               <small>{{ notebook.notebookCount }} {{ t('notebook', notebook.notebookCount === 1 ? 1 : 2) }}</small>
@@ -22,8 +22,8 @@
         </div>
       </div>
       <div class="flex flex-col gap-2 rounded-md bg-zinc-700/20 p-3">
-        <small class="text-gray-400">{{ t('Created') }}:</small>
-        <small class="text-gray-300">
+        <small class="text-neutral-400">{{ t('Created') }}:</small>
+        <small class="text-neutral-300">
           <CommonDateDisplay :date="notebook.createdAt"></CommonDateDisplay>
         </small>
       </div>

@@ -109,6 +109,9 @@ importers:
       puppeteer:
         specifier: ^24.31.0
         version: 24.31.0(typescript@5.9.3)
+      remark-gfm:
+        specifier: ^4.0.1
+        version: 4.0.1
       remark-html:
         specifier: ^16.0.1
         version: 16.0.1

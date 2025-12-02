@@ -15,6 +15,7 @@
   "created": "created",
   "Created": "@.capitalize:created",
   "updated": "updated",
+  "Updated": "@.capitalize:updated",
   "rename": "Rename",
   "recentNotes": "Recent Notes",
   "newNotebook": "New notebook",

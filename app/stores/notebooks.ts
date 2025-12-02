@@ -23,8 +23,6 @@ export const useNotebookStore = defineStore('notebook', () => {
     lazy: true
   })
 
-  execute()
-
   const mainOpenNotebooks: Ref<string[]> = ref([])
   const sidebarOpenNotebooks: Ref<string[]> = ref([])
 
@@ -248,6 +246,27 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
+  const fetchBooks = async () => {
+    if (status.value === 'idle' && !notebooks.value) {
+      await execute()
+    }
+
+    if (status.value === 'pending') {
+      await new Promise<void>((resolve) => {
+        const stopWatching = watch(
+          status,
+          (newStatus) => {
+            if (newStatus !== 'pending') {
+              stopWatching() // Stop watching once the status changes
+              resolve()
+            }
+          },
+          { immediate: true }
+        )
+      })
+    }
+  }
+
   return {
     toggleNotebook,
     notebooks,
@@ -264,6 +283,8 @@ export const useNotebookStore = defineStore('notebook', () => {
     // Note
     deleteNote,
     renameNote,
-    addNote
+    addNote,
+    // Get books
+    fetchBooks
   }
 })
