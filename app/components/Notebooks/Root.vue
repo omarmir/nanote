@@ -7,7 +7,14 @@
             <UIcon name="i-lucide-book" class="size-6 text-blue-400"></UIcon>
           </div>
           <div>
-            <h3 class="font-bold">{{ notebook.name }}</h3>
+            <button
+              variant="link"
+              :color="undefined"
+              class="cursor-pointer"
+              @click="toggleNotebook()"
+              :title="t('openNotebook', { notebook: notebook.label })">
+              <h3 class="font-bold">{{ notebook.label }}</h3>
+            </button>
             <div class="flex flex-row items-center text-neutral-400">
               <small>{{ notebook.noteCount }} {{ t('note', notebook.noteCount === 1 ? 1 : 2) }}</small>
               <span class="mx-1 font-extrabold">&middot;</span>
@@ -33,7 +40,7 @@
 <script lang="ts" setup>
 import type { DropdownMenuItem } from '@nuxt/ui'
 
-const { notebook } = defineProps<{ notebook: Notebook }>()
+const { notebook } = defineProps<{ notebook: NotebookTreeItem }>()
 const { t } = useI18n()
 
 const items: DropdownMenuItem[][] = [
@@ -55,4 +62,11 @@ const items: DropdownMenuItem[][] = [
     }
   ]
 ]
+const notebookStore = useNotebookStore()
+const openError: Ref<string | null> = ref(null)
+
+const toggleNotebook = async () => {
+  const resp = await notebookStore.toggleNotebook(notebook)
+  if (!resp.success) openError.value = resp.message
+}
 </script>

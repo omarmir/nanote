@@ -14,11 +14,13 @@ type EventHandlerWithSearch<T extends EventHandlerRequest, D> = (
 
 export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(handler: EventHandlerWithSearch<T, D>) {
   return defineEventHandler(async (event) => {
+    const t = await useTranslation(event)
+
     const fullPath = resolve(notesPath)
     const { q: rawQuery } = getQuery(event)
 
     if (!rawQuery || typeof rawQuery !== 'string') {
-      throw createError({ statusCode: 400, message: 'Missing query.' })
+      throw createError({ statusCode: 400, message: t('errors.missingQuery') })
     }
 
     const results: USearchResult[] = []
@@ -74,7 +76,7 @@ export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(h
         statusCode: 500,
         statusMessage: 'Internal Server Error',
         data: error,
-        message: 'Unable to search. Check console for details.'
+        message: t('errors.unableToSearch')
       })
     }
 

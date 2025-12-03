@@ -7,14 +7,16 @@ import { checkIfPathExists } from '~~/server/utils'
  * Create notebook
  */
 export default defineEventHandlerWithNotebook(
-  async (_event, notebook, fullPath, _parentFolder, name): Promise<Notebook> => {
+  async (event, notebook, fullPath, _parentFolder, name): Promise<Notebook> => {
+    const t = await useTranslation(event)
+
     //If folder already exists check
     const notebookExists = await checkIfPathExists(fullPath)
     if (notebookExists)
       throw createError({
         statusCode: 409,
         statusMessage: 'Conflict',
-        message: 'Notebook already exists'
+        message: t('errors.notebookAlreadyExists')
       })
 
     try {
@@ -23,20 +25,21 @@ export default defineEventHandlerWithNotebook(
 
       // Return the new notebook structure matching your type
       return {
-        notebooks: notebook.slice(0, -1) ?? [],
+        pathArray: notebook.slice(0, -1) ?? [],
         name: name ?? '',
         createdAt: new Date().toISOString(),
         updatedAt: null,
         notebookCount: 0,
         noteCount: 0,
-        path: fullPath
+        path: fullPath,
+        apiPath: notebook.join('/')
       } satisfies Notebook
     } catch (error) {
       console.error('Error creating notebook:', error)
       throw createError({
         statusCode: 500,
         statusMessage: 'Internal Server Error',
-        message: 'Failed to create notebook'
+        message: t('errors.failedCreateNotebook')
       })
     }
   },

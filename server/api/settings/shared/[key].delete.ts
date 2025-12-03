@@ -4,13 +4,14 @@ import { shared } from '~~/server/db/schema'
 // import type { Note } from '#shared/types/notebook'
 
 export default defineEventHandlerWithError(async (event): Promise<Result<null>> => {
+  const t = await useTranslation(event)
   const key = getRouterParam(event, 'key')
 
   if (!key) {
     throw createError({
       statusCode: 400,
       statusMessage: 'Bad Request',
-      message: 'Share note to be deleted is not specified.'
+      message: t('errors.shareNoteNotSpecified')
     })
   }
 
@@ -25,7 +26,7 @@ export default defineEventHandlerWithError(async (event): Promise<Result<null>> 
     throw createError({
       statusCode: 500,
       statusMessage: 'Internal Server Error',
-      message: `Expected to delete one share but deleted ${deleteNote.rowsAffected}`
+      message: t('errors.unexpectedDeleteCount', { count: deleteNote.rowsAffected })
     })
   }
 })

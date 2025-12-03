@@ -6,7 +6,7 @@ import type { APIError } from '#shared/types/result'
 
 type EventHandlerWithNotebook<T extends EventHandlerRequest, D> = (
   event: H3Event<T>,
-  notebook: string[],
+  pathArray: string[],
   fullPath: string,
   parentFolder: string,
   name: string | undefined
@@ -17,15 +17,17 @@ export function defineEventHandlerWithNotebook<T extends EventHandlerRequest, D>
   options?: { notebookCheck: boolean }
 ) {
   return defineEventHandler(async (event) => {
+    const t = await useTranslation(event)
+
     // Decode the path and then remove characters we cannot have
     const params = decodeURIComponent(event.context.params?.path ?? '')
-    const notebooks = params
+    const pathArray = params
       .split('/')
       .map((p) => p.replace(/[\\/:*?"<>|.]/g, ''))
       .filter(Boolean) // Removes empty strings
 
     // Construct paths
-    const fullPath = join(notesPath, ...notebooks)
+    const fullPath = join(notesPath, ...pathArray)
     const targetFolder = resolve(fullPath)
 
     // Check OS path length limitations
@@ -36,22 +38,23 @@ export function defineEventHandlerWithNotebook<T extends EventHandlerRequest, D>
       throw createError({
         statusCode: 400,
         statusMessage: 'Bad Request',
-        message: `Notebook name is too long. The full path exceeds the maximum allowed length of ${maxPathLength} characters.`
+        message: t('errors.notebookPathTooLong', { maxLength: maxPathLength })
       })
     }
 
-    const parentFolderArray = notebooks.slice(0, -1) ?? []
+    const parentFolderArray = pathArray.slice(0, -1) ?? []
     const parentFolder = join(notesPath, ...parentFolderArray)
-    const name = notebooks.at(-1)
+    const name = pathArray.at(-1)
+
     // This is for a new notebook, we can bail early
-    if (options?.notebookCheck === false) return await handler(event, notebooks, fullPath, parentFolder, name)
+    if (options?.notebookCheck === false) return await handler(event, pathArray, fullPath, parentFolder, name)
 
     // Security checks
     if (!targetFolder.startsWith(resolve(notesPath))) {
       throw createError({
         statusCode: 400,
         statusMessage: 'Bad Request',
-        message: 'Invalid notebook path'
+        message: t('errors.invalidNotebookPath')
       })
     }
     try {
@@ -61,37 +64,37 @@ export function defineEventHandlerWithNotebook<T extends EventHandlerRequest, D>
       throw createError({
         statusCode: 404,
         statusMessage: 'Not Found',
-        message: `Notebook "${notebooks.join(' > ')}" does not exist`
+        message: t('errors.notebookNotFound', { path: pathArray.join(' > ') })
       })
     }
     try {
-      return await handler(event, notebooks, fullPath, parentFolder, name)
+      return await handler(event, pathArray, fullPath, parentFolder, name)
     } catch (error) {
       console.log(event, error)
       if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
         throw createError({
           statusCode: 404,
           statusMessage: 'Not Found',
-          message: 'Note or notebook does not exist'
+          message: t('errors.noteOrNotebookNotFound')
         })
       } else if (error instanceof URIError) {
         throw createError({
           statusCode: 400,
           statusMessage: 'Bad Request',
-          message: 'Invalid URL encoding.'
+          message: t('errors.invalidUrlEncoding')
         })
       } else if (error instanceof Error && 'statusCode' in error) {
         const err = error as APIError
         throw createError({
           statusCode: err.statusCode ?? 500,
           statusMessage: err.statusMessage ?? 'Internal Server Error',
-          message: err.message ?? 'An unexpected error occurred'
+          message: err.message ?? t('errors.unexpectedError')
         })
       } else {
         throw createError({
           statusCode: 500,
           statusMessage: 'Internal Server Error',
-          message: 'An unexpected error occurred'
+          message: t('errors.unexpectedError')
         })
       }
     }

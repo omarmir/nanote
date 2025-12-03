@@ -8,13 +8,14 @@ import type { RenameNotebook } from '#shared/types/notebook'
  */
 export default defineEventHandlerWithNotebook(
   async (event, notebook, fullPath, parentFolder): Promise<RenameNotebook> => {
+    const t = await useTranslation(event)
     const body = await readBody(event)
     // Validate input
     if (!body?.newName) {
       throw createError({
         statusCode: 400,
         statusMessage: 'Bad Request',
-        message: 'Missing new name for notebook.'
+        message: t('errors.missingNewNotebookName')
       })
     }
 
@@ -30,7 +31,7 @@ export default defineEventHandlerWithNotebook(
       throw createError({
         statusCode: 409,
         statusMessage: 'Conflict',
-        message: 'New notebook name already exists'
+        message: t('errors.newNotebookNameExists')
       })
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error

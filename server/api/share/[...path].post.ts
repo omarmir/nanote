@@ -6,6 +6,7 @@ import { notePathArrayJoiner } from '#shared/utils/path-joiner'
 
 export default defineEventHandlerWithNotebookAndNote(
   async (event, notebooks, note, fullPath): Promise<Result<string>> => {
+    const t = await useTranslation(event)
     const { name } = await readBody(event)
 
     console.log(`Attempting to share note at: ${fullPath}`)
@@ -32,7 +33,7 @@ export default defineEventHandlerWithNotebookAndNote(
       throw createError({
         statusCode: 500,
         statusMessage: 'Internal Server Error',
-        message: 'Could not create share link for the note due to a database error.'
+        message: t('errors.failedCreateShareLink')
       })
     }
   }

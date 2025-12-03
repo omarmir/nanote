@@ -18,6 +18,8 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
   options?: { noteCheck: boolean }
 ) {
   return defineEventHandler(async (event) => {
+    const t = await useTranslation(event)
+
     // Decode the path and then remove characters we cannot have
     const params = decodeURIComponent(event.context.params?.path ?? '')
     const path = params.split('/').map((p) => p.replace(/[\\/:*?"<>|]/g, '')) || []
@@ -28,7 +30,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
       throw createError({
         statusCode: 400,
         statusMessage: 'Bad Request',
-        message: 'Missing notebook or note name'
+        message: t('errors.missingNotebookOrNote')
       })
     }
 
@@ -45,7 +47,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
       throw createError({
         statusCode: 400,
         statusMessage: 'Bad Request',
-        message: `Name exceeds maximum allowed length of 255 characters.`
+        message: t('errors.nameExceedsLimit')
       })
     }
 
@@ -57,7 +59,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
       throw createError({
         statusCode: 400,
         statusMessage: 'Bad Request',
-        message: `Path exceeds maximum allowed length of ${maxPathLength} characters.`
+        message: t('errors.pathExceedsLimit', { maxLength: maxPathLength })
       })
     }
 
@@ -66,7 +68,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
       throw createError({
         statusCode: 400,
         statusMessage: 'Bad Request',
-        message: 'Invalid notebook path'
+        message: t('errors.invalidNotebookPath')
       })
     }
 
@@ -81,9 +83,9 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
       const message =
         err.code === 'ENOENT'
           ? err.path === targetFolder
-            ? `Notebook "${notebooks.join(' > ')}" does not exist`
-            : `Note "${note}" does not exist`
-          : 'Access error'
+            ? t('errors.notebookNotFound', { path: notebooks.join(' > ') })
+            : t('errors.noteNotFound', { note })
+          : t('errors.accessError')
 
       throw createError({
         statusCode: 404,
@@ -99,26 +101,26 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
         throw createError({
           statusCode: 404,
           statusMessage: 'Not Found',
-          message: 'Note or notebook does not exist'
+          message: t('errors.noteOrNotebookNotFound')
         })
       } else if (error instanceof URIError) {
         throw createError({
           statusCode: 400,
           statusMessage: 'Bad Request',
-          message: 'Invalid URL encoding.'
+          message: t('errors.invalidUrlEncoding')
         })
       } else if (error instanceof Error && 'statusCode' in error) {
         const err = error as APIError
         throw createError({
           statusCode: err.statusCode ?? 500,
           statusMessage: err.statusMessage ?? 'Internal Server Error',
-          message: err.message ?? 'An unexpected error occurred'
+          message: err.message ?? t('errors.unexpectedError')
         })
       } else {
         throw createError({
           statusCode: 500,
           statusMessage: 'Internal Server Error',
-          message: 'An unexpected error occurred'
+          message: t('errors.unexpectedError')
         })
       }
     }

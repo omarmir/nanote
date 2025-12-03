@@ -20,6 +20,8 @@ export function defineEventHandlerWithAttachmentNotebookNote<T extends EventHand
 ) {
   return defineEventHandlerWithNotebookAndNote(
     async (event, notebooks, note, fullPath) => {
+      const t = await useTranslation(event)
+
       const oldNoteContent = await readFile(fullPath, 'utf-8')
 
       const deleteAllAttachments = async () => {
@@ -73,7 +75,7 @@ export function defineEventHandlerWithAttachmentNotebookNote<T extends EventHand
         throw createError({
           statusCode: 500,
           statusMessage: 'Internal Server Error',
-          message: 'Failed to process attachment'
+          message: t('errors.failedProcessAttachment')
         })
       }
     },

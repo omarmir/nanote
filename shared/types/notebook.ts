@@ -6,36 +6,33 @@ export type Notebook = {
   updatedAt: string | null
   noteCount: number
   notebookCount: number
-  notebooks: string[]
-  contents?: NotebookContents
   path: string
+  pathArray: string[]
+  apiPath: string
 }
 
 export type Note = {
   name: string
   createdAt: string
   updatedAt: string | null
-  notebook: string[]
   size?: number
   isMarkdown: boolean
   preview?: string
+  pathArray: string[]
+  apiPath: string
 }
 
 export type NotebookTreeItem = Omit<TreeItem, 'children'> & {
-  pathArray: string[]
+  label: string
   path: string
   children?: NotebookTreeItem[]
-  createdAt?: string
-  updatedAt?: string | null
+  createdAt: string
+  updatedAt: string | null
   noteCount?: number
   notebookCount?: number
-}
-
-export type NotebookContents = {
-  path: string
-  notebooks?: Record<string, Notebook>
-  notes: Note[]
+  isNote: boolean
   pathArray: string[]
+  apiPath: string
 }
 
 export type NoteResponse = {

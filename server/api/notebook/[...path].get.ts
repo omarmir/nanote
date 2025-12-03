@@ -1,14 +1,14 @@
 import { readdir, stat } from 'node:fs/promises'
 import { join, extname } from 'node:path'
 import { defineEventHandlerWithNotebook } from '~~/server/wrappers/notebook'
-import type { Note, Notebook, NotebookTreeItem } from '#shared/types/notebook'
+import type { NotebookTreeItem } from '#shared/types/notebook'
 /**
  * Returns contents for a specific notebook
  */
-export default defineEventHandlerWithNotebook(async (_event, notebook, fullPath): Promise<NotebookTreeItem[]> => {
+export default defineEventHandlerWithNotebook(async (_event, pathArray, fullPath): Promise<NotebookTreeItem[]> => {
   // Read directory contents
   const files = await readdir(fullPath, { withFileTypes: true })
-  const notebookContents: NotebookTreeItem[] = [{ children: [], path: fullPath, pathArray: notebook }]
+  const notebookContents: NotebookTreeItem[] = []
   // Process files concurrently
   await Promise.all(
     files.map(async (dirent) => {
@@ -17,13 +17,15 @@ export default defineEventHandlerWithNotebook(async (_event, notebook, fullPath)
       const createdAtTime = stats.birthtime.getTime() !== 0 ? stats.birthtime : stats.ctime
       if (dirent.isFile()) {
         const note = {
-          name: dirent.name,
-          notebook: notebook,
+          label: dirent.name,
           createdAt: createdAtTime.toISOString(),
           updatedAt: stats.mtime.toISOString(),
           size: stats.size / 1024,
           isMarkdown: extname(filePath).toLowerCase() === '.md',
-          path:
+          path: filePath,
+          pathArray,
+          isNote: true,
+          apiPath: `${pathArray.join('/')}/${dirent.name}`
         } satisfies NotebookTreeItem
         notebookContents.push(note)
       } else if (dirent.isDirectory()) {
@@ -56,20 +58,21 @@ export default defineEventHandlerWithNotebook(async (_event, notebook, fullPath)
         )
 
         const nestedNotebook = {
-          name: dirent.name,
+          label: dirent.name,
           createdAt: createdAtTime.toISOString(),
           noteCount: fileCount,
           notebookCount: folderCount,
-          notebooks: notebook ?? [],
+          children: [],
           updatedAt:
             updatedAt?.toISOString() ??
             new Date(Math.max(stats.birthtime.getTime(), stats.mtime.getTime())).toISOString(),
-          path: notebookPath
-        } satisfies Notebook
-        if (!notebookContents.notebooks) {
-          notebookContents.notebooks = {}
-        }
-        notebookContents.notebooks[nestedNotebook.name] = nestedNotebook
+          path: notebookPath,
+          pathArray: pathArray,
+          isNote: false,
+          apiPath: `${pathArray.join('/')}/${dirent.name}`
+        } satisfies NotebookTreeItem
+
+        notebookContents.push(nestedNotebook)
       }
     })
   )
