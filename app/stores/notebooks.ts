@@ -9,7 +9,8 @@ export const useNotebookStore = defineStore('notebook', () => {
     execute
   } = useFetch<NotebookTreeItem[]>('/api/notebook/*', {
     immediate: false,
-    lazy: true
+    lazy: true,
+    deep: true
   })
 
   const fetchBooks = async () => {
@@ -34,10 +35,7 @@ export const useNotebookStore = defineStore('notebook', () => {
   }
 
   // Helper function to traverse the tree and find a notebook by its pathArray
-  const findNotebookByPath = (
-    items: NotebookTreeItemWithExpanded[],
-    pathArray: string[]
-  ): NotebookTreeItemWithExpanded | null => {
+  const findNotebookByPath = (items: NotebookTreeItem[], pathArray: string[]): NotebookTreeItem | null => {
     // If pathArray is empty, return the root-level notebook
     if (pathArray.length === 0) {
       return null // Root-level notebooks are handled differently
@@ -45,7 +43,7 @@ export const useNotebookStore = defineStore('notebook', () => {
 
     // Navigate through the tree using pathArray as the hierarchy
     let currentItems = items
-    let currentNotebook: NotebookTreeItemWithExpanded | null = null
+    let currentNotebook: NotebookTreeItem | null = null
 
     for (const pathSegment of pathArray) {
       currentNotebook = currentItems.find((item) => item.label === pathSegment) || null
@@ -61,8 +59,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     return currentNotebook
   }
 
-  const toggleNotebook = async (notebook: NotebookTreeItemWithExpanded): Promise<Result<null>> => {
-    console.log(notebook)
+  const toggleNotebook = async (notebook: NotebookTreeItem): Promise<Result<null>> => {
     // If children are already loaded, nothing to do
     if (notebook.childrenLoaded) {
       return { success: true, data: null }
@@ -94,7 +91,6 @@ export const useNotebookStore = defineStore('notebook', () => {
             childrenLoaded: false
           }))
           notebook.childrenLoaded = true
-          console.log(notebook)
         }
       }
 
