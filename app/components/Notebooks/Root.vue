@@ -7,14 +7,13 @@
             <UIcon name="i-lucide-book" class="size-6 text-blue-400"></UIcon>
           </div>
           <div>
-            <button
-              variant="link"
-              :color="undefined"
+            <UButton
+              variant="ghost"
               class="cursor-pointer"
               @click="toggleNotebook()"
               :title="t('openNotebook', { notebook: notebook.label })">
               <h3 class="font-bold">{{ notebook.label }}</h3>
-            </button>
+            </UButton>
             <div class="flex flex-row items-center text-neutral-400">
               <small>{{ notebook.noteCount }} {{ t('note', notebook.noteCount === 1 ? 1 : 2) }}</small>
               <span class="mx-1 font-extrabold">&middot;</span>
@@ -36,12 +35,29 @@
       </div>
     </div>
     <template #footer v-if="notebook.children && notebook.childrenLoaded">
-      <pre>{{ notebook.children }}</pre>
+      <UTree
+        ref="tree"
+        @toggle="toggle"
+        :nested="false"
+        :unmount-on-hide="false"
+        :items="notebook.children"
+        expanded-icon="i-lucide-book-open"
+        collapsed-icon="i-lucide-book">
+        <template #item-label="{ item }">
+          <template v-if="item.isPlaceholder">
+            <USkeleton class="h-2 w-36"></USkeleton>
+          </template>
+          <template v-else>
+            {{ item.label }}
+          </template>
+        </template>
+      </UTree>
     </template>
   </UCard>
 </template>
 <script lang="ts" setup>
 import type { DropdownMenuItem } from '@nuxt/ui'
+import type { TreeItemToggleEvent } from 'reka-ui'
 
 const { notebook } = defineProps<{ notebook: NotebookTreeItem }>()
 const { t } = useI18n()
@@ -71,5 +87,9 @@ const openError: Ref<string | null> = ref(null)
 const toggleNotebook = async () => {
   const resp = await notebookStore.toggleNotebook(notebook)
   if (!resp.success) openError.value = resp.message
+}
+
+const toggle = async (e: TreeItemToggleEvent<NotebookTreeItem>, item: NotebookTreeItem) => {
+  const resp = await notebookStore.toggleNotebook(item)
 }
 </script>
