@@ -1,7 +1,7 @@
 import { readdir, stat } from 'node:fs/promises'
 import { join, extname } from 'node:path'
 import { defineEventHandlerWithNotebook } from '~~/server/wrappers/notebook'
-import type { NotebookTreeItem } from '#shared/types/notebook'
+import { LAZY_LOAD_PLACEHOLDER, type NotebookTreeItem } from '#shared/types/notebook'
 /**
  * Returns contents for a specific notebook
  */
@@ -26,7 +26,8 @@ export default defineEventHandlerWithNotebook(async (_event, pathArray, fullPath
           pathArray,
           isNote: true,
           apiPath: `${pathArray.join('/')}/${dirent.name}`,
-          childrenLoaded: false
+          childrenLoaded: false,
+          disabled: false
         } satisfies NotebookTreeItem
         notebookContents.push(note)
       } else if (dirent.isDirectory()) {
@@ -63,7 +64,7 @@ export default defineEventHandlerWithNotebook(async (_event, pathArray, fullPath
           createdAt: createdAtTime.toISOString(),
           noteCount: fileCount,
           notebookCount: folderCount,
-          children: [],
+          children: fileCount + folderCount > 0 ? [LAZY_LOAD_PLACEHOLDER] : [],
           updatedAt:
             updatedAt?.toISOString() ??
             new Date(Math.max(stats.birthtime.getTime(), stats.mtime.getTime())).toISOString(),
@@ -71,7 +72,8 @@ export default defineEventHandlerWithNotebook(async (_event, pathArray, fullPath
           pathArray: pathArray,
           isNote: false,
           apiPath: `${pathArray.join('/')}/${dirent.name}`,
-          childrenLoaded: false
+          childrenLoaded: false,
+          disabled: false
         } satisfies NotebookTreeItem
 
         notebookContents.push(nestedNotebook)
