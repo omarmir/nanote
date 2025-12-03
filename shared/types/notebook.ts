@@ -34,6 +34,8 @@ export type NotebookTreeItem = Omit<TreeItem, 'children'> & {
   pathArray: string[]
   apiPath: string
   childrenLoaded: boolean
+  isPlaceholder?: boolean
+  disabled: boolean
 }
 
 export type NoteResponse = {
@@ -79,3 +81,16 @@ export type DeleteNotebook = {
 export type SavingState = 'pending' | 'saving' | 'success' | 'error' | 'idle'
 
 export type NotebookDisplay = 'main' | 'sidebar' | 'other'
+
+export const LAZY_LOAD_PLACEHOLDER: NotebookTreeItem = {
+  label: 'Loading...',
+  isPlaceholder: true,
+  path: '',
+  createdAt: '',
+  updatedAt: null,
+  isNote: false,
+  pathArray: [],
+  apiPath: '',
+  childrenLoaded: false,
+  disabled: true
+}
