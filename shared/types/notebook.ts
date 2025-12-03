@@ -33,6 +33,7 @@ export type NotebookTreeItem = Omit<TreeItem, 'children'> & {
   isNote: boolean
   pathArray: string[]
   apiPath: string
+  childrenLoaded: boolean
 }
 
 export type NoteResponse = {

@@ -1,27 +1,15 @@
 import { defineStore } from 'pinia'
 import type { NotebookTreeItem } from '#shared/types/notebook'
 
-// Extended type to track if children have been loaded
-type NotebookTreeItemWithExpanded = NotebookTreeItem & {
-  childrenLoaded?: boolean
-}
-
 export const useNotebookStore = defineStore('notebook', () => {
   const {
     data: notebooks,
     status,
     error,
     execute
-  } = useFetch<NotebookTreeItemWithExpanded[]>('/api/notebook/*', {
+  } = useFetch<NotebookTreeItem[]>('/api/notebook/*', {
     immediate: false,
-    lazy: true,
-    transform: (data: NotebookTreeItem[]) => {
-      // Mark root level items as loaded since we fetched them
-      return data.map((item) => ({
-        ...item,
-        childrenLoaded: false // Not expanded yet, children not loaded
-      }))
-    }
+    lazy: true
   })
 
   const fetchBooks = async () => {
@@ -43,6 +31,34 @@ export const useNotebookStore = defineStore('notebook', () => {
         )
       })
     }
+  }
+
+  // Helper function to traverse the tree and find a notebook by its pathArray
+  const findNotebookByPath = (
+    items: NotebookTreeItemWithExpanded[],
+    pathArray: string[]
+  ): NotebookTreeItemWithExpanded | null => {
+    // If pathArray is empty, return the root-level notebook
+    if (pathArray.length === 0) {
+      return null // Root-level notebooks are handled differently
+    }
+
+    // Navigate through the tree using pathArray as the hierarchy
+    let currentItems = items
+    let currentNotebook: NotebookTreeItemWithExpanded | null = null
+
+    for (const pathSegment of pathArray) {
+      currentNotebook = currentItems.find((item) => item.label === pathSegment) || null
+      if (!currentNotebook) {
+        return null
+      }
+      // If not at the end, continue to children
+      if (currentNotebook.children && pathArray.indexOf(pathSegment) < pathArray.length - 1) {
+        currentItems = currentNotebook.children
+      }
+    }
+
+    return currentNotebook
   }
 
   const toggleNotebook = async (notebook: NotebookTreeItemWithExpanded): Promise<Result<null>> => {
@@ -71,6 +87,14 @@ export const useNotebookStore = defineStore('notebook', () => {
             childrenLoaded: false
           }))
           targetNotebook.childrenLoaded = true
+        } else if (notebook.pathArray.length === 0) {
+          // Handle root-level notebooks
+          notebook.children = children.map((child) => ({
+            ...child,
+            childrenLoaded: false
+          }))
+          notebook.childrenLoaded = true
+          console.log(notebook)
         }
       }
 
@@ -81,29 +105,6 @@ export const useNotebookStore = defineStore('notebook', () => {
         message: err instanceof Error ? err.message : 'Failed to load notebook children'
       }
     }
-  }
-
-  // Helper function to traverse the tree and find a notebook by its pathArray
-  const findNotebookByPath = (
-    items: NotebookTreeItemWithExpanded[],
-    pathArray: string[]
-  ): NotebookTreeItemWithExpanded | null => {
-    // Navigate through the tree using pathArray as the hierarchy
-    let currentItems = items
-    let currentNotebook: NotebookTreeItemWithExpanded | null = null
-
-    for (const pathSegment of pathArray) {
-      currentNotebook = currentItems.find((item) => item.label === pathSegment) || null
-      if (!currentNotebook) {
-        return null
-      }
-      // If not at the end, continue to children
-      if (currentNotebook.children && pathArray.indexOf(pathSegment) < pathArray.length - 1) {
-        currentItems = currentNotebook.children
-      }
-    }
-
-    return currentNotebook
   }
 
   return {

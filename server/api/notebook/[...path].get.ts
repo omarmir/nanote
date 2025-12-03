@@ -25,7 +25,8 @@ export default defineEventHandlerWithNotebook(async (_event, pathArray, fullPath
           path: filePath,
           pathArray,
           isNote: true,
-          apiPath: `${pathArray.join('/')}/${dirent.name}`
+          apiPath: `${pathArray.join('/')}/${dirent.name}`,
+          childrenLoaded: false
         } satisfies NotebookTreeItem
         notebookContents.push(note)
       } else if (dirent.isDirectory()) {
@@ -69,7 +70,8 @@ export default defineEventHandlerWithNotebook(async (_event, pathArray, fullPath
           path: notebookPath,
           pathArray: pathArray,
           isNote: false,
-          apiPath: `${pathArray.join('/')}/${dirent.name}`
+          apiPath: `${pathArray.join('/')}/${dirent.name}`,
+          childrenLoaded: false
         } satisfies NotebookTreeItem
 
         notebookContents.push(nestedNotebook)

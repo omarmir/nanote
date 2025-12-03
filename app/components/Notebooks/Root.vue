@@ -35,6 +35,9 @@
         </small>
       </div>
     </div>
+    <template #footer v-if="notebook.children && notebook.childrenLoaded">
+      <pre>{{ notebook.children }}</pre>
+    </template>
   </UCard>
 </template>
 <script lang="ts" setup>
