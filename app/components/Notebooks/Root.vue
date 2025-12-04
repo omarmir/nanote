@@ -52,10 +52,9 @@
         expanded-icon="i-lucide-book-open"
         collapsed-icon="i-lucide-book">
         <template #item-leading="{ item }">
-          <UIcon
-            name="i-custom-quill-markdown"
-            class="text-primary size-5"
-            v-if="item.isNote && item.isMarkdown"></UIcon>
+          <div v-if="item.isNote">
+            <FileIcon :name="item.label" :is-markdown="item.isMarkdown"></FileIcon>
+          </div>
         </template>
         <template #item-label="{ item }">
           <template v-if="item.isPlaceholder">

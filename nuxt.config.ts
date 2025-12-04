@@ -44,5 +44,14 @@ export default defineNuxtConfig({
     clientBundle: {
       scan: true
     }
+  },
+
+  imports: {
+    presets: [
+      {
+        from: 'material-file-icons',
+        imports: ['getIcon']
+      }
+    ]
   }
 })
