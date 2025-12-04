@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="!collapsed">
     <div class="mb-2 flex flex-row items-center justify-between">
       <h2 class="text-sm font-bold">{{ t('Notebook', 2) }}</h2>
       <UButton
@@ -41,6 +41,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+const { collapsed } = defineProps<{ collapsed?: boolean }>()
 import type { TreeItemToggleEvent } from 'reka-ui'
 
 const { t } = useI18n()
