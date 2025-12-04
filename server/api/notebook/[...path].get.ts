@@ -26,7 +26,6 @@ export default defineEventHandlerWithNotebook(async (_event, pathArray, fullPath
           pathArray: [...pathArray, dirent.name],
           isNote: true,
           apiPath: `${pathArray.join('/')}/${dirent.name}`,
-          childrenLoaded: false,
           disabled: false
         } satisfies NotebookTreeItem
         notebookContents.push(note)
@@ -72,7 +71,6 @@ export default defineEventHandlerWithNotebook(async (_event, pathArray, fullPath
           pathArray: [...pathArray, dirent.name],
           isNote: false,
           apiPath: `${pathArray.join('/')}/${dirent.name}`,
-          childrenLoaded: false,
           disabled: false
         } satisfies NotebookTreeItem
 

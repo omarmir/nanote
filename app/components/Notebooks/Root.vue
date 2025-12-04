@@ -10,7 +10,7 @@
             <UButton
               variant="ghost"
               class="cursor-pointer text-white"
-              @click="toggleNotebook()"
+              @click="toggle(notebook)"
               :title="t('openNotebook', { notebook: notebook.label })">
               <h3 class="font-bold">{{ notebook.label }}</h3>
             </UButton>
@@ -23,13 +23,14 @@
         </div>
         <div class="flex flex-row items-start">
           <UButton
-            @click="isOpen = false"
+            @click="toggle(notebook)"
             size="sm"
             variant="ghost"
             color="warning"
             icon="i-lucide-fold-vertical"
+            :title="t('closeNotebooks', 1)"
             class="cursor-pointer"
-            v-if="isOpen"></UButton>
+            :class="{ invisible: !notebook.isOpen }"></UButton>
           <UDropdownMenu :items="items">
             <UButton icon="i-lucide-ellipsis-vertical" color="neutral" variant="ghost" size="sm" />
           </UDropdownMenu>
@@ -42,10 +43,10 @@
         </small>
       </div>
     </div>
-    <template #footer v-if="notebook.children && isOpen">
+    <template #footer v-if="notebook.children && notebook.isOpen">
       <UTree
         ref="tree"
-        @toggle="toggle"
+        @toggle="(e, item) => toggle(item)"
         :nested="false"
         :unmount-on-hide="false"
         :items="notebook.children"
@@ -72,8 +73,7 @@
 import type { DropdownMenuItem } from '@nuxt/ui'
 import type { TreeItemToggleEvent } from 'reka-ui'
 
-const { notebook } = defineProps<{ notebook: NotebookTreeItem }>()
-const isOpen = ref(false)
+const { notebook, isDefaultOpen } = defineProps<{ notebook: NotebookTreeItemClient; isDefaultOpen: boolean }>()
 
 const { t } = useI18n()
 
@@ -99,17 +99,7 @@ const items: DropdownMenuItem[][] = [
 const notebookStore = useNotebookStore()
 const openError: Ref<string | null> = ref(null)
 
-const toggleNotebook = async () => {
-  if (isOpen.value) {
-    isOpen.value = false
-  } else {
-    isOpen.value = true
-    const resp = await notebookStore.toggleNotebook(notebook)
-    if (!resp.success) openError.value = resp.message
-  }
-}
-
-const toggle = async (e: TreeItemToggleEvent<NotebookTreeItem>, item: NotebookTreeItem) => {
-  const resp = await notebookStore.toggleNotebook(item)
+const toggle = async (item: NotebookTreeItemClient) => {
+  const resp = await notebookStore.toggleRootNotebook(item)
 }
 </script>

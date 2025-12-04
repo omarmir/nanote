@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { NotebookTreeItem } from '#shared/types/notebook'
+import type { NotebookTreeItemClient } from '#shared/types/notebook'
 
 export const useNotebookStore = defineStore('notebook', () => {
   const {
@@ -7,10 +7,15 @@ export const useNotebookStore = defineStore('notebook', () => {
     status,
     error,
     execute
-  } = useFetch<NotebookTreeItem[]>('/api/notebook/*', {
+  } = useFetch('/api/notebook/*', {
     immediate: false,
     lazy: true,
-    deep: true
+    deep: true,
+    transform: (books: NotebookTreeItem[]): NotebookTreeItemClient[] => {
+      return books.map((book) => {
+        return { ...book, childrenLoaded: false, isOpen: false }
+      })
+    }
   })
 
   const fetchBooks = async () => {
@@ -35,7 +40,7 @@ export const useNotebookStore = defineStore('notebook', () => {
   }
 
   // Helper function to traverse the tree and find a notebook by its pathArray
-  const findNotebookByPath = (items: NotebookTreeItem[], pathArray: string[]): NotebookTreeItem | null => {
+  const findNotebookByPath = (items: NotebookTreeItemClient[], pathArray: string[]): NotebookTreeItemClient | null => {
     // If pathArray is empty, return the root-level notebook
     if (pathArray.length === 0) {
       return null // Root-level notebooks are handled differently
@@ -43,7 +48,7 @@ export const useNotebookStore = defineStore('notebook', () => {
 
     // Navigate through the tree using pathArray as the hierarchy
     let currentItems = items
-    let currentNotebook: NotebookTreeItem | null = null
+    let currentNotebook: NotebookTreeItemClient | null = null
 
     for (const pathSegment of pathArray) {
       currentNotebook = currentItems.find((item) => item.label === pathSegment) || null
@@ -59,20 +64,31 @@ export const useNotebookStore = defineStore('notebook', () => {
     return currentNotebook
   }
 
-  const toggleNotebook = async (notebook: NotebookTreeItem): Promise<Result<null>> => {
-    // If children are already loaded, nothing to do
-    if (notebook.childrenLoaded) {
+  const toggleRootNotebook = async (notebook: NotebookTreeItemClient): Promise<Result<null>> => {
+    // if its already open close it
+    if (notebook.isOpen) {
+      notebook.isOpen = false
       return { success: true, data: null }
+    } else {
+      notebook.isOpen = true
     }
+    return toggleNotebook(notebook)
+  }
 
+  const toggleNotebook = async (notebook: NotebookTreeItemClient): Promise<Result<null>> => {
     // If it's a note (not a notebook/folder), nothing to load
     if (notebook.isNote) {
       return { success: true, data: null }
     }
 
+    // If children are already loaded, nothing to do
+    if (notebook.childrenLoaded) {
+      return { success: true, data: null }
+    }
+
     try {
       // Fetch children from the API
-      const children = await $fetch<NotebookTreeItem[]>(`/api/notebook/${notebook.apiPath}`)
+      const children = await $fetch<NotebookTreeItemClient[]>(`/api/notebook/${notebook.apiPath}`)
 
       // Find the notebook in the tree using pathArray and add children
       if (notebooks.value) {
@@ -103,6 +119,12 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
+  const anyOpenBooks: ComputedRef<boolean> = computed(() => notebooks.value?.some((book) => book.isOpen) ?? false)
+  const closeAllOpenBooks = () =>
+    notebooks.value?.forEach((book) => {
+      if (book.isOpen) book.isOpen = false
+    })
+
   return {
     notebooks,
     status,
@@ -111,7 +133,11 @@ export const useNotebookStore = defineStore('notebook', () => {
     // addNotebook,
     // Note
     toggleNotebook,
+    toggleRootNotebook,
     // Get books
-    fetchBooks
+    fetchBooks,
+    // state
+    anyOpenBooks,
+    closeAllOpenBooks
   }
 })

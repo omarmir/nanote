@@ -33,10 +33,14 @@ export type NotebookTreeItem = Omit<TreeItem, 'children'> & {
   isNote: boolean
   pathArray: string[]
   apiPath: string
-  childrenLoaded: boolean
   isPlaceholder?: boolean
   disabled: boolean
   isMarkdown?: boolean
+}
+
+export type NotebookTreeItemClient = NotebookTreeItem & {
+  childrenLoaded?: boolean
+  isOpen?: boolean
 }
 
 export type NoteResponse = {

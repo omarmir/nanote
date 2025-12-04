@@ -10,6 +10,7 @@
   "name": "Name",
   "notebook": "notebook | notebooks",
   "Notebook": "@.capitalize:notebook",
+  "closeNotebooks": "Close Notebook | Close Notebooks",
   "note": "note | notes",
   "Note": "@.capitalize:note",
   "openNotebook": "Open {notebook}",
