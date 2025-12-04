@@ -19,7 +19,7 @@
     </div>
     <ul v-if="notebookStore.notebooks" class="grid grid-cols-2 gap-4 xl:grid-cols-4">
       <li v-for="notebook in notebookStore.notebooks">
-        <NotebooksRoot :notebook :is-default-open="isDefaultOpen"></NotebooksRoot>
+        <NotebooksRoot :notebook></NotebooksRoot>
       </li>
     </ul>
   </div>
@@ -31,6 +31,4 @@ const { t } = useI18n()
 await notebookStore.fetchBooks()
 
 const notebookAddedError: Ref<string | null> = ref(null)
-
-const isDefaultOpen = ref(false)
 </script>

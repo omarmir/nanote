@@ -1,5 +1,5 @@
 <template>
-  <UCard variant="outline" :ui="{ body: 'sm:p-4' }">
+  <UCard :variant="notebook.isOpen ? 'subtle' : 'outline'" :ui="{ body: 'sm:p-4' }">
     <div class="flex flex-col gap-4">
       <div class="flex flex-row justify-between">
         <div class="flex grow flex-row gap-3">
@@ -71,9 +71,8 @@
 </template>
 <script lang="ts" setup>
 import type { DropdownMenuItem } from '@nuxt/ui'
-import type { TreeItemToggleEvent } from 'reka-ui'
 
-const { notebook, isDefaultOpen } = defineProps<{ notebook: NotebookTreeItemClient; isDefaultOpen: boolean }>()
+const { notebook } = defineProps<{ notebook: NotebookTreeItemClient }>()
 
 const { t } = useI18n()
 
