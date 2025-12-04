@@ -8,6 +8,7 @@
             {{ t('appName') }}
           </h1>
         </div>
+        <ThemeDropdown></ThemeDropdown>
       </template>
 
       <template #default="{ collapsed }">
