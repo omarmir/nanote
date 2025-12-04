@@ -9,7 +9,7 @@
           <div>
             <UButton
               variant="ghost"
-              class="cursor-pointer"
+              class="cursor-pointer text-white"
               @click="toggleNotebook()"
               :title="t('openNotebook', { notebook: notebook.label })">
               <h3 class="font-bold">{{ notebook.label }}</h3>
@@ -21,9 +21,17 @@
             </div>
           </div>
         </div>
-        <div>
+        <div class="flex flex-row items-start">
+          <UButton
+            @click="isOpen = false"
+            size="sm"
+            variant="ghost"
+            color="warning"
+            icon="i-lucide-fold-vertical"
+            class="cursor-pointer"
+            v-if="isOpen"></UButton>
           <UDropdownMenu :items="items">
-            <UButton icon="i-lucide-ellipsis-vertical" color="neutral" variant="ghost" size="xs" />
+            <UButton icon="i-lucide-ellipsis-vertical" color="neutral" variant="ghost" size="sm" />
           </UDropdownMenu>
         </div>
       </div>
@@ -34,7 +42,7 @@
         </small>
       </div>
     </div>
-    <template #footer v-if="notebook.children && notebook.childrenLoaded">
+    <template #footer v-if="notebook.children && isOpen">
       <UTree
         ref="tree"
         @toggle="toggle"
@@ -43,6 +51,12 @@
         :items="notebook.children"
         expanded-icon="i-lucide-book-open"
         collapsed-icon="i-lucide-book">
+        <template #item-leading="{ item }">
+          <UIcon
+            name="i-custom-quill-markdown"
+            class="text-primary size-5"
+            v-if="item.isNote && item.isMarkdown"></UIcon>
+        </template>
         <template #item-label="{ item }">
           <template v-if="item.isPlaceholder">
             <USkeleton class="h-2 w-36"></USkeleton>
@@ -60,6 +74,8 @@ import type { DropdownMenuItem } from '@nuxt/ui'
 import type { TreeItemToggleEvent } from 'reka-ui'
 
 const { notebook } = defineProps<{ notebook: NotebookTreeItem }>()
+const isOpen = ref(false)
+
 const { t } = useI18n()
 
 const items: DropdownMenuItem[][] = [
@@ -85,8 +101,13 @@ const notebookStore = useNotebookStore()
 const openError: Ref<string | null> = ref(null)
 
 const toggleNotebook = async () => {
-  const resp = await notebookStore.toggleNotebook(notebook)
-  if (!resp.success) openError.value = resp.message
+  if (isOpen.value) {
+    isOpen.value = false
+  } else {
+    isOpen.value = true
+    const resp = await notebookStore.toggleNotebook(notebook)
+    if (!resp.success) openError.value = resp.message
+  }
 }
 
 const toggle = async (e: TreeItemToggleEvent<NotebookTreeItem>, item: NotebookTreeItem) => {

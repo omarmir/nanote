@@ -36,6 +36,7 @@ export type NotebookTreeItem = Omit<TreeItem, 'children'> & {
   childrenLoaded: boolean
   isPlaceholder?: boolean
   disabled: boolean
+  isMarkdown?: boolean
 }
 
 export type NoteResponse = {

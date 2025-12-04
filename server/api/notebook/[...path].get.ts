@@ -23,7 +23,7 @@ export default defineEventHandlerWithNotebook(async (_event, pathArray, fullPath
           size: stats.size / 1024,
           isMarkdown: extname(filePath).toLowerCase() === '.md',
           path: filePath,
-          pathArray,
+          pathArray: [...pathArray, dirent.name],
           isNote: true,
           apiPath: `${pathArray.join('/')}/${dirent.name}`,
           childrenLoaded: false,
@@ -69,7 +69,7 @@ export default defineEventHandlerWithNotebook(async (_event, pathArray, fullPath
             updatedAt?.toISOString() ??
             new Date(Math.max(stats.birthtime.getTime(), stats.mtime.getTime())).toISOString(),
           path: notebookPath,
-          pathArray: pathArray,
+          pathArray: [...pathArray, dirent.name],
           isNote: false,
           apiPath: `${pathArray.join('/')}/${dirent.name}`,
           childrenLoaded: false,

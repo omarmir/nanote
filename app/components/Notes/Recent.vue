@@ -2,7 +2,7 @@
   <div>
     <h1 class="mb-6 text-2xl font-bold">{{ t('recentNotes') }}</h1>
     <ul v-if="notes" class="grid grid-cols-2 gap-4 xl:grid-cols-4">
-      <li v-for="note in notes" :key="note.notebook + note.name" class="flex">
+      <li v-for="note in notes" :key="note.apiPath" class="flex">
         <UCard class="flex-1">
           <h3 class="flex flex-row items-center gap-x-2 font-bold">
             <UIcon name="i-custom-quill-markdown" class="text-primary size-6" v-if="note.isMarkdown"></UIcon>
