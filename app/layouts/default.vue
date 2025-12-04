@@ -27,6 +27,7 @@
         </UButton>
 
         <UNavigationMenu :collapsed="collapsed" :items="items" orientation="vertical" />
+        <NotebooksSidebar></NotebooksSidebar>
       </template>
     </UDashboardSidebar>
     <slot />
