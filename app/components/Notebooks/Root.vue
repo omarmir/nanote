@@ -14,7 +14,7 @@
               :title="t('openNotebook', { notebook: notebook.label })">
               <h3 class="font-bold">{{ notebook.label }}</h3>
             </UButton>
-            <div class="flex flex-row items-center text-neutral-400">
+            <div class="ml-2 flex flex-row items-center text-neutral-400">
               <small>{{ notebook.noteCount }} {{ t('note', notebook.noteCount === 1 ? 1 : 2) }}</small>
               <span class="mx-1 font-extrabold">&middot;</span>
               <small>{{ notebook.notebookCount }} {{ t('notebook', notebook.notebookCount === 1 ? 1 : 2) }}</small>
@@ -36,7 +36,7 @@
           </UDropdownMenu>
         </div>
       </div>
-      <div class="flex flex-col gap-2 rounded-md bg-zinc-300/20 p-3 dark:bg-zinc-700/20">
+      <div class="flex flex-row gap-2 rounded-md bg-zinc-300/20 p-3 dark:bg-zinc-700/20">
         <small class="text-neutral-500 dark:text-neutral-400">{{ t('Created') }}:</small>
         <small class="text-neutral-600 dark:text-neutral-300">
           <CommonDateDisplay :date="notebook.createdAt"></CommonDateDisplay>
