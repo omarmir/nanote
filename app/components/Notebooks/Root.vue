@@ -3,13 +3,13 @@
     <div class="flex flex-col gap-4">
       <div class="flex flex-row justify-between">
         <div class="flex grow flex-row gap-3">
-          <div class="flex size-12 place-content-center items-center rounded-md bg-blue-500/20">
-            <UIcon name="i-lucide-book" class="size-6 text-blue-400"></UIcon>
+          <div class="bg-primary-500/20 flex size-12 place-content-center items-center rounded-md">
+            <UIcon name="i-lucide-book" class="text-primary-400 size-6"></UIcon>
           </div>
           <div>
             <UButton
               variant="ghost"
-              class="cursor-pointer text-white"
+              class="cursor-pointer text-black dark:text-white"
               @click="toggle(notebook)"
               :title="t('openNotebook', { notebook: notebook.label })">
               <h3 class="font-bold">{{ notebook.label }}</h3>
@@ -36,9 +36,9 @@
           </UDropdownMenu>
         </div>
       </div>
-      <div class="flex flex-col gap-2 rounded-md bg-zinc-700/20 p-3">
-        <small class="text-neutral-400">{{ t('Created') }}:</small>
-        <small class="text-neutral-300">
+      <div class="flex flex-col gap-2 rounded-md bg-zinc-300/20 p-3 dark:bg-zinc-700/20">
+        <small class="text-neutral-500 dark:text-neutral-400">{{ t('Created') }}:</small>
+        <small class="text-neutral-600 dark:text-neutral-300">
           <CommonDateDisplay :date="notebook.createdAt"></CommonDateDisplay>
         </small>
       </div>
