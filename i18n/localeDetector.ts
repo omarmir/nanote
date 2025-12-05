@@ -12,6 +12,11 @@ export default defineI18nLocaleDetector((event, config) => {
     return cookie.toString()
   }
 
+  const cookieRedirect = tryCookieLocale(event, { lang: '', name: 'i18n_redirected' }) // disable locale default value with `lang` option
+  if (cookieRedirect) {
+    return cookieRedirect.toString()
+  }
+
   // try to get locale from header (`accept-header`)
   const header = tryHeaderLocale(event, { lang: '' }) // disable locale default value with `lang` option
   if (header) {
