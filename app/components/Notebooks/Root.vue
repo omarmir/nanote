@@ -36,7 +36,9 @@
           </UDropdownMenu>
         </div>
       </div>
-      <div class="flex flex-row gap-2 rounded-md bg-zinc-300/20 p-3 dark:bg-zinc-700/20">
+      <div
+        class="flex flex-row gap-2 rounded-md bg-zinc-300/20 p-3 dark:bg-zinc-700/20"
+        v-if="!settingsStore.settings.isDense">
         <small class="text-neutral-500 dark:text-neutral-400">{{ t('Created') }}:</small>
         <small class="text-neutral-600 dark:text-neutral-300">
           <CommonDateDisplay :date="notebook.createdAt"></CommonDateDisplay>
@@ -72,8 +74,9 @@
 <script lang="ts" setup>
 import type { DropdownMenuItem } from '@nuxt/ui'
 
-const { notebook } = defineProps<{ notebook: NotebookTreeItemClient }>()
+const settingsStore = useSettingsStore()
 
+const { notebook } = defineProps<{ notebook: NotebookTreeItemClient }>()
 const { t } = useI18n()
 
 const items: DropdownMenuItem[][] = [
