@@ -9,7 +9,7 @@
     expanded-icon="i-lucide-book-open"
     collapsed-icon="i-lucide-book">
     <template #item-leading="{ item }">
-      <div v-if="item.isNote" class="flex flex-row items-center">
+      <div v-if="item.isNote" class="self-start">
         <FileIcon :name="item.label" :is-markdown="item.isMarkdown"></FileIcon>
       </div>
     </template>
@@ -18,7 +18,15 @@
         <USkeleton class="h-2 w-36"></USkeleton>
       </template>
       <template v-else>
-        {{ item.label }}
+        <div class="text-left">{{ item.label }}</div>
+        <div
+          class="mt-0.5 flex flex-row gap-2 text-neutral-500 dark:text-neutral-400"
+          v-if="!settingsStore.settings.isDense && item.isNote">
+          <small>
+            {{ t('Updated') }}:
+            <CommonDateDisplay :date="item.updatedAt"></CommonDateDisplay>
+          </small>
+        </div>
       </template>
     </template>
   </UTree>
@@ -27,8 +35,11 @@
 const { notebook, type } = defineProps<{ notebook: NotebookTreeItemClient[]; type: 'root' | 'sidebar' }>()
 
 const expanded = defineModel<string[] | undefined>({ required: false })
+const { t } = useI18n()
 
 const notebookStore = useNotebookStore()
+const settingsStore = useSettingsStore()
+
 const openError: Ref<string | null> = ref(null)
 
 const toggle = async (item: NotebookTreeItemClient) => {
