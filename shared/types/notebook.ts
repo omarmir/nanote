@@ -1,4 +1,5 @@
 import type { TreeItem } from '@nuxt/ui'
+import * as v from 'valibot'
 
 export type Notebook = {
   name: string
@@ -99,3 +100,28 @@ export const LAZY_LOAD_PLACEHOLDER: NotebookTreeItem = {
   childrenLoaded: false,
   disabled: true
 }
+
+// Forbidden characters across Windows, Linux, and macOS
+// Windows: < > : " / \ | ? *
+// Also forbidden: leading/trailing spaces or periods, names ending with space
+// Reserved names on Windows: CON, PRN, AUX, NUL, COM1-9, LPT1-9
+// eslint-disable-next-line no-control-regex
+const forbiddenChars = /[<>:"/\\|?*\x00-\x1f]/
+const reservedNames = /^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$/i
+
+export const NewNotebookSchema = v.pipe(
+  v.object({
+    name: v.pipe(
+      v.string(),
+      v.trim(),
+      v.nonEmpty('Notebook name is required'),
+      v.maxLength(255, 'Name must be 255 characters or less'),
+      v.check((name) => !forbiddenChars.test(name), 'Name contains invalid characters (< > : " / \\ | ? *)'),
+      v.check((name) => !reservedNames.test(name), 'Name cannot be a reserved system name'),
+      v.check((name) => !name.endsWith('.'), 'Name cannot end with a period'),
+      v.check((name) => name === name.trim(), 'Name cannot have leading or trailing spaces')
+    )
+  })
+)
+
+export type NewNotebook = v.InferOutput<typeof NewNotebookSchema>
