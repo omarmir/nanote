@@ -22,8 +22,8 @@
               <Suspense v-if="note.isMarkdown">
                 <CommonMarkdown :content="note.preview"></CommonMarkdown>
               </Suspense>
+              <span v-else class="whitespace-pre-line">{{ note.preview }}</span>
             </small>
-            <small v-else class="whitespace-pre-line">{{ note.preview }}</small>
           </div>
         </UCard>
       </li>
