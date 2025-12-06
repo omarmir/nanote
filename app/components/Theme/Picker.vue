@@ -47,8 +47,8 @@
             v-for="m in modes"
             :key="m.label"
             v-bind="m"
-            :selected="colorMode.preference === m.label"
-            @click="mode = m.label" />
+            :selected="colorMode.preference === m.type"
+            @click="mode = m.type" />
         </div>
       </fieldset>
     </template>
@@ -101,9 +101,9 @@ const primary = computed({
 })
 
 const modes = [
-  { label: t('modes.light'), icon: appConfig.ui.icons.light },
-  { label: t('modes.dark'), icon: appConfig.ui.icons.dark },
-  { label: t('modes.system'), icon: appConfig.ui.icons.system }
+  { label: t('modes.light'), icon: appConfig.ui.icons.light, type: 'light' },
+  { label: t('modes.dark'), icon: appConfig.ui.icons.dark, type: 'dark' },
+  { label: t('modes.system'), icon: appConfig.ui.icons.system, type: 'system' }
 ]
 const mode = computed({
   get() {
