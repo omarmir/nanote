@@ -6,7 +6,7 @@
         color="neutral"
         :variant="open ? 'soft' : 'ghost'"
         square
-        :ui="{ leadingIcon: 'text-primary' }" />
+        :ui="{ leadingIcon: 'text-primary -ml-2' }" />
     </template>
 
     <template #content>
