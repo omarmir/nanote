@@ -13,7 +13,7 @@
               {{ note.name }}
             </span>
           </h3>
-          <div class="flex flex-col gap-2 text-neutral-500">
+          <div class="mt-1 flex flex-col gap-2 text-neutral-500">
             <small>
               {{ t('Updated') }}
               <CommonDateDisplay :date="note.updatedAt"></CommonDateDisplay>
@@ -22,8 +22,8 @@
               <Suspense v-if="note.isMarkdown">
                 <CommonMarkdown :content="note.preview"></CommonMarkdown>
               </Suspense>
-              <span v-else class="whitespace-pre-line">{{ note.preview }}</span>
             </small>
+            <small v-else class="whitespace-pre-line">{{ note.preview }}</small>
           </div>
         </UCard>
       </li>
