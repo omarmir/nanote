@@ -7,7 +7,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     status,
     error,
     execute
-  } = useFetch('/api/notebook/*', {
+  } = useFetch<NotebookTreeItemClient[]>('/api/notebook/*', {
     immediate: false,
     lazy: true,
     deep: true,

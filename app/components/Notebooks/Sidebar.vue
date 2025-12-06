@@ -17,45 +17,19 @@
           @click="settingsStore.toggleDenseMode()"></UButton>
       </div>
     </div>
-
-    <UTree
-      v-model:expanded="expanded"
-      ref="tree"
-      @toggle="toggle"
-      :nested="false"
-      :unmount-on-hide="false"
-      :items="notebookStore.notebooks"
-      :ui="{
-        linkLabel: 'text-wrap text-left'
-      }"
-      expanded-icon="i-lucide-book-open"
-      collapsed-icon="i-lucide-book">
-      <template #item-leading="{ item }">
-        <div v-if="item.isNote" class="flex flex-row items-center">
-          <FileIcon :name="item.label" :is-markdown="item.isMarkdown"></FileIcon>
-        </div>
-      </template>
-      <template #item-label="{ item }">
-        <template v-if="item.isPlaceholder">
-          <USkeleton class="h-2 w-36"></USkeleton>
-        </template>
-        <template v-else class="text-wrap">
-          {{ item.label }}
-        </template>
-      </template>
-    </UTree>
+    <ContentTree
+      type="sidebar"
+      v-if="notebookStore.notebooks"
+      :notebook="notebookStore.notebooks"
+      v-model:expanded="expanded"></ContentTree>
   </div>
 </template>
 <script lang="ts" setup>
 const { collapsed } = defineProps<{ collapsed?: boolean }>()
-import type { TreeItemToggleEvent } from 'reka-ui'
 
 const { t } = useI18n()
 const notebookStore = useNotebookStore()
 const settingsStore = useSettingsStore()
 
 const expanded = ref([])
-
-const toggle = async (e: TreeItemToggleEvent<NotebookTreeItem>, item: NotebookTreeItem) =>
-  await notebookStore.toggleNotebook(item)
 </script>

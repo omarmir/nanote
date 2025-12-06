@@ -46,28 +46,7 @@
       </div>
     </div>
     <template #footer v-if="notebook.children && notebook.isOpen">
-      <UTree
-        ref="tree"
-        @toggle="(e, item) => toggle(item)"
-        :nested="false"
-        :unmount-on-hide="false"
-        :items="notebook.children"
-        expanded-icon="i-lucide-book-open"
-        collapsed-icon="i-lucide-book">
-        <template #item-leading="{ item }">
-          <div v-if="item.isNote" class="flex flex-row items-center">
-            <FileIcon :name="item.label" :is-markdown="item.isMarkdown"></FileIcon>
-          </div>
-        </template>
-        <template #item-label="{ item }">
-          <template v-if="item.isPlaceholder">
-            <USkeleton class="h-2 w-36"></USkeleton>
-          </template>
-          <template v-else>
-            {{ item.label }}
-          </template>
-        </template>
-      </UTree>
+      <ContentTree :notebook="notebook.children" type="root"></ContentTree>
     </template>
   </UCard>
 </template>
