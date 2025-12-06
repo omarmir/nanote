@@ -47,6 +47,7 @@
     "remark-parse": "^11.0.0",
     "shell-escape": "^0.2.0",
     "unified": "^11.0.5",
+    "valibot": "^1.2.0",
     "view": "link:@milkdown/prose/view"
   },
   "devDependencies": {
