@@ -25,7 +25,7 @@
       expanded-icon="i-lucide-book-open"
       collapsed-icon="i-lucide-book">
       <template #item-leading="{ item }">
-        <div v-if="item.isNote">
+        <div v-if="item.isNote" class="flex flex-row items-center">
           <FileIcon :name="item.label" :is-markdown="item.isMarkdown"></FileIcon>
         </div>
       </template>
