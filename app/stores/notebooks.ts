@@ -18,6 +18,12 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   })
 
+  const getNotePaths = (notebooks: string[], note: string): { apiPath: string; notePath: string[] } => {
+    const notePath = [...notebooks, note]
+    const apiPath = notePathArrayJoiner(notePath)
+    return { apiPath, notePath }
+  }
+
   const fetchBooks = async () => {
     if (status.value === 'idle' && !notebooks.value) {
       await execute()
@@ -116,6 +122,36 @@ export const useNotebookStore = defineStore('notebook', () => {
         success: false,
         message: err instanceof Error ? err.message : 'Failed to load notebook children'
       }
+    }
+  }
+
+  const addNotebook = async (name: string, notebook?: Notebook): Promise<Result<Notebook>> => {
+    const notebookPath = notebook ? [...(notebook?.notebooks ?? []), notebook?.name ?? ''] : []
+    const { apiPath } = getNotePaths(notebookPath, name)
+
+    try {
+      const resp = await $fetch<Notebook>(`/api/notebook/${apiPath}`, {
+        method: 'POST'
+      })
+
+      const nb = getNotebookByPathArray(notebookPath, notebooks.value)
+
+      //if the notebook is entered at the top level
+      if (notebookPath.length === 0 && notebooks.value) {
+        if (!notebooks.value.notebooks) notebooks.value.notebooks = {}
+        notebooks.value.notebooks[resp.name] = resp
+      } else {
+        if (nb?.contents) {
+          if (!nb.contents.notebooks) nb.contents.notebooks = {}
+          nb.contents.notebooks[resp.name] = resp
+        }
+      }
+      return {
+        success: true,
+        data: resp
+      }
+    } catch (error) {
+      return { success: false, message: (error as FetchError).data.message }
     }
   }
 
