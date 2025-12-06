@@ -9,7 +9,7 @@
           <div>
             <UButton
               variant="ghost"
-              class="cursor-pointer text-black dark:text-white"
+              class="text-black dark:text-white"
               @click="toggle(notebook)"
               :title="t('openNotebook', { notebook: notebook.label })">
               <h3 class="font-bold">{{ notebook.label }}</h3>
@@ -29,7 +29,6 @@
             color="warning"
             icon="i-lucide-fold-vertical"
             :title="t('closeNotebooks', 1)"
-            class="cursor-pointer"
             :class="{ invisible: !notebook.isOpen }"></UButton>
           <UDropdownMenu :items="items">
             <UButton icon="i-lucide-ellipsis-vertical" color="neutral" variant="ghost" size="sm" />

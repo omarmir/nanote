@@ -8,7 +8,6 @@
           size="md"
           @click="notebookStore.closeAllOpenBooks()"
           color="warning"
-          class="cursor-pointer"
           :class="{ invisible: notebookStore.anyOpenBooks === false }"
           variant="ghost"
           :title="t('closeNotebooks', 2)"></UButton>

@@ -7,6 +7,12 @@ export default defineAppConfig({
     colors: {
       primary: 'blue',
       neutral: 'neutral'
+    },
+    button: {
+      slots: {
+        // These classes will be applied to ALL buttons by default
+        base: 'cursor-pointer'
+      }
     }
   }
 })

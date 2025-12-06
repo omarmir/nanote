@@ -7,7 +7,6 @@
         variant="ghost"
         color="warning"
         icon="i-lucide-fold-vertical"
-        class="cursor-pointer"
         :class="{ invisible: expanded.length === 0 }"
         @click="expanded = []" />
     </div>
