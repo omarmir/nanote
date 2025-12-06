@@ -67,6 +67,7 @@ const colours = [
   'lime',
   'green',
   'emerald',
+  'sage',
   'teal',
   'cyan',
   'sky',

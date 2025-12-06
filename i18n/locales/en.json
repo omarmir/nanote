@@ -92,7 +92,8 @@
     "gray": "Gray",
     "zinc": "Zinc",
     "neutral": "Neutral",
-    "stone": "Stone"
+    "stone": "Stone",
+    "sage": "Sage"
   },
   "modes": {
     "light": "Light",
