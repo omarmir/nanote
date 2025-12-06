@@ -10,11 +10,13 @@
           :icon="settingsStore.settings.isDense ? 'i-custom-code-more' : 'i-custom-code-less'"
           variant="ghost"
           class="cursor-pointer"
+          size="md"
           @click="settingsStore.toggleDenseMode()"></UButton>
         <UButton
           to="https://github.com/omarmir/nanote"
           icon="i-custom-simple-icons-github"
           target="_blank"
+          size="md"
           variant="ghost"
           color="neutral" />
       </div>
