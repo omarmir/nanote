@@ -5,7 +5,7 @@
     </template>
     <template #right>
       <div class="flex flex-row items-center gap-2">
-        <ThemePicker class="size-5 cursor-pointer"></ThemePicker>
+        <ThemePicker class="cursor-pointer"></ThemePicker>
         <UButton
           :icon="settingsStore.settings.isDense ? 'i-custom-code-more' : 'i-custom-code-less'"
           variant="ghost"
