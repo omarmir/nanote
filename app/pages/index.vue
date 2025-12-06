@@ -6,11 +6,15 @@
           <UDashboardSidebarCollapse />
         </template>
         <template #right>
-          <div class="flex flex-row items-center gap-4">
+          <div class="flex flex-row items-center gap-2">
             <ThemePicker class="size-5 cursor-pointer"></ThemePicker>
-            <ULink to="https://github.com/omarmir/nanote" target="_blank">
-              <UAvatar icon="i-custom-simple-icons-github" size="md" />
-            </ULink>
+            <UButton icon="i-custom-code-more" variant="ghost" class="cursor-pointer"></UButton>
+            <UButton
+              to="https://github.com/omarmir/nanote"
+              icon="i-custom-simple-icons-github"
+              target="_blank"
+              variant="ghost"
+              color="neutral" />
           </div>
         </template>
       </UDashboardNavbar>
