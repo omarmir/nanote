@@ -4,6 +4,7 @@ services:
     image: omarmir/nanote:latest
     ports:
       - '3030:3000'
+    # Make sure these folders (notes, uploads, config) already exist or the notes will be created in the main folder of the app.
     environment:
       - NOTES_PATH=/nanote/notes
       - UPLOAD_PATH=/nanote/uploads
