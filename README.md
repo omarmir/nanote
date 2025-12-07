@@ -70,6 +70,7 @@ environment:
 volumes:
   - /path/to/local/uploads/nanote/volume:/nanote
 ```
+***Note:*** Make sure these folders (notes, uploads, config) already exist or the notes will be created in the main folder of the app.
 
 If these are not set then the app will save files locally within itself. The notes environment variable is where it will save your notes, and uploads is where any attachments are stored.
 
