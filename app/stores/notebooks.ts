@@ -131,9 +131,12 @@ export const useNotebookStore = defineStore('notebook', () => {
         method: 'POST'
       })
 
-      const targetNotebook = findNotebookByPath(notebooks.value, resp.pathArray)
-
-      targetNotebook?.children?.push(resp)
+      if (notebook) {
+        const targetNotebook = findNotebookByPath(notebooks.value, notebook.pathArray)
+        targetNotebook?.children?.push(resp)
+      } else {
+        notebooks.value.push(resp)
+      }
 
       return {
         success: true,

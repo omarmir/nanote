@@ -1,5 +1,5 @@
 <template>
-  <UModal>
+  <UModal v-model:open="open">
     <UButton icon="i-lucide-plus" size="md" color="neutral" variant="outline" :title="t('newNotebook')">
       {{ t('Notebook', 1) }}
     </UButton>
@@ -8,9 +8,18 @@
         <UFormField :label="t('notebookName')" name="name" class="w-full">
           <div class="flex w-full flex-row items-center gap-2">
             <UInput v-model="state.name" class="w-full" :placeholder="t('notebookName')" />
-            <UButton type="submit">Create</UButton>
+            <UButton type="submit">{{ t('create') }}</UButton>
           </div>
         </UFormField>
+        <UAlert
+          v-if="addError"
+          color="error"
+          variant="outline"
+          icon="i-lucide-circle-alert"
+          :title="t('failure')"
+          :description="addError"
+          as="div"
+          class="mt-2" />
       </UForm>
     </template>
   </UModal>
@@ -19,6 +28,8 @@
 import type { FormSubmitEvent } from '@nuxt/ui'
 const { notebook } = defineProps<{ notebook?: Notebook }>()
 const { t } = useI18n()
+const open = ref(false)
+const addError: Ref<null | string> = ref(null)
 
 const state = reactive({
   name: ''
@@ -30,9 +41,12 @@ const toast = useToast()
 async function onSubmit(event: FormSubmitEvent<NewNotebook>) {
   const addResp = await notebookStore.addNotebook(event.data.name, notebook)
   if (addResp.success) {
-    toast.add({ title: 'Success', description: 'Notebook created successfully.', color: 'success' })
+    toast.add({ title: t('success'), description: t('notebookCreatedSuccess'), color: 'success' })
+    addError.value = null
+    open.value = false
   } else {
-    toast.add({ title: 'Failure', description: 'Unable to create notebook', color: 'error' })
+    addError.value = addResp.message
+    toast.add({ title: t('failure'), description: addResp.message, color: 'error' })
   }
 }
 </script>

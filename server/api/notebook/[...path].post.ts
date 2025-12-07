@@ -32,9 +32,9 @@ export default defineEventHandlerWithNotebook(
         noteCount: 0,
         path: fullPath,
         children: [LAZY_LOAD_PLACEHOLDER],
-        pathArray: [...pathArray, name ?? ''],
+        pathArray,
         isNote: false,
-        apiPath: `${pathArray.join('/')}/${name ?? ''}`,
+        apiPath: `/${pathArray.join('/')}`,
         disabled: false
       } satisfies NotebookTreeItem
     } catch (error) {
