@@ -66,6 +66,7 @@ export const useNotebookStore = defineStore('notebook', () => {
   }
 
   const toggleRootNotebook = async (notebook: NotebookTreeItemClient): Promise<Result<null>> => {
+    console.log(notebook)
     // if its already open close it
     if (notebook.isOpen) {
       notebook.isOpen = false

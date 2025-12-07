@@ -45,7 +45,7 @@
       </div>
     </div>
     <template #footer v-if="notebook.children && notebook.isOpen">
-      <ContentTree :notebook="notebook.children" type="root"></ContentTree>
+      <TreeNotebooks :items="notebook.children" type="root" @toggle="toggle"></TreeNotebooks>
     </template>
   </UCard>
 </template>
@@ -80,6 +80,7 @@ const notebookStore = useNotebookStore()
 const openError: Ref<string | null> = ref(null)
 
 const toggle = async (item: NotebookTreeItemClient) => {
+  console.log('togg')
   const resp = await notebookStore.toggleRootNotebook(item)
 }
 </script>
