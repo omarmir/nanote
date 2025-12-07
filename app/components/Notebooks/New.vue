@@ -16,17 +16,23 @@
   </UModal>
 </template>
 <script lang="ts" setup>
-import * as v from 'valibot'
 import type { FormSubmitEvent } from '@nuxt/ui'
+const { notebook } = defineProps<{ notebook?: Notebook }>()
 const { t } = useI18n()
 
 const state = reactive({
   name: ''
 })
 
+const notebookStore = useNotebookStore()
+
 const toast = useToast()
 async function onSubmit(event: FormSubmitEvent<NewNotebook>) {
-  toast.add({ title: 'Success', description: 'Notebook created successfully.', color: 'success' })
-  console.log(event.data)
+  const addResp = await notebookStore.addNotebook(event.data.name, notebook)
+  if (addResp.success) {
+    toast.add({ title: 'Success', description: 'Notebook created successfully.', color: 'success' })
+  } else {
+    toast.add({ title: 'Failure', description: 'Unable to create notebook', color: 'error' })
+  }
 }
 </script>

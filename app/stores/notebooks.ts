@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import type { NotebookTreeItemClient } from '#shared/types/notebook'
+import { FetchError } from 'ofetch'
 
 export const useNotebookStore = defineStore('notebook', () => {
   const {
@@ -17,12 +18,6 @@ export const useNotebookStore = defineStore('notebook', () => {
       })
     }
   })
-
-  const getNotePaths = (notebooks: string[], note: string): { apiPath: string; notePath: string[] } => {
-    const notePath = [...notebooks, note]
-    const apiPath = notePathArrayJoiner(notePath)
-    return { apiPath, notePath }
-  }
 
   const fetchBooks = async () => {
     if (status.value === 'idle' && !notebooks.value) {
@@ -125,27 +120,21 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
-  const addNotebook = async (name: string, notebook?: Notebook): Promise<Result<Notebook>> => {
-    const notebookPath = notebook ? [...(notebook?.notebooks ?? []), notebook?.name ?? ''] : []
-    const { apiPath } = getNotePaths(notebookPath, name)
+  const addNotebook = async (name: string, notebook?: Notebook): Promise<Result<NotebookTreeItemClient>> => {
+    if (!notebooks.value) {
+      return { success: false, message: 'No notebooks' }
+    }
+    const notebookPath = notebook ? `${notebook.apiPath}/${name}` : name
 
     try {
-      const resp = await $fetch<Notebook>(`/api/notebook/${apiPath}`, {
+      const resp = await $fetch<NotebookTreeItemClient>(`/api/notebook/${notebookPath}`, {
         method: 'POST'
       })
 
-      const nb = getNotebookByPathArray(notebookPath, notebooks.value)
+      const targetNotebook = findNotebookByPath(notebooks.value, resp.pathArray)
 
-      //if the notebook is entered at the top level
-      if (notebookPath.length === 0 && notebooks.value) {
-        if (!notebooks.value.notebooks) notebooks.value.notebooks = {}
-        notebooks.value.notebooks[resp.name] = resp
-      } else {
-        if (nb?.contents) {
-          if (!nb.contents.notebooks) nb.contents.notebooks = {}
-          nb.contents.notebooks[resp.name] = resp
-        }
-      }
+      targetNotebook?.children?.push(resp)
+
       return {
         success: true,
         data: resp
@@ -166,7 +155,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     status,
     error,
     // deleteNotebook,
-    // addNotebook,
+    addNotebook,
     // Note
     toggleNotebook,
     toggleRootNotebook,
