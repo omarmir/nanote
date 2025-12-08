@@ -20,5 +20,6 @@
   "eslint.validate": ["javascript", "javascriptreact", "typescript", "vue"],
   "[xml]": {
     "editor.defaultFormatter": "redhat.vscode-xml"
-  }
+  },
+  "postman.settings.dotenv-detection-notification-visibility": false
 }
