@@ -14,7 +14,7 @@
       </div>
       <NotebooksNew></NotebooksNew>
     </div>
-    <ul v-if="notebookStore.notebooks" class="grid grid-cols-2 gap-4 xl:grid-cols-4">
+    <ul v-if="notebookStore.notebooks" class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
       <li v-for="notebook in notebookStore.notebooks">
         <NotebooksRoot :notebook></NotebooksRoot>
       </li>

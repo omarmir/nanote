@@ -80,7 +80,6 @@ const notebookStore = useNotebookStore()
 const openError: Ref<string | null> = ref(null)
 
 const toggle = async (item: NotebookTreeItemClient) => {
-  console.log('togg')
   const resp = await notebookStore.toggleRootNotebook(item)
 }
 </script>
