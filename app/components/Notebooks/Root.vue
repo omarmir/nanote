@@ -31,7 +31,22 @@
             :title="t('closeNotebooks', 1)"
             :class="{ invisible: !notebook.isOpen }"></UButton>
           <UDropdownMenu :items="items">
-            <UButton icon="i-lucide-ellipsis-vertical" color="neutral" variant="ghost" size="sm" />
+            <UButton icon="i-lucide-ellipsis-vertical" color="neutral" variant="ghost" size="sm" @click="" />
+            <template #item="{ item }">
+              <NotebooksNew>
+                <template #trigger>
+                  <UButton
+                    :icon="item.icon"
+                    class="w-full"
+                    size="md"
+                    :color="item.color ? item.color : 'neutral'"
+                    variant="ghost"
+                    :title="item.label">
+                    {{ item.label }}
+                  </UButton>
+                </template>
+              </NotebooksNew>
+            </template>
           </UDropdownMenu>
         </div>
       </div>
@@ -65,6 +80,10 @@ const items: DropdownMenuItem[][] = [
     },
     {
       label: t('Note', 1),
+      icon: 'i-lucide-plus'
+    },
+    {
+      label: t('Notebook', 1),
       icon: 'i-lucide-plus'
     }
   ],

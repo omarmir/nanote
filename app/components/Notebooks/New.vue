@@ -1,8 +1,8 @@
 <template>
   <UModal v-model:open="open">
-    <UButton icon="i-lucide-plus" size="md" color="neutral" variant="outline" :title="t('newNotebook')">
-      {{ t('Notebook', 1) }}
-    </UButton>
+    <template #default>
+      <slot name="trigger"></slot>
+    </template>
     <template #content>
       <UForm :schema="NewNotebookSchema" :state="state" class="w-full p-4" @submit="onSubmit">
         <UFormField :label="t('notebookName')" name="name" class="w-full">

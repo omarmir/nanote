@@ -12,7 +12,13 @@
           variant="ghost"
           :title="t('closeNotebooks', 2)"></UButton>
       </div>
-      <NotebooksNew></NotebooksNew>
+      <NotebooksNew>
+        <template #trigger>
+          <UButton icon="i-lucide-plus" size="md" color="neutral" variant="outline" :title="t('newNotebook')">
+            {{ t('Notebook', 1) }}
+          </UButton>
+        </template>
+      </NotebooksNew>
     </div>
     <ul v-if="notebookStore.notebooks" class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
       <li v-for="notebook in notebookStore.notebooks">
