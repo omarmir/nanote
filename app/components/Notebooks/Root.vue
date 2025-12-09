@@ -33,7 +33,14 @@
             :class="{ invisible: !notebook.isOpen }"
             @click="toggle(notebook)" />
           <UDropdownMenu :items="items">
-            <UButton icon="i-lucide-ellipsis-vertical" color="neutral" variant="ghost" size="sm" />
+            <UButton
+              icon="i-lucide-ellipsis-vertical"
+              color="neutral"
+              variant="ghost"
+              size="sm"
+              :ui="{
+                label: '!p-0'
+              }" />
             <template #item="{ item }">
               <NotebooksNew :notebook>
                 <template #trigger>
@@ -68,6 +75,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { dropdownMenu } from '#build/ui'
 import type { DropdownMenuItem } from '@nuxt/ui'
 
 const settingsStore = useSettingsStore()

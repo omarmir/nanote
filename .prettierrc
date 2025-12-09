@@ -7,14 +7,5 @@
   "htmlWhitespaceSensitivity": "ignore",
   "bracketSameLine": true,
   "singleAttributePerLine": false,
-  "plugins": ["prettier-plugin-tailwindcss"],
-  "overrides": [
-    {
-      "files": ["*.ts", "*.tsx", "*.vue"],
-      "options": {
-        "parser": "typescript",
-        "semi": false
-      }
-    }
-  ]
+  "plugins": ["prettier-plugin-tailwindcss"]
 }
