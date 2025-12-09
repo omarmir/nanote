@@ -4,15 +4,17 @@
       <div class="flex flex-row justify-between">
         <div class="flex grow flex-row gap-3">
           <div class="bg-primary-500/20 flex size-12 place-content-center items-center rounded-md">
-            <UIcon name="i-lucide-book" class="text-primary-400 size-6"></UIcon>
+            <UIcon name="i-lucide-book" class="text-primary-400 size-6" />
           </div>
           <div>
             <UButton
               variant="ghost"
               class="text-black dark:text-white"
-              @click="toggle(notebook)"
-              :title="t('openNotebook', { notebook: notebook.label })">
-              <h3 class="font-bold">{{ notebook.label }}</h3>
+              :title="t('openNotebook', { notebook: notebook.label })"
+              @click="toggle(notebook)">
+              <h3 class="font-bold">
+                {{ notebook.label }}
+              </h3>
             </UButton>
             <div class="ml-2 flex flex-row items-center text-neutral-400">
               <small>{{ notebook.noteCount }} {{ t('note', notebook.noteCount === 1 ? 1 : 2) }}</small>
@@ -23,17 +25,17 @@
         </div>
         <div class="flex flex-row items-start">
           <UButton
-            @click="toggle(notebook)"
             size="sm"
             variant="ghost"
             color="warning"
             icon="i-lucide-fold-vertical"
             :title="t('closeNotebooks', 1)"
-            :class="{ invisible: !notebook.isOpen }"></UButton>
+            :class="{ invisible: !notebook.isOpen }"
+            @click="toggle(notebook)" />
           <UDropdownMenu :items="items">
-            <UButton icon="i-lucide-ellipsis-vertical" color="neutral" variant="ghost" size="sm" @click="" />
+            <UButton icon="i-lucide-ellipsis-vertical" color="neutral" variant="ghost" size="sm" />
             <template #item="{ item }">
-              <NotebooksNew>
+              <NotebooksNew :notebook>
                 <template #trigger>
                   <UButton
                     :icon="item.icon"
@@ -51,19 +53,20 @@
         </div>
       </div>
       <div
-        class="flex flex-row gap-2 rounded-md bg-zinc-300/20 p-3 dark:bg-zinc-700/20"
-        v-if="!settingsStore.settings.isDense">
+        v-if="!settingsStore.settings.isDense"
+        class="flex flex-row gap-2 rounded-md bg-zinc-300/20 p-3 dark:bg-zinc-700/20">
         <small class="text-neutral-500 dark:text-neutral-400">{{ t('Created') }}:</small>
         <small class="text-neutral-600 dark:text-neutral-300">
-          <CommonDateDisplay :date="notebook.createdAt"></CommonDateDisplay>
+          <CommonDateDisplay :date="notebook.createdAt" />
         </small>
       </div>
     </div>
-    <template #footer v-if="notebook.children && notebook.isOpen">
-      <TreeNotebooks :items="notebook.children" type="root" @toggle="toggle"></TreeNotebooks>
+    <template v-if="notebook.children && notebook.isOpen" #footer>
+      <TreeNotebooks :items="notebook.children" type="root" @toggle="toggle" />
     </template>
   </UCard>
 </template>
+
 <script lang="ts" setup>
 import type { DropdownMenuItem } from '@nuxt/ui'
 

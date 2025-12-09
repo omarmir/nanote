@@ -7,12 +7,15 @@
         color="neutral"
         :variant="open ? 'soft' : 'ghost'"
         square
-        :ui="{ leadingIcon: 'text-primary' }" />
+        :ui="{ leadingIcon: 'text-primary' }"
+      />
     </template>
 
     <template #content>
       <fieldset>
-        <legend class="mb-2 text-[11px] leading-none font-semibold">Primary</legend>
+        <legend class="mb-2 text-[11px] leading-none font-semibold">
+          Primary
+        </legend>
 
         <div class="-mx-2 grid grid-cols-3 gap-1">
           <ThemeButton
@@ -21,12 +24,15 @@
             :label="t(`colours.${colour}`)"
             :chip="colour"
             :selected="primary === colour"
-            @click="primary = colour" />
+            @click="primary = colour"
+          />
         </div>
       </fieldset>
 
       <fieldset>
-        <legend class="mb-2 text-[11px] leading-none font-semibold">Neutral</legend>
+        <legend class="mb-2 text-[11px] leading-none font-semibold">
+          Neutral
+        </legend>
 
         <div class="-mx-2 grid grid-cols-3 gap-1">
           <ThemeButton
@@ -35,12 +41,15 @@
             :label="t(`colours.${colour}`)"
             :chip="colour === 'neutral' ? 'old-neutral' : colour"
             :selected="neutral === colour"
-            @click="neutral = colour" />
+            @click="neutral = colour"
+          />
         </div>
       </fieldset>
 
       <fieldset>
-        <legend class="mb-2 text-[11px] leading-none font-semibold">Theme</legend>
+        <legend class="mb-2 text-[11px] leading-none font-semibold">
+          Theme
+        </legend>
 
         <div class="-mx-2 grid grid-cols-3 gap-1">
           <ThemeButton
@@ -48,12 +57,14 @@
             :key="m.label"
             v-bind="m"
             :selected="colorMode.preference === m.type"
-            @click="mode = m.type" />
+            @click="mode = m.type"
+          />
         </div>
       </fieldset>
     </template>
   </UPopover>
 </template>
+
 <script setup lang="ts">
 const appConfig = useAppConfig()
 const colorMode = useColorMode()

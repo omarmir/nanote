@@ -45,7 +45,7 @@ export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(h
 
     try {
       const output = execSync(command, execOptions) as string
-      const lines = output.split('\n').filter((line) => line.trim() !== '')
+      const lines = output.split('\n').filter(line => line.trim() !== '')
 
       for (const line of lines) {
         const [type, full] = line.split(':', 2)
@@ -81,8 +81,8 @@ export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(h
     }
 
     // Deduplicate and sort by score (descending), and limit to MAX_RESULTS (here, 5)
-    const searchResults: USearchResult[] = Array.from(new Set(results.map((r) => JSON.stringify(r))))
-      .map((r) => JSON.parse(r) as USearchResult)
+    const searchResults: USearchResult[] = Array.from(new Set(results.map(r => JSON.stringify(r))))
+      .map(r => JSON.parse(r) as USearchResult)
       .sort((a, b) => b.score - a.score)
       .slice(0, MAX_RESULTS)
 

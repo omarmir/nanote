@@ -65,8 +65,8 @@ export default defineEventHandlerWithNotebook(async (_event, pathArray, fullPath
           notebookCount: folderCount,
           children: fileCount + folderCount > 0 ? [LAZY_LOAD_PLACEHOLDER] : [],
           updatedAt:
-            updatedAt?.toISOString() ??
-            new Date(Math.max(stats.birthtime.getTime(), stats.mtime.getTime())).toISOString(),
+            updatedAt?.toISOString()
+            ?? new Date(Math.max(stats.birthtime.getTime(), stats.mtime.getTime())).toISOString(),
           path: notebookPath,
           pathArray: [...pathArray, dirent.name],
           isNote: false,

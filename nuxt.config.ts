@@ -2,11 +2,20 @@
 export default defineNuxtConfig({
   modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxt/test-utils', '@nuxt/hints', '@nuxtjs/i18n', '@pinia/nuxt'],
 
+  ssr: false,
+
+  imports: {
+    presets: [
+      {
+        from: 'material-file-icons',
+        imports: ['getIcon']
+      }
+    ]
+  },
+
   devtools: {
     enabled: true
   },
-
-  ssr: false,
 
   css: ['~/assets/css/main.css'],
 
@@ -44,14 +53,5 @@ export default defineNuxtConfig({
     clientBundle: {
       scan: true
     }
-  },
-
-  imports: {
-    presets: [
-      {
-        from: 'material-file-icons',
-        imports: ['getIcon']
-      }
-    ]
   }
 })

@@ -10,7 +10,7 @@ export default defineEventHandlerWithNotebook(
   async (event, pathArray, fullPath, _parentFolder, name): Promise<NotebookTreeItem> => {
     const t = await useTranslation(event)
 
-    //If folder already exists check
+    // If folder already exists check
     const notebookExists = await checkIfPathExists(fullPath)
     if (notebookExists)
       throw createError({

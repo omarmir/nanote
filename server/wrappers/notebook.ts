@@ -23,7 +23,7 @@ export function defineEventHandlerWithNotebook<T extends EventHandlerRequest, D>
     const params = decodeURIComponent(event.context.params?.path ?? '')
     const pathArray = params
       .split('/')
-      .map((p) => p.replace(/[\\/:*?"<>|.]/g, ''))
+      .map(p => p.replace(/[\\/:*?"<>|.]/g, ''))
       .filter(Boolean) // Removes empty strings
 
     // Construct paths

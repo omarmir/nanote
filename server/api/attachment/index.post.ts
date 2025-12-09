@@ -25,7 +25,7 @@ export default defineEventHandlerWithAttachmentAuthError(async (event) => {
       if (entry.name === 'path') acc.pathEntry = entry
       return acc
     },
-    {} as { fileEntry?: MultiPartData; pathEntry?: MultiPartData }
+    {} as { fileEntry?: MultiPartData, pathEntry?: MultiPartData }
   )
 
   if (!fileEntry?.data || !pathEntry?.data) {

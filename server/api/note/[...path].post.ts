@@ -20,7 +20,7 @@ export default defineEventHandlerWithNotebookAndNote(
     // Parse form data if available
     const formData = await readMultipartFormData(event)
     if (formData) {
-      const fileEntry = formData.find((entry) => entry.name === 'file')
+      const fileEntry = formData.find(entry => entry.name === 'file')
       if (fileEntry?.data) {
         fileContent = Buffer.from(fileEntry.data)
       }
@@ -29,7 +29,7 @@ export default defineEventHandlerWithNotebookAndNote(
     /**
      * Try to access the note and if it exists throw a specific error (it exists)
      */
-    //If folder already exists check
+    // If folder already exists check
     const notebookExists = await checkIfPathExists(mdPath)
     if (notebookExists)
       throw createError({

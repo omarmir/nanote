@@ -1,14 +1,16 @@
 <template>
   <UModal v-model:open="open">
     <template #default>
-      <slot name="trigger"></slot>
+      <slot name="trigger" />
     </template>
     <template #content>
       <UForm :schema="NewNotebookSchema" :state="state" class="w-full p-4" @submit="onSubmit">
         <UFormField :label="t('notebookName')" name="name" class="w-full">
           <div class="flex w-full flex-row items-center gap-2">
             <UInput v-model="state.name" class="w-full" :placeholder="t('notebookName')" />
-            <UButton type="submit">{{ t('create') }}</UButton>
+            <UButton type="submit">
+              {{ t('create') }}
+            </UButton>
           </div>
         </UFormField>
         <UAlert
@@ -24,9 +26,11 @@
     </template>
   </UModal>
 </template>
+
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui'
-const { notebook } = defineProps<{ notebook?: Notebook }>()
+
+const { notebook } = defineProps<{ notebook?: NotebookTreeItemClient }>()
 const { t } = useI18n()
 const open = ref(false)
 const addError: Ref<null | string> = ref(null)

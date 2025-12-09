@@ -19,8 +19,8 @@ export function defineEventHandlerWithAttachmentAuthError<T extends EventHandler
     const file = decodeURIComponent(getRouterParam(event, 'file') ?? '')
     // @ts-expect-error dynamic attachments
     const rawAttachments = verifyShared.data.attachments
-    const attachments =
-      Array.isArray(rawAttachments) && rawAttachments.every((a) => typeof a === 'string')
+    const attachments
+      = Array.isArray(rawAttachments) && rawAttachments.every(a => typeof a === 'string')
         ? (rawAttachments as string[])
         : []
     if (attachments.includes(file)) return await handler(event)

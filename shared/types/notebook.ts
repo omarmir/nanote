@@ -1,28 +1,6 @@
 import type { TreeItem } from '@nuxt/ui'
 import * as v from 'valibot'
 
-export type Notebook = {
-  name: string
-  createdAt: string
-  updatedAt: string | null
-  noteCount: number
-  notebookCount: number
-  path: string
-  pathArray: string[]
-  apiPath: string
-}
-
-export type Note = {
-  name: string
-  createdAt: string
-  updatedAt: string | null
-  size?: number
-  isMarkdown: boolean
-  preview?: string
-  pathArray: string[]
-  apiPath: string
-}
-
 export type NotebookTreeItem = Omit<TreeItem, 'children'> & {
   label: string
   path: string
@@ -116,10 +94,10 @@ export const NewNotebookSchema = v.pipe(
       v.trim(),
       v.nonEmpty('Notebook name is required'),
       v.maxLength(255, 'Name must be 255 characters or less'),
-      v.check((name) => !forbiddenChars.test(name), 'Name contains invalid characters (< > : " / \\ | ? *)'),
-      v.check((name) => !reservedNames.test(name), 'Name cannot be a reserved system name'),
-      v.check((name) => !name.endsWith('.'), 'Name cannot end with a period'),
-      v.check((name) => name === name.trim(), 'Name cannot have leading or trailing spaces')
+      v.check(name => !forbiddenChars.test(name), 'Name contains invalid characters (< > : " / \\ | ? *)'),
+      v.check(name => !reservedNames.test(name), 'Name cannot be a reserved system name'),
+      v.check(name => !name.endsWith('.'), 'Name cannot end with a period'),
+      v.check(name => name === name.trim(), 'Name cannot have leading or trailing spaces')
     )
   })
 )

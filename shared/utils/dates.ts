@@ -3,7 +3,7 @@ export const formatNoteDate = (dateStr: string, isISODate: boolean) => {
   return `${date} @ ${time}`
 }
 
-export const getSplitISO = (dateStr: string, isISODate: boolean): { date: string; time: string } => {
+export const getSplitISO = (dateStr: string, isISODate: boolean): { date: string, time: string } => {
   const date = new Date(dateStr)
   if (isISODate) {
     const [isoDate, isoTime] = date.toISOString().split('T')

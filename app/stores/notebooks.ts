@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { NotebookTreeItemClient } from '#shared/types/notebook'
-import { FetchError } from 'ofetch'
+import type { FetchError } from 'ofetch'
 
 export const useNotebookStore = defineStore('notebook', () => {
   const {
@@ -52,7 +52,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     let currentNotebook: NotebookTreeItemClient | null = null
 
     for (const pathSegment of pathArray) {
-      currentNotebook = currentItems.find((item) => item.label === pathSegment) || null
+      currentNotebook = currentItems.find(item => item.label === pathSegment) || null
       if (!currentNotebook) {
         return null
       }
@@ -97,14 +97,14 @@ export const useNotebookStore = defineStore('notebook', () => {
         const targetNotebook = findNotebookByPath(notebooks.value, notebook.pathArray)
         if (targetNotebook) {
           // Add children with childrenLoaded flag
-          targetNotebook.children = children.map((child) => ({
+          targetNotebook.children = children.map(child => ({
             ...child,
             childrenLoaded: false
           }))
           targetNotebook.childrenLoaded = true
         } else if (notebook.pathArray.length === 0) {
           // Handle root-level notebooks
-          notebook.children = children.map((child) => ({
+          notebook.children = children.map(child => ({
             ...child,
             childrenLoaded: false
           }))
@@ -121,7 +121,10 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
-  const addNotebook = async (name: string, notebook?: Notebook): Promise<Result<NotebookTreeItemClient>> => {
+  const addNotebook = async (
+    name: string,
+    notebook?: NotebookTreeItemClient
+  ): Promise<Result<NotebookTreeItemClient>> => {
     if (!notebooks.value) {
       return { success: false, message: 'No notebooks' }
     }
@@ -148,7 +151,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
-  const anyOpenBooks: ComputedRef<boolean> = computed(() => notebooks.value?.some((book) => book.isOpen) ?? false)
+  const anyOpenBooks: ComputedRef<boolean> = computed(() => notebooks.value?.some(book => book.isOpen) ?? false)
   const closeAllOpenBooks = () =>
     notebooks.value?.forEach((book) => {
       if (book.isOpen) book.isOpen = false

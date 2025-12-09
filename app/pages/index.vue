@@ -5,18 +5,19 @@
     </template>
     <template #body>
       <Suspense>
-        <NotebooksAll></NotebooksAll>
+        <NotebooksAll />
         <template #fallback>
-          <SkeletonsAllNotebooks></SkeletonsAllNotebooks>
+          <SkeletonsAllNotebooks />
         </template>
       </Suspense>
       <Suspense>
-        <NotesRecent></NotesRecent>
+        <NotesRecent />
         <template #fallback>
-          <SkeletonsRecentNotes></SkeletonsRecentNotes>
+          <SkeletonsRecentNotes />
         </template>
       </Suspense>
     </template>
   </UDashboardPanel>
 </template>
+
 <script lang="ts" setup></script>

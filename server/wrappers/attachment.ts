@@ -26,8 +26,8 @@ export function defineEventHandlerWithAttachmentNotebookNote<T extends EventHand
 
       const deleteAllAttachments = async () => {
         const oldMatches = [...oldNoteContent.matchAll(fileRegex)]
-          .map((match) => match.groups?.href.split('/').at(-1))
-          .filter((item) => item !== undefined)
+          .map(match => match.groups?.href.split('/').at(-1))
+          .filter(item => item !== undefined)
 
         for (const match of oldMatches) {
           const filePath = join(uploadPath, 'attachments', match)
@@ -45,14 +45,14 @@ export function defineEventHandlerWithAttachmentNotebookNote<T extends EventHand
         const newNoteContent = (newFileData ?? '').toString()
 
         const newMatches = [...newNoteContent.matchAll(fileRegex)]
-          .map((match) => match.groups?.href.split('/').at(-1))
-          .filter((item) => item !== undefined)
+          .map(match => match.groups?.href.split('/').at(-1))
+          .filter(item => item !== undefined)
 
         const oldMatches = [...oldNoteContent.matchAll(fileRegex)]
-          .map((match) => match.groups?.href.split('/').at(-1))
-          .filter((item) => item !== undefined)
+          .map(match => match.groups?.href.split('/').at(-1))
+          .filter(item => item !== undefined)
 
-        const uniqueMatches = oldMatches.filter((item) => !newMatches.includes(item))
+        const uniqueMatches = oldMatches.filter(item => !newMatches.includes(item))
 
         for (const match of uniqueMatches) {
           const filePath = join(uploadPath, 'attachments', match)

@@ -22,7 +22,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
 
     // Decode the path and then remove characters we cannot have
     const params = decodeURIComponent(event.context.params?.path ?? '')
-    const path = params.split('/').map((p) => p.replace(/[\\/:*?"<>|]/g, '')) || []
+    const path = params.split('/').map(p => p.replace(/[\\/:*?"<>|]/g, '')) || []
     const notebooks = path.slice(0, -1)
     const note = path.at(-1)
 
@@ -42,7 +42,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
     const fileExtension = extname(fullPath).toLowerCase()
     const isMarkdown = fileExtension === '.md'
 
-    //Is the name going to exceed limits?
+    // Is the name going to exceed limits?
     if (note.length > 255) {
       throw createError({
         statusCode: 400,
@@ -80,8 +80,8 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
       console.error('Note error:', error)
 
       const err = error as NodeJS.ErrnoException
-      const message =
-        err.code === 'ENOENT'
+      const message
+        = err.code === 'ENOENT'
           ? err.path === targetFolder
             ? t('errors.notebookNotFound', { path: notebooks.join(' > ') })
             : t('errors.noteNotFound', { note })

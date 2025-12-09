@@ -24,8 +24,8 @@ export default defineEventHandlerWithError(async (event): Promise<Note[]> => {
   const notes: Note[] = await Promise.all(
     recentFiles.map(async (file) => {
       const relativePath = path.relative(notesPath, file.path)
-      const pathArray =
-        path.dirname(relativePath) !== '.' ? path.dirname(relativePath).split(path.sep).filter(Boolean) : []
+      const pathArray
+        = path.dirname(relativePath) !== '.' ? path.dirname(relativePath).split(path.sep).filter(Boolean) : []
 
       let preview = ''
       try {
