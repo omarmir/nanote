@@ -1,10 +1,10 @@
 <template>
   <UModal v-model:open="open" :close="{ onClick: () => emit('close', false) }">
     <template #default>
-      <slot name="trigger"></slot>
+      <slot name="trigger" />
     </template>
     <template #content>
-      <UForm :schema="NewNotebookSchema" :state="state" class="w-full p-4" @submit="onSubmit" :validate-on="['change']">
+      <UForm :schema="NewNotebookSchema" :state="state" class="w-full p-4" :validate-on="['change']" @submit="onSubmit">
         <UFormField :label="t('notebookName')" name="name" class="w-full">
           <div class="flex w-full flex-row items-center gap-2">
             <UInput v-model="state.name" class="w-full" :placeholder="t('notebookName')" />

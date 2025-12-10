@@ -23,7 +23,7 @@
       </NotebooksNew>
     </div>
     <ul v-if="notebookStore.notebooks" class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-      <li v-for="notebook in notebookStore.notebooks">
+      <li v-for="notebook in notebookStore.notebooks" :key="notebook.apiPath">
         <NotebooksRoot :notebook />
       </li>
     </ul>

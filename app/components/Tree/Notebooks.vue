@@ -14,7 +14,7 @@
                 <template v-if="item.isPlaceholder">
                   <USkeleton class="size-5" />
                 </template>
-                <template v-else-if="!item.isPlaceholder && item.isNote" class="self-start">
+                <template v-else-if="!item.isPlaceholder && item.isNote">
                   <FileIcon :name="item.label" :is-markdown="item.isMarkdown" />
                 </template>
                 <template v-else>
@@ -62,7 +62,7 @@
 </template>
 
 <script lang="ts" setup>
-const { items, depth = 0 } = defineProps<{ items: NotebookTreeItemClient[], depth?: number }>()
+const { items, depth = 0 } = defineProps<{ items: NotebookTreeItemClient[]; depth?: number }>()
 
 const { t } = useI18n()
 
@@ -84,7 +84,7 @@ const onToggle = (item: NotebookTreeItemClient) => {
   }
 
   if (expanded.value.includes(item.apiPath)) {
-    expanded.value = expanded.value.filter(book => book !== item.apiPath)
+    expanded.value = expanded.value.filter((book) => book !== item.apiPath)
   } else {
     expanded.value = [...expanded.value, item.apiPath]
   }

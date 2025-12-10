@@ -6,7 +6,9 @@ export default withNuxt(
   {
     rules: {
       'vue/max-attributes-per-line': 'off',
-      'vue/html-closing-bracket-newline': 'off'
+      'vue/html-closing-bracket-newline': 'off',
+      '@typescript-eslint/member-delimiter-style': 'off',
+      '@stylistic/member-delimiter-style': 'off'
     }
   }
 )

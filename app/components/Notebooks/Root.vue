@@ -60,5 +60,10 @@ const openError: Ref<string | null> = ref(null)
 
 const toggle = async (item: NotebookTreeItemClient) => {
   const resp = await notebookStore.toggleRootNotebook(item)
+  if (!resp.success) {
+    openError.value = resp.message
+  } else {
+    openError.value = null
+  }
 }
 </script>

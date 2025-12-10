@@ -7,6 +7,7 @@ defineProps<{
 }>()
 
 const slots = defineSlots<{
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   leading: () => any
 }>()
 </script>
@@ -19,12 +20,8 @@ const slots = defineSlots<{
     :icon="icon"
     :label="label"
     class="ring-default rounded-sm text-[11px] capitalize"
-    :class="[selected ? 'bg-elevated' : 'hover:bg-elevated/50']"
-  >
-    <template
-      v-if="chip || !!slots.leading"
-      #leading
-    >
+    :class="[selected ? 'bg-elevated' : 'hover:bg-elevated/50']">
+    <template v-if="chip || !!slots.leading" #leading>
       <slot name="leading">
         <span
           class="inline-block size-2 rounded-full"
@@ -32,8 +29,7 @@ const slots = defineSlots<{
           :style="{
             '--color-light': `var(--color-${chip}-500)`,
             '--color-dark': `var(--color-${chip}-400)`
-          }"
-        />
+          }" />
       </slot>
     </template>
   </UButton>

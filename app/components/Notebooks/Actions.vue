@@ -5,6 +5,7 @@
     </UDropdownMenu>
   </div>
 </template>
+
 <script lang="ts" setup>
 import type { DropdownMenuItem } from '@nuxt/ui'
 import { LazyNotebooksNew } from '#components'
