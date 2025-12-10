@@ -1,10 +1,10 @@
 <template>
-  <UModal v-model:open="open">
+  <UModal v-model:open="open" :close="{ onClick: () => emit('close', false) }">
     <template #default>
-      <slot name="trigger" />
+      <slot name="trigger"></slot>
     </template>
     <template #content>
-      <UForm :schema="NewNotebookSchema" :state="state" class="w-full p-4" @submit="onSubmit">
+      <UForm :schema="NewNotebookSchema" :state="state" class="w-full p-4" @submit="onSubmit" :validate-on="['change']">
         <UFormField :label="t('notebookName')" name="name" class="w-full">
           <div class="flex w-full flex-row items-center gap-2">
             <UInput v-model="state.name" class="w-full" :placeholder="t('notebookName')" />
@@ -32,8 +32,12 @@ import type { FormSubmitEvent } from '@nuxt/ui'
 
 const { notebook } = defineProps<{ notebook?: NotebookTreeItemClient }>()
 const { t } = useI18n()
-const open = ref(false)
+
+const emit = defineEmits<{ close: [boolean] }>()
+
 const addError: Ref<null | string> = ref(null)
+
+const open = ref(false)
 
 const state = reactive({
   name: ''
@@ -48,6 +52,7 @@ async function onSubmit(event: FormSubmitEvent<NewNotebook>) {
     toast.add({ title: t('success'), description: t('notebookCreatedSuccess'), color: 'success' })
     addError.value = null
     open.value = false
+    emit('close', true)
   } else {
     addError.value = addResp.message
     toast.add({ title: t('failure'), description: addResp.message, color: 'error' })

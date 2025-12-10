@@ -32,31 +32,7 @@
             :title="t('closeNotebooks', 1)"
             :class="{ invisible: !notebook.isOpen }"
             @click="toggle(notebook)" />
-          <UDropdownMenu :items="items">
-            <UButton
-              icon="i-lucide-ellipsis-vertical"
-              color="neutral"
-              variant="ghost"
-              size="sm"
-              :ui="{
-                label: '!p-0'
-              }" />
-            <template #item="{ item }">
-              <NotebooksNew :notebook>
-                <template #trigger>
-                  <UButton
-                    :icon="item.icon"
-                    class="w-full"
-                    size="md"
-                    :color="item.color ? item.color : 'neutral'"
-                    variant="ghost"
-                    :title="item.label">
-                    {{ item.label }}
-                  </UButton>
-                </template>
-              </NotebooksNew>
-            </template>
-          </UDropdownMenu>
+          <NotebooksActions :notebook />
         </div>
       </div>
       <div
@@ -75,37 +51,10 @@
 </template>
 
 <script lang="ts" setup>
-import type { dropdownMenu } from '#build/ui'
-import type { DropdownMenuItem } from '@nuxt/ui'
-
 const settingsStore = useSettingsStore()
 
 const { notebook } = defineProps<{ notebook: NotebookTreeItemClient }>()
 const { t } = useI18n()
-
-const items: DropdownMenuItem[][] = [
-  [
-    {
-      label: t('rename'),
-      icon: 'i-gg-rename'
-    },
-    {
-      label: t('Note', 1),
-      icon: 'i-lucide-plus'
-    },
-    {
-      label: t('Notebook', 1),
-      icon: 'i-lucide-plus'
-    }
-  ],
-  [
-    {
-      label: t('delete'),
-      color: 'error',
-      icon: 'i-lucide-trash-2'
-    }
-  ]
-]
 const notebookStore = useNotebookStore()
 const openError: Ref<string | null> = ref(null)
 
