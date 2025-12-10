@@ -1,6 +1,6 @@
 <template>
   <div v-if="!collapsed">
-    <div class="mb-2 flex flex-row items-center justify-between">
+    <div class="mb-1 flex flex-row items-center justify-between">
       <h2 class="text-sm font-bold">
         {{ t('Notebook', 2) }}
       </h2>
@@ -12,11 +12,11 @@
         :class="{ invisible: expanded.length === 0 }"
         @click="expanded = []" />
     </div>
-    <ContentTree
+    <TreeNotebooks
       v-if="notebookStore.notebooks"
       v-model:expanded="expanded"
       type="sidebar"
-      :notebook="notebookStore.notebooks" />
+      :items="notebookStore.notebooks" />
   </div>
 </template>
 

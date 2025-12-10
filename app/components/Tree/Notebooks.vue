@@ -1,15 +1,15 @@
 <template>
   <div class="flex flex-col gap-1">
     <ul v-for="item in items" :key="item.apiPath">
-      <TreeItem :key="item.apiPath" :item :expanded class="flex w-full flex-col place-content-center gap-1">
+      <TreeItem :key="item.apiPath" :item :expanded class="flex w-full flex-col place-content-center gap-0.5">
         <template #default="{ isOpen }">
           <UButton
             class="flex flex-row items-center justify-between"
-            :style="{ paddingLeft: `${depth * 32 + 10}px` }"
+            :style="{ paddingLeft: `${depth * 24 + 10}px` }"
             :variant="isOpen ? 'soft' : 'ghost'"
             color="neutral"
             @click="onToggle(item)">
-            <div class="flex w-full flex-row items-start gap-2">
+            <div class="flex w-full flex-row items-start gap-1">
               <slot name="leading">
                 <template v-if="item.isPlaceholder">
                   <USkeleton class="size-5" />
@@ -33,7 +33,7 @@
                   <div
                     v-if="!settingsStore.settings.isDense && item.isNote"
                     class="mt-0.5 flex flex-row gap-2 text-neutral-500 dark:text-neutral-400">
-                    <small>
+                    <small class="text-left">
                       {{ t('Updated') }}:
                       <CommonDateDisplay :date="item.updatedAt" />
                     </small>
