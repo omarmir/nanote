@@ -52,6 +52,7 @@
           <TreeNotebooks
             v-if="item.children && isOpen"
             v-model:current-note="currentNote"
+            v-model:current-notebook="currentNotebook"
             :items="item.children"
             :depth="depth + 1"
             @toggle="onToggle" />
@@ -71,6 +72,7 @@ const settingsStore = useSettingsStore()
 const expanded = defineModel<string[]>('expanded', { required: false, default: [] })
 
 const currentNote = defineModel<string>('currentNote', { required: false, default: null })
+const currentNotebook = defineModel<NotebookTreeItemClient>('currentNotebook', { required: false, default: null })
 
 const emit = defineEmits<{
   (e: 'toggle', payload: NotebookTreeItemClient): void
@@ -81,6 +83,8 @@ const onToggle = (item: NotebookTreeItemClient) => {
   if (item.isNote) {
     currentNote.value = item.apiPath
     return
+  } else {
+    currentNotebook.value = item
   }
 
   if (expanded.value.includes(item.apiPath)) {
