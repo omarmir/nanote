@@ -1,5 +1,6 @@
 <template>
   <div class="flex flex-col gap-1">
+    <span v-if="currentNotebook">{{ currentNotebook.label }}</span>
     <ul v-for="item in items" :key="item.apiPath">
       <TreeItem :key="item.apiPath" :item :expanded class="flex w-full flex-col place-content-center gap-0.5">
         <template #default="{ isOpen }">
@@ -80,14 +81,15 @@ const emit = defineEmits<{
 
 const onToggle = (item: NotebookTreeItemClient) => {
   emit('toggle', item)
+  const isCurrentlyExpanded = expanded.value.includes(item.apiPath)
   if (item.isNote) {
     currentNote.value = item.apiPath
     return
   } else {
-    currentNotebook.value = item
+    if (!isCurrentlyExpanded) currentNotebook.value = item
   }
 
-  if (expanded.value.includes(item.apiPath)) {
+  if (isCurrentlyExpanded) {
     expanded.value = expanded.value.filter((book) => book !== item.apiPath)
   } else {
     expanded.value = [...expanded.value, item.apiPath]
