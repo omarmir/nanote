@@ -36,6 +36,7 @@
   "edit": "Edit",
   "share": "Share",
   "pdf": "PDF",
+  "add": "Add",
   "shareNote": "Share Note",
   "shareNoteInstruction": "Generate a sharable link. Note that they will only be able to view the note only.",
   "shareName": "Share name (optional)",

@@ -1,6 +1,8 @@
 <template>
   <div class="flex flex-col gap-1">
-    <span v-if="currentNotebook">{{ currentNotebook.label }}</span>
+    <UButton icon="i-lucide-plus" variant="ghost" color="primary" :style="{ paddingLeft: `${depth * 24 + 10}px` }">
+      {{ t('add') }}
+    </UButton>
     <ul v-for="item in items" :key="item.apiPath">
       <TreeItem :key="item.apiPath" :item :expanded class="flex w-full flex-col place-content-center gap-0.5">
         <template #default="{ isOpen }">
@@ -53,7 +55,6 @@
           <TreeNotebooks
             v-if="item.children && isOpen"
             v-model:current-note="currentNote"
-            v-model:current-notebook="currentNotebook"
             :items="item.children"
             :depth="depth + 1"
             @toggle="onToggle" />
@@ -73,7 +74,6 @@ const settingsStore = useSettingsStore()
 const expanded = defineModel<string[]>('expanded', { required: false, default: [] })
 
 const currentNote = defineModel<string>('currentNote', { required: false, default: null })
-const currentNotebook = defineModel<NotebookTreeItemClient>('currentNotebook', { required: false, default: null })
 
 const emit = defineEmits<{
   (e: 'toggle', payload: NotebookTreeItemClient): void
@@ -85,8 +85,6 @@ const onToggle = (item: NotebookTreeItemClient) => {
   if (item.isNote) {
     currentNote.value = item.apiPath
     return
-  } else {
-    if (!isCurrentlyExpanded) currentNotebook.value = item
   }
 
   if (isCurrentlyExpanded) {
