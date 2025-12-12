@@ -3,7 +3,7 @@
     <ul v-for="item in items" :key="item.apiPath">
       <TreeItem :key="item.apiPath" :item :expanded class="flex w-full flex-col place-content-center gap-0.5">
         <template #default="{ isOpen }">
-          <UFieldGroup>
+          <UFieldGroup class="rounded-md">
             <UButton
               class="flex grow flex-row items-center justify-between"
               :style="{ paddingLeft: `${depth * 24 + 10}px` }"

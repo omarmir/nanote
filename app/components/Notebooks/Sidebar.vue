@@ -15,6 +15,7 @@
     <TreeNotebooks
       v-if="notebookStore.notebooks"
       v-model:expanded="expanded"
+      @toggle="toggle"
       type="sidebar"
       :items="notebookStore.notebooks" />
   </div>
@@ -26,4 +27,14 @@ const { collapsed } = defineProps<{ collapsed?: boolean }>()
 const { t } = useI18n()
 const notebookStore = useNotebookStore()
 const expanded = ref([])
+const openError: Ref<string | null> = ref(null)
+
+const toggle = async (item: NotebookTreeItemClient) => {
+  const resp = await notebookStore.toggleNotebook(item)
+  if (!resp.success) {
+    openError.value = resp.message
+  } else {
+    openError.value = null
+  }
+}
 </script>
