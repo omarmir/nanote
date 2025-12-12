@@ -194,6 +194,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     error,
     // deleteNotebook,
     addNotebook,
+    addNote,
     // Note
     toggleNotebook,
     toggleRootNotebook,

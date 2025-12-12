@@ -31,7 +31,7 @@ export default defineEventHandlerWithNotebook(
       throw createError({
         statusCode: 409,
         statusMessage: 'Conflict',
-        message: t('errors.newNotebookNameExists')
+        message: t('errors.notebookAlreadyExists')
       })
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error

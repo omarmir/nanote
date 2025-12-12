@@ -72,10 +72,10 @@
     "failedProcessAttachment": "Failed to process attachment",
     "missingQuery": "Missing query.",
     "unableToSearch": "Unable to search. Check console for details.",
+    "noteAlreadyExists": "Note already exists",
     "notebookAlreadyExists": "Notebook already exists",
     "failedCreateNotebook": "Failed to create notebook",
     "missingNewNotebookName": "Missing new name for notebook.",
-    "newNotebookNameExists": "New notebook name already exists",
     "shareNoteNotSpecified": "Share note to be deleted is not specified.",
     "unexpectedDeleteCount": "Expected to delete one share but deleted {count}",
     "failedCreateShareLink": "Could not create share link for the note due to a database error."

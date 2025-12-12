@@ -6,10 +6,9 @@ import type { APIError } from '#shared/types/result'
 
 type EventHandlerWithNotebookAndNote<T extends EventHandlerRequest, D> = (
   event: H3Event<T>,
-  notebooks: string[],
+  pathArray: string[],
   note: string,
   fullPath: string,
-  notebookPath: string,
   isMarkdown: boolean
 ) => Promise<D>
 
@@ -22,11 +21,11 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
 
     // Decode the path and then remove characters we cannot have
     const params = decodeURIComponent(event.context.params?.path ?? '')
-    const path = params.split('/').map(p => p.replace(/[\\/:*?"<>|]/g, '')) || []
-    const notebooks = path.slice(0, -1)
+    const path = params.split('/').map((p) => p.replace(/[\\/:*?"<>|]/g, '')) || []
+    const pathArray = path.slice(0, -1)
     const note = path.at(-1)
 
-    if (notebooks.length === 0 || !note) {
+    if (pathArray.length === 0 || !note) {
       throw createError({
         statusCode: 400,
         statusMessage: 'Bad Request',
@@ -35,7 +34,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
     }
 
     // Construct paths
-    const targetFolder = resolve(join(notesPath, ...notebooks))
+    const targetFolder = resolve(join(notesPath, ...pathArray))
     const filename = note
     const fullPath = join(targetFolder, filename)
 
@@ -75,15 +74,16 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
     try {
       // Verify notebook and note exist and is read/write allowed
       await access(targetFolder, constants.R_OK | constants.W_OK)
+      console.log('fp', fullPath)
       if (options?.noteCheck) await access(fullPath, constants.R_OK | constants.W_OK)
     } catch (error) {
       console.error('Note error:', error)
 
       const err = error as NodeJS.ErrnoException
-      const message
-        = err.code === 'ENOENT'
+      const message =
+        err.code === 'ENOENT'
           ? err.path === targetFolder
-            ? t('errors.notebookNotFound', { path: notebooks.join(' > ') })
+            ? t('errors.notebookNotFound', { path: pathArray.join(' > ') })
             : t('errors.noteNotFound', { note })
           : t('errors.accessError')
 
@@ -94,7 +94,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
       })
     }
     try {
-      return await handler(event, notebooks, note, fullPath, targetFolder, isMarkdown)
+      return await handler(event, pathArray, note, fullPath, isMarkdown)
     } catch (error) {
       console.log(event, error)
       if ((error as NodeJS.ErrnoException).code === 'ENOENT') {

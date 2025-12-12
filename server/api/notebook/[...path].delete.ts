@@ -4,7 +4,7 @@ import { defineEventHandlerWithNotebook } from '~~/server/wrappers/notebook'
 import type { DeleteNotebook } from '#shared/types/notebook'
 
 /**
- * Dekete notebook
+ * Delete notebook
  */
 export default defineEventHandlerWithNotebook(
   async (_event, cleanNotebook, fullPath): Promise<DeleteNotebook> => {
