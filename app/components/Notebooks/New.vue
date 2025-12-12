@@ -1,10 +1,15 @@
 <template>
-  <UModal v-model:open="open" :close="{ onClick: () => emit('close', false) }">
+  <UModal v-model:open="open" :close="{ onClick: () => emit('close', false) }" :title="t('newNotebook')">
     <template #default>
       <slot name="trigger" />
     </template>
-    <template #content>
-      <UForm :schema="NewNotebookSchema" :state="state" class="w-full p-4" :validate-on="['change']" @submit="onSubmit">
+    <template #body>
+      <i18n-t keypath="addNotebook" tag="h3" v-if="notebook" class="mb-2">
+        <template v-slot:notebook>
+          <span class="text-primary">{{ notebook.label }}</span>
+        </template>
+      </i18n-t>
+      <UForm :schema="NewNotebookSchema" :state="state" class="w-full" :validate-on="['change']" @submit="onSubmit">
         <UFormField :label="t('notebookName')" name="name" class="w-full">
           <div class="flex w-full flex-row items-center gap-2">
             <UInput v-model="state.name" class="w-full" :placeholder="t('notebookName')" />

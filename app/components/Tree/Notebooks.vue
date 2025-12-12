@@ -25,7 +25,7 @@
                 </slot>
                 <slot name="label">
                   <div v-if="item.isPlaceholder">
-                    <USkeleton class="h-2 w-36" />
+                    <USkeleton class="mt-1.5 h-2 w-36" />
                   </div>
                   <div v-else>
                     <div class="text-left" :class="{ 'text-primary': currentNote === item.apiPath }">
@@ -50,7 +50,7 @@
                   :class="{ 'rotate-180': isOpen }" />
               </slot>
             </UButton>
-            <TreeNewItem :is-open :item v-if="!item.isNote"></TreeNewItem>
+            <NotebooksActions :is-open :notebook="item" v-if="!item.isNote"></NotebooksActions>
           </UFieldGroup>
 
           <TreeNotebooks

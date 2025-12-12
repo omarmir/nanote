@@ -1,16 +1,14 @@
 <template>
-  <div>
-    <UDropdownMenu :items="items">
-      <UButton icon="i-lucide-ellipsis-vertical" color="neutral" variant="ghost" size="sm" />
-    </UDropdownMenu>
-  </div>
+  <UDropdownMenu :items="items">
+    <UButton icon="i-lucide-ellipsis-vertical" color="neutral" :variant="isOpen ? 'soft' : 'ghost'" size="sm" />
+  </UDropdownMenu>
 </template>
 
 <script lang="ts" setup>
 import type { DropdownMenuItem } from '@nuxt/ui'
 import { LazyNotebooksNew } from '#components'
 
-const { notebook } = defineProps<{ notebook: NotebookTreeItemClient }>()
+const { notebook, isOpen = false } = defineProps<{ notebook: NotebookTreeItemClient; isOpen?: boolean }>()
 const { t } = useI18n()
 const overlay = useOverlay()
 
