@@ -7,6 +7,7 @@
 <script lang="ts" setup>
 import type { DropdownMenuItem } from '@nuxt/ui'
 import { LazyNotebooksNew } from '#components'
+import { LazyNotesNew } from '#components'
 
 const { notebook, isOpen = false } = defineProps<{ notebook: NotebookTreeItemClient; isOpen?: boolean }>()
 const { t } = useI18n()
@@ -22,7 +23,11 @@ const items: DropdownMenuItem[][] = [
     {
       label: t('Note', 1),
       icon: 'i-lucide-plus',
-      class: 'cursor-pointer'
+      class: 'cursor-pointer',
+      onSelect: () => {
+        const modal = overlay.create(LazyNotesNew)
+        modal.open({ notebook })
+      }
     },
     {
       label: t('Notebook', 1),

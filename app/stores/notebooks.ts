@@ -52,7 +52,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     let currentNotebook: NotebookTreeItemClient | null = null
 
     for (const pathSegment of pathArray) {
-      currentNotebook = currentItems.find(item => item.label === pathSegment) || null
+      currentNotebook = currentItems.find((item) => item.label === pathSegment) || null
       if (!currentNotebook) {
         return null
       }
@@ -97,14 +97,14 @@ export const useNotebookStore = defineStore('notebook', () => {
         const targetNotebook = findNotebookByPath(notebooks.value, notebook.pathArray)
         if (targetNotebook) {
           // Add children with childrenLoaded flag
-          targetNotebook.children = children.map(child => ({
+          targetNotebook.children = children.map((child) => ({
             ...child,
             childrenLoaded: false
           }))
           targetNotebook.childrenLoaded = true
         } else if (notebook.pathArray.length === 0) {
           // Handle root-level notebooks
-          notebook.children = children.map(child => ({
+          notebook.children = children.map((child) => ({
             ...child,
             childrenLoaded: false
           }))
@@ -126,7 +126,8 @@ export const useNotebookStore = defineStore('notebook', () => {
     notebook?: NotebookTreeItemClient
   ): Promise<Result<NotebookTreeItemClient>> => {
     if (!notebooks.value) {
-      return { success: false, message: 'No notebooks' }
+      const { t } = useI18n()
+      return { success: false, message: t('errors.notebookNotFound', { path: notebook?.label }) }
     }
     const notebookPath = notebook ? `${notebook.apiPath}/${name}` : name
 
@@ -151,7 +152,37 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
-  const anyOpenBooks: ComputedRef<boolean> = computed(() => notebooks.value?.some(book => book.isOpen) ?? false)
+  const addNote = async (
+    notebook: NotebookTreeItemClient,
+    note: string,
+    isManualFile: boolean = false
+  ): Promise<Result<NotebookTreeItem>> => {
+    if (!notebooks.value) {
+      const { t } = useI18n()
+      return { success: false, message: t('errors.notebookNotFound', { path: notebook.label }) }
+    }
+
+    const notePath = notebook ? `${notebook.apiPath}/${note}` : note
+
+    try {
+      const resp = await $fetch<NotebookTreeItemClient>(`/api/note/${notePath}`, {
+        method: 'POST',
+        body: { isManualFile }
+      })
+
+      const targetNotebook = findNotebookByPath(notebooks.value, notebook.pathArray)
+      targetNotebook?.children?.push(resp)
+
+      return {
+        success: true,
+        data: resp
+      }
+    } catch (error) {
+      return { success: false, message: (error as FetchError).data.message }
+    }
+  }
+
+  const anyOpenBooks: ComputedRef<boolean> = computed(() => notebooks.value?.some((book) => book.isOpen) ?? false)
   const closeAllOpenBooks = () =>
     notebooks.value?.forEach((book) => {
       if (book.isOpen) book.isOpen = false

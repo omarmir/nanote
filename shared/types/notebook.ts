@@ -87,19 +87,19 @@ export const LAZY_LOAD_PLACEHOLDER: NotebookTreeItem = {
 const forbiddenChars = /[<>:"/\\|?*\x00-\x1f]/
 const reservedNames = /^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$/i
 
-export const NewNotebookSchema = v.pipe(
+export const NewFileFolderSchema = v.pipe(
   v.object({
     name: v.pipe(
       v.string(),
       v.trim(),
       v.nonEmpty('Notebook name is required'),
       v.maxLength(255, 'Name must be 255 characters or less'),
-      v.check(name => !forbiddenChars.test(name), 'Name contains invalid characters (< > : " / \\ | ? *)'),
-      v.check(name => !reservedNames.test(name), 'Name cannot be a reserved system name'),
-      v.check(name => !name.endsWith('.'), 'Name cannot end with a period'),
-      v.check(name => name === name.trim(), 'Name cannot have leading or trailing spaces')
+      v.check((name) => !forbiddenChars.test(name), 'Name contains invalid characters (< > : " / \\ | ? *)'),
+      v.check((name) => !reservedNames.test(name), 'Name cannot be a reserved system name'),
+      v.check((name) => !name.endsWith('.'), 'Name cannot end with a period'),
+      v.check((name) => name === name.trim(), 'Name cannot have leading or trailing spaces')
     )
   })
 )
 
-export type NewNotebook = v.InferOutput<typeof NewNotebookSchema>
+export type NewNoteNotebook = v.InferOutput<typeof NewFileFolderSchema>
