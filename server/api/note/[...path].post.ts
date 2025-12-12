@@ -43,14 +43,14 @@ export default defineEventHandlerWithNotebookAndNote(
     const fullPathWithNewFile = [...pathArray, note]
 
     return {
-      label: fullPath,
+      label: note,
       createdAt: createdAtTime.toISOString(),
       updatedAt: null,
       notebookCount: 0,
       noteCount: 0,
       path: fullPath,
       pathArray: fullPathWithNewFile,
-      isNote: false,
+      isNote: true,
       apiPath: `/${fullPathWithNewFile.join('/')}`,
       disabled: false,
       isMarkdown

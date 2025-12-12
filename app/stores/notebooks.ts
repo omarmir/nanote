@@ -66,7 +66,6 @@ export const useNotebookStore = defineStore('notebook', () => {
   }
 
   const toggleRootNotebook = async (notebook: NotebookTreeItemClient): Promise<Result<null>> => {
-    console.log(notebook)
     // if its already open close it
     if (notebook.isOpen) {
       notebook.isOpen = false
@@ -152,22 +151,18 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
-  const addNote = async (
-    notebook: NotebookTreeItemClient,
-    note: string,
-    isManualFile: boolean = false
-  ): Promise<Result<NotebookTreeItem>> => {
+  const addNote = async (state: NewNote, notebook: NotebookTreeItemClient): Promise<Result<NotebookTreeItem>> => {
     if (!notebooks.value) {
       const { t } = useI18n()
       return { success: false, message: t('errors.notebookNotFound', { path: notebook.label }) }
     }
 
-    const notePath = notebook ? `${notebook.apiPath}/${note}` : note
+    const name = state.isManual ? state.name : `${state.name}.md`
+    const notePath = notebook ? `${notebook.apiPath}/${name}` : name
 
     try {
       const resp = await $fetch<NotebookTreeItemClient>(`/api/note/${notePath}`, {
-        method: 'POST',
-        body: { isManualFile }
+        method: 'POST'
       })
 
       const targetNotebook = findNotebookByPath(notebooks.value, notebook.pathArray)

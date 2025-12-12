@@ -102,4 +102,10 @@ export const NewFileFolderSchema = v.pipe(
   })
 )
 
-export type NewNoteNotebook = v.InferOutput<typeof NewFileFolderSchema>
+export const NewFileSchema = v.object({
+  ...NewFileFolderSchema.entries,
+  isManual: v.boolean()
+})
+
+export type NewNotebook = v.InferOutput<typeof NewFileFolderSchema>
+export type NewNote = v.InferOutput<typeof NewFileSchema>

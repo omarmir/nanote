@@ -51,7 +51,7 @@ const state = reactive({
 const notebookStore = useNotebookStore()
 
 const toast = useToast()
-async function onSubmit(event: FormSubmitEvent<NewNoteNotebook>) {
+async function onSubmit(event: FormSubmitEvent<NewNotebook>) {
   const addResp = await notebookStore.addNotebook(event.data.name, notebook)
   if (addResp.success) {
     toast.add({ title: t('success'), description: t('notebookCreatedSuccess'), color: 'success' })

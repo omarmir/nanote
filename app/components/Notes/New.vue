@@ -4,16 +4,19 @@
       <slot name="trigger" />
     </template>
     <template #body>
-      <i18n-t keypath="addNote" tag="h3" v-if="notebook" class="mb-2">
+      <div class="flex flex-row place-content-end pb-2">
+        <USwitch v-model="state.isManual" :label="t('manual')" :aria-details="t('manualAddNewNote')" />
+      </div>
+      <i18n-t :keypath="state.isManual ? 'manualAddNewNote' : 'addNote'" tag="h3" v-if="notebook" class="mb-2">
         <template v-slot:notebook>
-          <span class="text-primary">{{ notebook.label }}</span>
+          <span class="text-warning">{{ notebook.label }}</span>
         </template>
       </i18n-t>
-      <UForm :schema="NewFileFolderSchema" :state="state" class="w-full" :validate-on="['change']" @submit="onSubmit">
+      <UForm :schema="NewFileSchema" :state="state" class="w-full" :validate-on="['change']" @submit="onSubmit">
         <UFormField :label="t('noteName')" name="name" class="w-full">
           <div class="flex w-full flex-row items-center gap-2">
             <UInput v-model="state.name" class="w-full" :placeholder="t('noteName')" />
-            <UButton type="submit">
+            <UButton type="submit" :icon="state.isManual ? 'i-lucide-file' : 'i-custom-ri-markdown-line'">
               {{ t('create') }}
             </UButton>
           </div>
@@ -35,7 +38,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui'
 
-const { notebook } = defineProps<{ notebook?: NotebookTreeItemClient }>()
+const { notebook } = defineProps<{ notebook: NotebookTreeItemClient }>()
 const { t } = useI18n()
 
 const emit = defineEmits<{ close: [boolean] }>()
@@ -45,14 +48,15 @@ const addError: Ref<null | string> = ref(null)
 const open = ref(false)
 
 const state = reactive({
-  name: ''
+  name: '',
+  isManual: false
 })
 
 const notebookStore = useNotebookStore()
 
 const toast = useToast()
-async function onSubmit(event: FormSubmitEvent<NewNoteNotebook>) {
-  const addResp = await notebookStore.addNotebook(event.data.name, notebook)
+async function onSubmit(event: FormSubmitEvent<NewNote>) {
+  const addResp = await notebookStore.addNote(event.data, notebook)
   if (addResp.success) {
     toast.add({ title: t('success'), description: t('notebookCreatedSuccess'), color: 'success' })
     addError.value = null
