@@ -9,7 +9,7 @@
           <span class="text-primary">{{ notebook.label }}</span>
         </template>
       </i18n-t>
-      <UForm :schema="NewFileFolderSchema" :state="state" class="w-full" :validate-on="['change']" @submit="onSubmit">
+      <UForm :schema="NewFileFolderSchema" :state="state" class="w-full" @submit="onSubmit">
         <UFormField :label="t('notebookName')" name="name" class="w-full">
           <div class="flex w-full flex-row items-center gap-2">
             <UInput v-model="state.name" class="w-full" :placeholder="t('notebookName')" />

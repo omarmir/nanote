@@ -4,21 +4,21 @@
       <slot name="trigger" />
     </template>
     <template #body>
-      <div class="flex flex-row place-content-end pb-2">
-        <USwitch v-model="state.isManual" :label="t('manual')" :aria-details="t('manualAddNewNote')" />
-      </div>
       <i18n-t :keypath="state.isManual ? 'manualAddNewNote' : 'addNote'" tag="h3" v-if="notebook" class="mb-2">
         <template v-slot:notebook>
           <span class="text-warning">{{ notebook.label }}</span>
         </template>
       </i18n-t>
-      <UForm :schema="NewFileSchema" :state="state" class="w-full" :validate-on="['change']" @submit="onSubmit">
+      <UForm :schema="NewFileSchema" :state="state" class="w-full" @submit="onSubmit">
         <UFormField :label="t('noteName')" name="name" class="w-full">
-          <div class="flex w-full flex-row items-center gap-2">
+          <div class="flex w-full flex-col items-start gap-4">
             <UInput v-model="state.name" class="w-full" :placeholder="t('noteName')" />
-            <UButton type="submit" :icon="state.isManual ? 'i-lucide-file' : 'i-custom-ri-markdown-line'">
-              {{ t('create') }}
-            </UButton>
+            <USwitch v-model="state.isManual" :label="t('manual')" :aria-details="t('manualAddNewNote')" />
+            <div class="flex w-full flex-row place-content-end">
+              <UButton type="submit" :icon="state.isManual ? 'i-lucide-file' : 'i-custom-ri-markdown-line'">
+                {{ t('create') }}
+              </UButton>
+            </div>
           </div>
         </UFormField>
         <UAlert
