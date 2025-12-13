@@ -3,9 +3,9 @@
     <ul v-for="item in items" :key="item.apiPath">
       <TreeItem :key="item.apiPath" :item :expanded class="flex w-full flex-col place-content-center gap-0.5">
         <template #default="{ isOpen }">
-          <UFieldGroup class="rounded-md">
+          <UFieldGroup class="group rounded-md">
             <UButton
-              class="flex grow flex-row items-center justify-between"
+              class="target flex grow flex-row items-center justify-between group-hover:bg-neutral-500/20"
               :style="{ paddingLeft: `${depth * 24 + 10}px` }"
               :variant="isOpen ? 'soft' : 'ghost'"
               color="neutral"
@@ -50,7 +50,12 @@
                   :class="{ 'rotate-180': isOpen }" />
               </slot>
             </UButton>
-            <NotebooksActions :is-open :notebook="item" v-if="!item.isNote"></NotebooksActions>
+            <NotebooksActions
+              :is-open
+              :notebook="item"
+              class="target group-hover:bg-neutral-500/20"
+              v-if="!item.isNote"></NotebooksActions>
+            <NotesActions class="target group-hover:bg-neutral-500/20" :is-open :notebook="item" v-else></NotesActions>
           </UFieldGroup>
 
           <TreeNotebooks
