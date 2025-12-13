@@ -17,6 +17,11 @@ export type NotebookTreeItem = Omit<TreeItem, 'children'> & {
   isMarkdown?: boolean
 }
 
+export type RenameTreeItem = Omit<
+  TreeItem,
+  'children' | 'noteCount' | 'notebookCount' | 'isNote' | 'isPlaceholder' | 'disabled' | 'isMarkdown'
+>
+
 export type NotebookTreeItemClient = NotebookTreeItem & {
   childrenLoaded?: boolean
   isOpen?: boolean
@@ -32,26 +37,7 @@ export type NoteResponse = {
   originalFilename: string
 }
 
-export type RenameNotebook = {
-  oldName: string
-  path: string
-  newName: string
-  createdAt: string
-  updatedAt: string
-  notebooks: string[]
-}
-
-export type RenameNote = {
-  oldName: string
-  newName: string
-  notebook: string[]
-  createdAt: string
-  updatedAt: string
-}
-
 export type SavingState = 'pending' | 'saving' | 'success' | 'error' | 'idle'
-
-export type NotebookDisplay = 'main' | 'sidebar' | 'other'
 
 export const LAZY_LOAD_PLACEHOLDER: NotebookTreeItem = {
   label: 'Loading...',
