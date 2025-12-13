@@ -38,6 +38,7 @@
   "manualPlaceholder": "Full file name with the extension",
   "deleteNotebook": "Delete {item} and all of the notes inside. This action cannot be undone.",
   "deleteNote": "Delete {item}. This action cannot be undone.",
+  "deleted": "{item} deleted!",
   "delete": "Delete",
   "focus": "Focus",
   "edit": "Edit",

@@ -183,13 +183,85 @@ export const useNotebookStore = defineStore('notebook', () => {
       if (book.isOpen) book.isOpen = false
     })
 
+  const removeNotebookFromTree = (notebooks: NotebookTreeItemClient[], notebook: NotebookTreeItemClient): void => {
+    if (notebook.pathArray.length === 1) {
+      // Root-level notebook - remove from notebooks array
+      const index = notebooks.findIndex((item) => item.label === notebook.label)
+      if (index !== -1) {
+        notebooks.splice(index, 1)
+      }
+    } else {
+      // Nested notebook - find parent and remove from its children
+      const parentPath = notebook.pathArray.slice(0, -1)
+      const parentNotebook = findNotebookByPath(notebooks, parentPath)
+      if (parentNotebook?.children) {
+        const index = parentNotebook.children.findIndex((item) => item.label === notebook.label)
+        if (index !== -1) {
+          parentNotebook.children.splice(index, 1)
+        }
+      }
+    }
+  }
+
+  const deleteNote = async (note: NotebookTreeItemClient): Promise<Result<boolean>> => {
+    if (!notebooks.value) {
+      const { t } = useI18n()
+      return { success: false, message: t('errors.notebookNotFound', { path: note.label }) }
+    }
+    try {
+      const resp = await $fetch<boolean>(`/api/note/${note.apiPath}`, {
+        method: 'DELETE'
+      })
+
+      removeNotebookFromTree(notebooks.value, note)
+
+      return {
+        success: true,
+        data: resp
+      }
+    } catch (err) {
+      const error = err as FetchError
+      return {
+        success: false,
+        message: error.data.message
+      }
+    }
+  }
+
+  const deleteNotebook = async (notebook: NotebookTreeItemClient): Promise<Result<boolean>> => {
+    if (!notebooks.value) {
+      const { t } = useI18n()
+      return { success: false, message: t('errors.notebookNotFound', { path: notebook.label }) }
+    }
+
+    try {
+      const resp = await $fetch<boolean>(`/api/notebook/${notebook.apiPath}`, {
+        method: 'DELETE'
+      })
+
+      removeNotebookFromTree(notebooks.value, notebook)
+
+      return {
+        success: true,
+        data: resp
+      }
+    } catch (err) {
+      const error = err as FetchError
+      return {
+        success: false,
+        message: error.data.message
+      }
+    }
+  }
+
   return {
     notebooks,
     status,
     error,
-    // deleteNotebook,
+    deleteNotebook,
     addNotebook,
     addNote,
+    deleteNote,
     // Note
     toggleNotebook,
     toggleRootNotebook,

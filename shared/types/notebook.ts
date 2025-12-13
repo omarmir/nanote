@@ -49,19 +49,6 @@ export type RenameNote = {
   updatedAt: string
 }
 
-export type DeleteNote = {
-  name: string
-  timestamp: string
-  notebook: string[]
-  deleted: boolean
-}
-
-export type DeleteNotebook = {
-  timestamp: string
-  notebook: string[]
-  deleted: boolean
-}
-
 export type SavingState = 'pending' | 'saving' | 'success' | 'error' | 'idle'
 
 export type NotebookDisplay = 'main' | 'sidebar' | 'other'
