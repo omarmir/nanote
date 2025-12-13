@@ -39,7 +39,7 @@
           </template>
         </UButton>
 
-        <UNavigationMenu :collapsed :items="items" orientation="vertical" />
+        <UNavigationMenu :collapsed :items="items" orientation="vertical" color="primary" />
         <NotebooksSidebar :collapsed />
       </template>
     </UDashboardSidebar>

@@ -18,6 +18,11 @@ const items: DropdownMenuItem[][] = [
       label: t('rename'),
       icon: 'i-custom-gg-rename',
       class: 'cursor-pointer'
+    },
+    {
+      label: t('share'),
+      icon: 'i-lucide-share-2',
+      class: 'cursor-pointer'
     }
   ],
   [
