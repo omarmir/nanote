@@ -18,7 +18,7 @@
           <div class="flex w-full flex-col items-center gap-4">
             <UInput v-model="state.name" class="w-full" :placeholder="t('renameItem', { item: item?.label })" />
             <div class="flex w-full flex-row place-content-end items-center gap-4">
-              <UButton type="submit" color="warning">
+              <UButton type="submit" color="warning" :disabled="isRenaming">
                 {{ t('rename') }}
                 <template #leading>
                   <UIcon v-if="isRenaming" name="i-lucide-loader-circle" class="animate-spin"></UIcon>
@@ -63,6 +63,7 @@ const state = reactive({
 })
 
 async function onSubmit(event: FormSubmitEvent<NewName>) {
+  isRenaming.value = true
   const renamedResp = await notebookStore.renameNotebook(item, event.data.name)
   if (renamedResp.success) {
     toast.add({
@@ -77,6 +78,7 @@ async function onSubmit(event: FormSubmitEvent<NewName>) {
     renameError.value = renamedResp.message
     toast.add({ title: t('failure'), description: renamedResp.message, color: 'error' })
   }
+  isRenaming.value = false
 }
 
 const cancelRename = async () => emit('close', false)

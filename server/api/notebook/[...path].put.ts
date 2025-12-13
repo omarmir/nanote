@@ -40,16 +40,19 @@ export default defineEventHandlerWithNotebook(
     // Perform rename
     await rename(fullPath, newPath)
 
+    // create new path array
+    const newPathArray = [...pathArray.slice(0, -1), cleanNewName]
+
     // Get updated stats
     const stats = await stat(newPath)
 
     return {
-      label: name ?? '',
+      label: cleanNewName,
       createdAt: stats.birthtime.toISOString(),
       updatedAt: stats.mtime.toISOString(),
-      path: fullPath,
-      pathArray,
-      apiPath: `/${pathArray.join('/')}`
+      path: newPath,
+      pathArray: newPathArray,
+      apiPath: `/${newPathArray.join('/')}`
     } satisfies RenameTreeItem
   },
   { notebookCheck: false }

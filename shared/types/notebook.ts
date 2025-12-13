@@ -17,10 +17,14 @@ export type NotebookTreeItem = Omit<TreeItem, 'children'> & {
   isMarkdown?: boolean
 }
 
-export type RenameTreeItem = Omit<
-  TreeItem,
-  'children' | 'noteCount' | 'notebookCount' | 'isNote' | 'isPlaceholder' | 'disabled' | 'isMarkdown'
->
+export type RenameTreeItem = {
+  label: string
+  path: string
+  createdAt: string
+  updatedAt: string | null
+  pathArray: string[]
+  apiPath: string
+}
 
 export type NotebookTreeItemClient = NotebookTreeItem & {
   childrenLoaded?: boolean

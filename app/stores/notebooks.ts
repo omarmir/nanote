@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { NotebookTreeItemClient } from '#shared/types/notebook'
+import type { NotebookTreeItemClient, RenameTreeItem } from '#shared/types/notebook'
 import type { FetchError } from 'ofetch'
 
 export const useNotebookStore = defineStore('notebook', () => {
@@ -288,16 +288,18 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
 
     try {
-      const resp = await $fetch<NotebookTreeItemClient>(`/api/notebook/${notebook.apiPath}`, {
+      const resp = await $fetch<RenameTreeItem>(`/api/notebook/${notebook.apiPath}`, {
         method: 'PUT',
         body: {
           newName: newNotebookName
         }
       })
 
-      replaceItemInTree(notebooks.value, notebook, resp)
+      const replacedItem = { ...notebook, ...resp }
 
-      return { success: true, data: resp }
+      replaceItemInTree(notebooks.value, notebook, replacedItem)
+
+      return { success: true, data: replacedItem }
     } catch (err) {
       const error = (err as FetchError).data.message
       return { success: false, message: error }
