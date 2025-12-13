@@ -8,7 +8,7 @@
       <slot name="trigger" />
     </template>
     <template #body>
-      <i18n-t :keypath="item.isNote ? 'deleteNote' : 'deleteNotebook'" tag="h3" class="mb-2">
+      <i18n-t :keypath="item.isNote ? 'deleteNote' : 'deleteNotebook'" tag="h3" class="mb-4">
         <template v-slot:item>
           <span class="text-warning">{{ item.label }}</span>
         </template>

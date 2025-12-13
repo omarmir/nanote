@@ -6,8 +6,6 @@
 
 <script lang="ts" setup>
 import type { DropdownMenuItem } from '@nuxt/ui'
-import { LazyNotebooksNew } from '#components'
-import { LazyNotesNew } from '#components'
 import { LazyCommonDelete } from '#components'
 
 const { notebook, isOpen = false } = defineProps<{ notebook: NotebookTreeItemClient; isOpen?: boolean }>()
@@ -20,24 +18,6 @@ const items: DropdownMenuItem[][] = [
       label: t('rename'),
       icon: 'i-custom-gg-rename',
       class: 'cursor-pointer'
-    },
-    {
-      label: t('Note', 1),
-      icon: 'i-lucide-plus',
-      class: 'cursor-pointer',
-      onSelect: () => {
-        const modal = overlay.create(LazyNotesNew)
-        modal.open({ notebook })
-      }
-    },
-    {
-      label: t('Notebook', 1),
-      icon: 'i-lucide-plus',
-      class: 'cursor-pointer',
-      onSelect: () => {
-        const modal = overlay.create(LazyNotebooksNew)
-        modal.open({ notebook })
-      }
     }
   ],
   [
