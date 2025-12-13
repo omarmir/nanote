@@ -9,7 +9,8 @@ type EventHandlerWithNotebookAndNote<T extends EventHandlerRequest, D> = (
   pathArray: string[],
   note: string,
   fullPath: string,
-  isMarkdown: boolean
+  isMarkdown: boolean,
+  targetFolder: string
 ) => Promise<D>
 
 export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequest, D>(
@@ -94,7 +95,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
       })
     }
     try {
-      return await handler(event, pathArray, note, fullPath, isMarkdown)
+      return await handler(event, pathArray, note, fullPath, isMarkdown, targetFolder)
     } catch (error) {
       console.log(event, error)
       if ((error as NodeJS.ErrnoException).code === 'ENOENT') {

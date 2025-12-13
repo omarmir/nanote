@@ -306,12 +306,41 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
+  const renameNote = async (
+    note: NotebookTreeItemClient,
+    newNoteName: string
+  ): Promise<Result<NotebookTreeItemClient>> => {
+    if (!notebooks.value) {
+      const { t } = useI18n()
+      return { success: false, message: t('errors.noteNotFound', { path: note.label }) }
+    }
+
+    try {
+      const resp = await $fetch<RenameTreeItem>(`/api/note/${note.apiPath}`, {
+        method: 'PUT',
+        body: {
+          newName: newNoteName
+        }
+      })
+
+      const replacedItem = { ...note, ...resp }
+
+      replaceItemInTree(notebooks.value, note, replacedItem)
+
+      return { success: true, data: replacedItem }
+    } catch (err) {
+      const error = (err as FetchError).data.message
+      return { success: false, message: error }
+    }
+  }
+
   return {
     notebooks,
     status,
     error,
     deleteNotebook,
     renameNotebook,
+    renameNote,
     addNotebook,
     addNote,
     deleteNote,

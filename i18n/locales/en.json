@@ -84,6 +84,7 @@
     "notebookAlreadyExists": "Notebook already exists",
     "failedCreateNotebook": "Failed to create notebook",
     "missingNewNotebookName": "Missing new name for notebook.",
+    "missingNewNoteName": "Missing new name for note.",
     "shareNoteNotSpecified": "Share note to be deleted is not specified.",
     "unexpectedDeleteCount": "Expected to delete one share but deleted {count}",
     "failedCreateShareLink": "Could not create share link for the note due to a database error."
