@@ -10,7 +10,7 @@
     <template #body>
       <i18n-t :keypath="state.isManual ? 'manualAddNewNote' : 'addNote'" tag="h3" v-if="notebook" class="mb-2">
         <template v-slot:notebook>
-          <span class="text-warning">{{ notebook.label }}</span>
+          <span class="text-primary">{{ notebook.label }}</span>
         </template>
       </i18n-t>
       <UForm :schema="NewFileSchema" :state="state" class="w-full" @submit="onSubmit">

@@ -93,6 +93,6 @@ export const NewFileSchema = v.object({
   ...NewFileFolderSchema.entries,
   isManual: v.boolean()
 })
-
+export type NewName = v.InferOutput<typeof NewFileFolderSchema>
 export type NewNotebook = v.InferOutput<typeof NewFileFolderSchema>
 export type NewNote = v.InferOutput<typeof NewFileSchema>

@@ -183,7 +183,7 @@ export const useNotebookStore = defineStore('notebook', () => {
       if (book.isOpen) book.isOpen = false
     })
 
-  const removeNotebookFromTree = (notebooks: NotebookTreeItemClient[], notebook: NotebookTreeItemClient): void => {
+  const removeItemFromTree = (notebooks: NotebookTreeItemClient[], notebook: NotebookTreeItemClient): void => {
     if (notebook.pathArray.length === 1) {
       // Root-level notebook - remove from notebooks array
       const index = notebooks.findIndex((item) => item.label === notebook.label)
@@ -203,6 +203,30 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
+  const replaceItemInTree = (
+    notebooks: NotebookTreeItemClient[],
+    oldItem: NotebookTreeItemClient,
+    newItem: NotebookTreeItemClient
+  ): void => {
+    if (oldItem.pathArray.length === 1) {
+      // Root-level item - replace in notebooks array
+      const index = notebooks.findIndex((item) => item.label === oldItem.label)
+      if (index !== -1) {
+        notebooks.splice(index, 1, newItem)
+      }
+    } else {
+      // Nested item - find parent and replace in its children
+      const parentPath = oldItem.pathArray.slice(0, -1)
+      const parentNotebook = findNotebookByPath(notebooks, parentPath)
+      if (parentNotebook?.children) {
+        const index = parentNotebook.children.findIndex((item) => item.label === oldItem.label)
+        if (index !== -1) {
+          parentNotebook.children.splice(index, 1, newItem)
+        }
+      }
+    }
+  }
+
   const deleteNote = async (note: NotebookTreeItemClient): Promise<Result<boolean>> => {
     if (!notebooks.value) {
       const { t } = useI18n()
@@ -213,7 +237,7 @@ export const useNotebookStore = defineStore('notebook', () => {
         method: 'DELETE'
       })
 
-      removeNotebookFromTree(notebooks.value, note)
+      removeItemFromTree(notebooks.value, note)
 
       return {
         success: true,
@@ -239,7 +263,7 @@ export const useNotebookStore = defineStore('notebook', () => {
         method: 'DELETE'
       })
 
-      removeNotebookFromTree(notebooks.value, notebook)
+      removeItemFromTree(notebooks.value, notebook)
 
       return {
         success: true,
@@ -254,11 +278,38 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
+  const renameNotebook = async (
+    notebook: NotebookTreeItemClient,
+    newNotebookName: string
+  ): Promise<Result<NotebookTreeItemClient>> => {
+    if (!notebooks.value) {
+      const { t } = useI18n()
+      return { success: false, message: t('errors.notebookNotFound', { path: notebook.label }) }
+    }
+
+    try {
+      const resp = await $fetch<NotebookTreeItemClient>(`/api/notebook/${notebook.apiPath}`, {
+        method: 'PUT',
+        body: {
+          newName: newNotebookName
+        }
+      })
+
+      replaceItemInTree(notebooks.value, notebook, resp)
+
+      return { success: true, data: resp }
+    } catch (err) {
+      const error = (err as FetchError).data.message
+      return { success: false, message: error }
+    }
+  }
+
   return {
     notebooks,
     status,
     error,
     deleteNotebook,
+    renameNotebook,
     addNotebook,
     addNote,
     deleteNote,
