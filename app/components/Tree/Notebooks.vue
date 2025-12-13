@@ -54,12 +54,17 @@
               :is-open
               :notebook="item"
               class="target group-hover:bg-neutral-500/20"
-              v-if="!item.isNote"></NotebooksActions>
-            <NotesActions class="target group-hover:bg-neutral-500/20" :is-open :notebook="item" v-else></NotesActions>
+              v-if="!item.isNote && !compact"></NotebooksActions>
+            <NotesActions
+              class="target group-hover:bg-neutral-500/20"
+              :is-open
+              :notebook="item"
+              v-else-if="item.isNote && !compact"></NotesActions>
           </UFieldGroup>
 
           <TreeNotebooks
             v-if="item.children && isOpen"
+            :compact
             v-model:current-note="currentNote"
             :items="item.children"
             :depth="depth + 1"
@@ -71,7 +76,11 @@
 </template>
 
 <script lang="ts" setup>
-const { items, depth = 0 } = defineProps<{ items: NotebookTreeItemClient[]; depth?: number }>()
+const {
+  items,
+  depth = 0,
+  compact = false
+} = defineProps<{ items: NotebookTreeItemClient[]; depth?: number; compact?: boolean }>()
 
 const { t } = useI18n()
 
