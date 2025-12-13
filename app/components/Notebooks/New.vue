@@ -1,5 +1,5 @@
 <template>
-  <UModal v-model:open="open" :close="{ onClick: () => emit('close', false) }" :title="t('newNotebook')">
+  <UModal v-model:open="open" :close="{ onClick: () => emit('close', false) }" :aria-describedby="t('newNotebook')">
     <template #default>
       <slot name="trigger" />
     </template>

@@ -8,6 +8,7 @@
 import type { DropdownMenuItem } from '@nuxt/ui'
 import { LazyNotebooksNew } from '#components'
 import { LazyNotesNew } from '#components'
+import { LazyCommonDelete } from '#components'
 
 const { notebook, isOpen = false } = defineProps<{ notebook: NotebookTreeItemClient; isOpen?: boolean }>()
 const { t } = useI18n()
@@ -44,7 +45,11 @@ const items: DropdownMenuItem[][] = [
       label: t('delete'),
       color: 'error',
       icon: 'i-lucide-trash-2',
-      class: 'cursor-pointer'
+      class: 'cursor-pointer',
+      onSelect: () => {
+        const modal = overlay.create(LazyCommonDelete)
+        modal.open({ item: notebook })
+      }
     }
   ]
 ]
