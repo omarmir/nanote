@@ -48,7 +48,7 @@
   "share": "Share",
   "pdf": "PDF",
   "cancel": "Cancel",
-  "shareNote": "Share Note",
+  "shareNote": "Share {note} with secret URL",
   "shareNoteInstruction": "Generate a sharable link. Note that they will only be able to view the note only.",
   "shareName": "Share name (optional)",
   "sharedNotes": "Shared Notes",

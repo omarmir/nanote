@@ -8,6 +8,7 @@
 import type { DropdownMenuItem } from '@nuxt/ui'
 import { LazyCommonDelete } from '#components'
 import { LazyNotesRename } from '#components'
+import { LazyNotesShare } from '#components'
 
 const { item, isOpen = false } = defineProps<{ item: NotebookTreeItemClient; isOpen?: boolean }>()
 const { t } = useI18n()
@@ -27,7 +28,11 @@ const items: DropdownMenuItem[][] = [
     {
       label: t('share'),
       icon: 'i-lucide-share-2',
-      class: 'cursor-pointer'
+      class: 'cursor-pointer',
+      onSelect: () => {
+        const modal = overlay.create(LazyNotesShare)
+        modal.open({ note: item })
+      }
     }
   ],
   [
