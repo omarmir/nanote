@@ -1,5 +1,5 @@
 import { rename, access, constants, stat } from 'node:fs/promises'
-import { join, resolve } from 'node:path'
+import { extname, join, resolve } from 'node:path'
 import { defineEventHandlerWithNotebookAndNote } from '~~/server/wrappers/note'
 import type { RenameTreeItem } from '#shared/types/notebook'
 // import { waitforme } from '~~/server/utils'
@@ -44,10 +44,13 @@ export default defineEventHandlerWithNotebookAndNote(
     await rename(fullPath, newPath)
 
     // create new path array
-    const newPathArray = [...pathArray.slice(0, -1), cleanNewNote]
+    const newPathArray = [...pathArray, cleanNewNote]
 
     // Get updated stats
     const stats = await stat(newPath)
+
+    const fileExtension = extname(newPath).toLowerCase()
+    const isMarkdown = fileExtension === '.md'
 
     return {
       label: cleanNewNote,
@@ -55,7 +58,8 @@ export default defineEventHandlerWithNotebookAndNote(
       updatedAt: stats.mtime.toISOString(),
       path: newPath,
       pathArray: newPathArray,
-      apiPath: `/${newPathArray.join('/')}`
+      apiPath: `/${newPathArray.join('/')}`,
+      isMarkdown
     } satisfies RenameTreeItem
   }
 )

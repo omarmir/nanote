@@ -58,7 +58,7 @@
             <NotesActions
               class="target group-hover:bg-neutral-500/20"
               :is-open
-              :notebook="item"
+              :item
               v-else-if="item.isNote && !compact"></NotesActions>
           </UFieldGroup>
 

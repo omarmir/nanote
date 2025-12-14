@@ -13,10 +13,11 @@
           <span class="text-primary">{{ item.label }}</span>
         </template>
       </i18n-t>
-      <UForm :schema="NewFileFolderSchema" :state="state" class="w-full" @submit="onSubmit">
+      <UForm :schema="NewFileSchema" :state="state" class="w-full" @submit="onSubmit">
         <UFormField :label="t('newName')" name="name" class="w-full">
-          <div class="flex w-full flex-col items-center gap-4">
+          <div class="flex w-full flex-col items-start gap-4">
             <UInput v-model="state.name" class="w-full" :placeholder="t('renameItem', { item: item?.label })" />
+            <USwitch v-model="state.isManual" :label="t('manual')" :aria-details="t('manualAddNewNote')" />
             <div class="flex w-full flex-row place-content-end items-center gap-4">
               <UButton type="submit" color="warning" :disabled="isRenaming">
                 {{ t('rename') }}
@@ -59,12 +60,13 @@ const isRenaming = ref(false)
 const renameError: Ref<null | string> = ref(null)
 
 const state = reactive({
-  name: item.label
+  name: item.label,
+  isManual: !item.isMarkdown
 })
 
 async function onSubmit(event: FormSubmitEvent<NewName>) {
   isRenaming.value = true
-  const renamedResp = await notebookStore.renameNotebook(item, event.data.name)
+  const renamedResp = await notebookStore.renameNote(item, event.data.name)
   if (renamedResp.success) {
     toast.add({
       title: t('success'),

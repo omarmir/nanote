@@ -24,6 +24,7 @@ export type RenameTreeItem = {
   updatedAt: string | null
   pathArray: string[]
   apiPath: string
+  isMarkdown?: boolean
 }
 
 export type NotebookTreeItemClient = NotebookTreeItem & {
