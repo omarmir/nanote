@@ -1,5 +1,5 @@
 <template>
-  <UApp>
+  <UApp v-if="settingsStore.isLoaded">
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
@@ -13,5 +13,11 @@ useHead({
   htmlAttrs: {
     lang: 'en'
   }
+})
+
+const settingsStore = useSettingsStore()
+
+onMounted(async () => {
+  await settingsStore.loadSettings()
 })
 </script>

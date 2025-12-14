@@ -3,17 +3,43 @@ import type { InsertSetting } from '~~/server/db/schema'
 import type { Result } from '#shared/types/result'
 
 export const useSettingsStore = defineStore('settings', () => {
-  const { $settings } = useNuxtApp()
-  const settingSetError: Ref<null | string> = ref(null)
-  const error: Ref<string | null> = ref($settings.error ? ($settings.error ?? 'Unknown error') : null)
-  const settings = reactive({
-    isDense: $settings.data.get('isDense') === 'true',
-    isParagraphSpaced: $settings.data.get('isParagraphSpaced')
-      ? $settings.data.get('isParagraphSpaced') === 'true'
-      : true,
-    isISODate: $settings.data.get('isISODate') === 'true',
-    isCodeViewAllFiles: $settings.data.get('isCodeViewAllFiles') === 'true'
+  const isLoaded = ref(false)
+  const error = ref<string | null>(null)
+  const settingSetError = ref<string | null>(null)
+
+  interface LocalSettings {
+    isDense: boolean
+    isParagraphSpaced: boolean
+    isISODate: boolean
+    isCodeViewAllFiles: boolean
+    [key: string]: boolean
+  }
+
+  const settings = ref<LocalSettings>({
+    isDense: true,
+    isParagraphSpaced: true,
+    isISODate: true,
+    isCodeViewAllFiles: false
   })
+
+  const loadSettings = async () => {
+    if (isLoaded.value) return
+
+    try {
+      const resp = await $fetch<Result<Settings[]>>('/api/settings/all')
+      if (resp.success) {
+        resp.data.forEach((setting) => {
+          settings.value[setting.setting] = setting.value === 'true'
+        })
+      } else {
+        error.value = resp.message
+      }
+    } catch (e: any) {
+      error.value = e.message || 'Failed to load settings'
+    } finally {
+      isLoaded.value = true
+    }
+  }
 
   const setSetting = async (insertSetting: InsertSetting): Promise<Result<null>> => {
     const newSetting: InsertSetting = {
@@ -27,9 +53,11 @@ export const useSettingsStore = defineStore('settings', () => {
     return resp
   }
 
-  const toggleDenseMode = () => (settings.isDense = !settings.isDense)
+  const toggleDenseMode = () => {
+    settings.value.isDense = !settings.value.isDense
+  }
 
-  const toggleParagraphSpacing = () => (settings.isParagraphSpaced = !settings.isParagraphSpaced)
+  const toggleParagraphSpacing = () => (settings.value.isParagraphSpaced = !settings.value.isParagraphSpaced)
 
   const setSettingValue = async (setting: string, value: string) => {
     const newSetting: InsertSetting = {
@@ -40,23 +68,25 @@ export const useSettingsStore = defineStore('settings', () => {
   }
 
   watch(
-    () => settings.isDense,
-    () => setSettingValue('isDense', settings.isDense.toString())
+    () => settings.value.isDense,
+    () => {
+      setSettingValue('isDense', settings.value.isDense.toString())
+    }
   )
 
   watch(
-    () => settings.isParagraphSpaced,
-    () => setSettingValue('isParagraphSpaced', settings.isDense.toString())
+    () => settings.value.isParagraphSpaced,
+    () => setSettingValue('isParagraphSpaced', settings.value.isParagraphSpaced.toString())
   )
 
   watch(
-    () => settings.isISODate,
-    () => setSettingValue('isISODate', settings.isISODate.toString())
+    () => settings.value.isISODate,
+    () => setSettingValue('isISODate', settings.value.isISODate.toString())
   )
 
   watch(
-    () => settings.isCodeViewAllFiles,
-    () => setSettingValue('isCodeViewAllFiles', settings.isCodeViewAllFiles.toString())
+    () => settings.value.isCodeViewAllFiles,
+    () => setSettingValue('isCodeViewAllFiles', settings.value.isCodeViewAllFiles.toString())
   )
 
   return {
@@ -64,6 +94,8 @@ export const useSettingsStore = defineStore('settings', () => {
     settings,
     error,
     settingSetError,
-    toggleParagraphSpacing
+    toggleParagraphSpacing,
+    loadSettings,
+    isLoaded
   }
 })
