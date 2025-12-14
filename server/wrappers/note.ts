@@ -75,7 +75,6 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
     try {
       // Verify notebook and note exist and is read/write allowed
       await access(targetFolder, constants.R_OK | constants.W_OK)
-      console.log('fp', fullPath)
       if (options?.noteCheck) await access(fullPath, constants.R_OK | constants.W_OK)
     } catch (error) {
       console.error('Note error:', error)
