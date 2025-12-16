@@ -29,7 +29,7 @@
             v-if="savingState === 'pending'"
             name="i-lucide-loader-circle"
             class="text-warning animate-spin"></UIcon>
-          <UIcon v-if="savingState === 'success'" name="i-lucide-circle-check" class="text-success"></UIcon>
+          <UIcon v-if="savingState === 'success'" name="i-lucide-circle-check" class="text-primary"></UIcon>
         </div>
       </div>
       <UAlert v-if="error" class="mb-4">

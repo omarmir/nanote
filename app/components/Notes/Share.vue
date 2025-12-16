@@ -43,7 +43,7 @@
           <UButton color="primary" variant="soft" @click="copyLink">
             <template #leading>
               <UIcon v-if="isCopied === null" name="i-lucide-copy"></UIcon>
-              <UIcon v-if="isCopied" name="i-lucide-circle-check" class="text-success"></UIcon>
+              <UIcon v-if="isCopied" name="i-lucide-circle-check" class="text-primary"></UIcon>
               <UIcon v-if="isCopied === false" name="i-lucide-circle-x" class="text-error"></UIcon>
             </template>
             {{ t('copy') }}
