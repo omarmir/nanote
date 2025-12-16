@@ -1,8 +1,5 @@
 <template>
-  <UDashboardNavbar
-    title="Home"
-    :ui="{ right: 'gap-3' }"
-  >
+  <UDashboardNavbar :title="name ?? t('navigation.home')" :ui="{ right: 'gap-3' }">
     <template #leading>
       <UDashboardSidebarCollapse />
     </template>
@@ -13,21 +10,22 @@
           :icon="settingsStore.settings.isDense ? 'i-custom-code-more' : 'i-custom-code-less'"
           variant="ghost"
           size="md"
-          @click="settingsStore.toggleDenseMode()"
-        />
+          @click="settingsStore.toggleDenseMode()" />
         <UButton
           to="https://github.com/omarmir/nanote"
           icon="i-custom-simple-icons-github"
           target="_blank"
           size="md"
           variant="ghost"
-          color="neutral"
-        />
+          color="neutral" />
       </div>
     </template>
   </UDashboardNavbar>
 </template>
 
 <script lang="ts" setup>
+const { name } = defineProps<{ name?: string }>()
+const { t } = useI18n()
+
 const settingsStore = useSettingsStore()
 </script>

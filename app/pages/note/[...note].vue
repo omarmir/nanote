@@ -1,7 +1,7 @@
 <template>
   <UDashboardPanel id="home">
     <template #header>
-      <TopBar />
+      <TopBar :name="t('Note')" />
     </template>
     <template #body>
       <Suspense>
@@ -22,4 +22,5 @@
 <script setup lang="ts">
 const route = useRoute()
 const notebookPath = route.params.note
+const { t } = useI18n()
 </script>
