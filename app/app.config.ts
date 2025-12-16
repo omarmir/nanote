@@ -1,10 +1,10 @@
 export default defineAppConfig({
   theme: {
-    radius: 0.25,
-    blackAsPrimary: false
+    radius: 0.25
   },
   ui: {
     colors: {
+      dark: true,
       primary: 'blue',
       neutral: 'neutral'
     },

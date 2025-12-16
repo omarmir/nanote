@@ -33,6 +33,4 @@
 <script lang="ts" setup>
 const notebookStore = useNotebookStore()
 const { t } = useI18n()
-
-await notebookStore.fetchBooks()
 </script>
