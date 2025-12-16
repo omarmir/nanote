@@ -1,5 +1,5 @@
 <template>
-  <UApp v-if="settingsStore.isLoaded">
+  <UApp>
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>

@@ -1,0 +1,99 @@
+<template>
+  <div class="flex flex-col pb-2">
+    <div class="flex flex-col-reverse gap-y-4 md:flex-row md:items-baseline">
+      <h1 class="w-full text-5xl">
+        <input
+          v-model="note"
+          :disabled="savingState === 'pending' || savingState === 'saving'"
+          class="w-full bg-transparent text-gray-900 focus:italic focus:outline-none dark:text-gray-200"
+          aria-label="Rename name"
+          aria-details="Allows you to rename the note" />
+      </h1>
+      <div class="flex flex-row flex-wrap gap-4 md:flex-nowrap">
+        <!-- <NoteRename v-model="note" :name :notebooks></NoteRename>
+        <NoteDelete :name :notebooks @deleted="noteDeleted">
+          <div
+            class="flex flex-row items-center gap-2 text-gray-900 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-600">
+            <UIcon name="i-lucide-trash-2" class="size-6" />
+            Delete
+          </div>
+        </NoteDelete> -->
+        <button
+          class="hover:text-accent-hover dark:hover:text-accent flex flex-row items-center gap-2 text-gray-900 dark:text-gray-400"
+          @click="$emit('readonlymode')">
+          <UIcon v-if="isReadOnly" class="size-6" name="i-lucide-pencil" />
+          <UIcon v-else class="size-6" name="i-lucide-pencil-off" />
+          Edit
+        </button>
+        <!-- <NoteShare :notebook-a-p-i-path></NoteShare> -->
+        <button
+          class="hover:text-accent-hover dark:hover:text-accent flex flex-row items-center gap-2 text-gray-900 dark:text-gray-400"
+          @click="exportPDF()">
+          <Icon v-if="isExporting" name="lucide:loader-circle" class="size-6 animate-spin text-amber-500"></Icon>
+          <Icon v-else name="carbon:generate-pdf" class="size-6" />
+          PDF
+        </button>
+      </div>
+    </div>
+    <UAlert color="error" v-if="error" class="mb-4 w-full">
+      <template #title>
+        {{ t('failure') }}
+      </template>
+      <template #description>
+        {{ error }}
+      </template>
+    </UAlert>
+  </div>
+</template>
+<script lang="ts" setup>
+const {
+  name,
+  notebooks,
+  isReadOnly = false,
+  savingState
+} = defineProps<{
+  name: string
+  notebooks: string[]
+  isReadOnly?: boolean
+  savingState: SavingState
+}>()
+
+const notebookAPIPath = notePathArrayJoiner([...notebooks, name])
+
+const { t } = useI18n()
+
+const { name: noteName } = getFileNameAndExtension(name)
+
+const note = ref(noteName)
+const error: Ref<string | null> = ref(null)
+
+const noteDeleted = () => navigateTo('/')
+
+defineEmits(['focusmode', 'readonlymode'])
+
+const isExporting = ref(false)
+
+const exportPDF = async () => {
+  isExporting.value = true
+  try {
+    // Fetch binary PDF data from your API endpoint as ArrayBuffer
+    const pdfArrayBuffer = await $fetch<ArrayBuffer>(`/api/note/download/pdf/${notebookAPIPath}`, {
+      responseType: 'arrayBuffer'
+    })
+
+    // Create a Blob from the ArrayBuffer with PDF mime type
+    const pdfBlob = new Blob([pdfArrayBuffer], { type: 'application/pdf' })
+
+    // Optionally convert Blob to File if your downloadFile function expects File
+    // (Blob works fine for URL.createObjectURL too)
+    const pdfFile = new File([pdfBlob], `${noteName}.pdf`, { type: 'application/pdf' })
+
+    // Download the file using your helper
+    downloadFile(pdfFile)
+  } catch (error) {
+    console.error('Failed to export PDF:', error)
+  } finally {
+    isExporting.value = false
+  }
+}
+</script>

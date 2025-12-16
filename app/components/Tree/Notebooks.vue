@@ -5,6 +5,13 @@
         <template #default="{ isOpen }">
           <UFieldGroup class="group rounded-md">
             <UButton
+              v-bind="
+                item.isNote
+                  ? {
+                      to: `/note/${item.apiPath}`
+                    }
+                  : {}
+              "
               class="target flex grow flex-row items-center justify-between group-hover:bg-neutral-500/20"
               :style="{ paddingLeft: `${depth * 24 + 10}px` }"
               :variant="isOpen ? 'soft' : 'ghost'"
@@ -95,6 +102,7 @@ const emit = defineEmits<{
 }>()
 
 const onToggle = (item: NotebookTreeItemClient) => {
+  if (item.isNote) return true
   emit('toggle', item)
   const isCurrentlyExpanded = expanded.value.includes(item.apiPath)
   if (item.isNote) {
