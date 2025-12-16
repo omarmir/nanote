@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-[60px] mb-5 flex flex-wrap">
+  <div class="mb-5 flex flex-wrap sm:mx-[60px]">
     <div class="mb-6 w-full max-w-full px-3 sm:flex-none">
       <div class="flex flex-col gap-2 divide-y divide-gray-300 dark:divide-gray-700">
         <NotesName
