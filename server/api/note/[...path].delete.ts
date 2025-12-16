@@ -12,7 +12,7 @@ export default defineEventHandlerWithAttachmentNotebookNote(
     fullPath,
     _markAttachmentForDeletionIfNeeded,
     deleteAllAttachments
-  ): Promise<DeleteNote> => {
+  ): Promise<boolean> => {
     // Read file contents and stats
     await unlink(fullPath)
 
