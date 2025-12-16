@@ -46,6 +46,7 @@
   "focus": "Focus",
   "edit": "Edit",
   "share": "Share",
+  "shareURL": "Share URL",
   "pdf": "PDF",
   "cancel": "Cancel",
   "shareNote": "Share {note} with secret URL",

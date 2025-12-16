@@ -1,5 +1,6 @@
 <template>
   <UModal
+    :ui="{ content: 'max-w-2xl' }"
     v-model:open="open"
     :close="{ onClick: () => emit('close', false) }"
     :aria-describedby="t('share')"
@@ -13,7 +14,7 @@
           <span class="text-primary">{{ note.label }}</span>
         </template>
       </i18n-t>
-      <UForm :state="state" class="w-full" @submit="onSubmit">
+      <UForm :state="state" class="w-full" @submit="onSubmit" v-if="!shareLink">
         <UFormField :label="t('shareName')" name="name" class="w-full">
           <div class="flex w-full flex-row items-center gap-2">
             <UInput v-model="state.name" class="w-full" :placeholder="t('shareName')" />
@@ -22,13 +23,6 @@
             </UButton>
           </div>
         </UFormField>
-        <UAlert
-          class="mt-4"
-          v-if="shareKey"
-          color="info"
-          variant="subtle"
-          :title="t('URL')"
-          :description="shareKey"></UAlert>
         <UAlert
           v-if="shareError"
           color="error"
@@ -39,6 +33,23 @@
           as="div"
           class="mt-2" />
       </UForm>
+      <UAlert class="mt-4" v-if="shareLink" color="info" variant="subtle" :title="t('shareURL')" orientation="vertical">
+        <template #description>
+          <div class="text-wrap">
+            {{ shareLink }}
+          </div>
+        </template>
+        <template #actions>
+          <UButton color="primary" variant="soft" @click="copyLink">
+            <template #leading>
+              <UIcon v-if="isCopied === null" name="i-lucide-copy"></UIcon>
+              <UIcon v-if="isCopied" name="i-lucide-circle-check" class="text-success"></UIcon>
+              <UIcon v-if="isCopied === false" name="i-lucide-circle-x" class="text-error"></UIcon>
+            </template>
+            {{ t('copy') }}
+          </UButton>
+        </template>
+      </UAlert>
     </template>
   </UModal>
 </template>
@@ -46,6 +57,8 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui'
 import { FetchError } from 'ofetch'
+import { useClipboard } from '@vueuse/core'
+const { copy, copied, isSupported } = useClipboard()
 
 const { note } = defineProps<{ note: NotebookTreeItemClient }>()
 const { t } = useI18n()
@@ -60,7 +73,7 @@ const state = reactive({
   name: ''
 })
 
-const shareKey: Ref<string | null> = ref(null)
+const shareLink: Ref<string | null> = ref(null)
 
 async function onSubmit(event: FormSubmitEvent<NewNotebook>) {
   try {
@@ -72,9 +85,25 @@ async function onSubmit(event: FormSubmitEvent<NewNotebook>) {
       return
     }
     shareError.value = null
-    shareKey.value = shareResp.data
+    shareLink.value = `${window.location.origin}/share/${shareResp.data}`
   } catch (err) {
     shareError.value = (err as FetchError).data.message
+  }
+}
+
+const isCopied: Ref<boolean | null> = ref(null)
+
+const copyLink = async () => {
+  if (!shareLink.value) return
+  try {
+    await copy(shareLink.value)
+    isCopied.value = copied.value
+  } catch (err) {
+    isCopied.value = false
+  } finally {
+    setTimeout(() => {
+      isCopied.value = null
+    }, 5000)
   }
 }
 </script>
