@@ -39,7 +39,7 @@
             {{ shareLink }}
           </div>
         </template>
-        <template #actions>
+        <template #actions v-if="isSupported">
           <UButton color="primary" variant="soft" @click="copyLink">
             <template #leading>
               <UIcon v-if="isCopied === null" name="i-lucide-copy"></UIcon>
