@@ -1,5 +1,5 @@
 <template>
-  <div class="-mx-3 mb-5 flex flex-wrap">
+  <div class="-mx-3 mb-5 flex flex-wrap" :class="{ 'mx-[60px]': isMD }">
     <div class="mb-6 w-full max-w-full px-3 sm:flex-none">
       <div class="flex flex-col gap-2 divide-y divide-gray-300 dark:divide-gray-700">
         <NotesName
@@ -29,6 +29,7 @@
             v-if="savingState === 'pending'"
             name="i-lucide-loader-circle"
             class="text-warning animate-spin"></UIcon>
+          <UIcon v-if="savingState === 'success'" name="i-lucide-circle-check" class="text-success"></UIcon>
         </div>
       </div>
       <UAlert v-if="error" class="mb-4">
@@ -55,7 +56,7 @@
         v-model="md"
         :theme="isDark ? 'dark' : 'light'"
         class="file-editor mt-4 w-full"
-        placeholder="Enter your content here..."
+        :placeholder="t('contentHere')"
         :auto-focus="true"
         :line-wrapping="true"
         :editable="true"
@@ -68,7 +69,7 @@
 </template>
 <script setup lang="ts">
 import { MilkdownProvider } from '@milkdown/vue'
-import { watchDebounced, useDark } from '@vueuse/core'
+import { watchDebounced } from '@vueuse/core'
 import type { FetchError } from 'ofetch'
 import { EditorView } from '@codemirror/view'
 import { useRouter } from 'vue-router'
@@ -78,13 +79,14 @@ const router = useRouter()
 const settingsStore = useSettingsStore()
 
 const queryParams = router.currentRoute.value.query
+const colorMode = useColorMode()
 
 const { notebookPath } = defineProps<{ notebookPath: string | string[] }>()
 
 const { t } = useI18n()
 
 const isMD: Ref<boolean | null> = ref(null)
-const isDark = useDark()
+const isDark = computed(() => colorMode.value === 'dark')
 const note = notebookPath.at(-1) ?? ''
 const notebooksParams = notebookPath.slice(0, -1)
 const notebooksArray = typeof notebooksParams === 'string' ? [notebooksParams] : notebooksParams

@@ -126,6 +126,13 @@ useEditor((root) => {
 })
 </script>
 <style lang="postcss">
+.milkdown {
+  /* Font Families */
+  --crepe-font-title: 'Public Sans', sans-serif;
+  --crepe-font-default: 'Public Sans', sans-serif;
+  --crepe-font-code: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
 .milkdown-editor .milkdown {
   --crepe-color-background: #fdfcff;
   --crepe-color-on-background: #1b1c1d;
@@ -205,6 +212,7 @@ useEditor((root) => {
     }
 
     .ProseMirror {
+      padding: 0px !important;
       p {
         @apply p-0 align-middle;
       }

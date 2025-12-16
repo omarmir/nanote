@@ -65,6 +65,7 @@
   "spaceParaHelp": "Automatically put some spacing between paragraphs",
   "alwaysCodeView": "Use code view for all files?",
   "alwaysCodeViewHelp": "Use a plain text editor view for all files including markdown files?",
+  "contentHere": "Enter your content here...",
   "errors": {
     "failedNotebookLoad": "Failed to load notebook children",
     "notebookPathTooLong": "Notebook name is too long. The full path exceeds the maximum allowed length of {maxLength} characters.",
