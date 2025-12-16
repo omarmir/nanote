@@ -2,11 +2,20 @@
 export default defineNuxtConfig({
   modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxt/test-utils', '@nuxt/hints', '@nuxtjs/i18n', '@pinia/nuxt'],
 
+  ssr: false,
+
+  imports: {
+    presets: [
+      {
+        from: 'material-file-icons',
+        imports: ['getIcon']
+      }
+    ]
+  },
+
   devtools: {
     enabled: true
   },
-
-  ssr: false,
 
   css: ['~/assets/css/main.css'],
 
@@ -27,7 +36,10 @@ export default defineNuxtConfig({
 
   i18n: {
     defaultLocale: 'en',
-    locales: [{ code: 'en', name: 'English', file: 'en.json' }]
+    locales: [{ code: 'en', name: 'English', file: 'en.json' }],
+    experimental: {
+      localeDetector: 'localeDetector.ts'
+    }
   },
 
   icon: {

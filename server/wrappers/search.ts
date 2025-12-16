@@ -14,11 +14,13 @@ type EventHandlerWithSearch<T extends EventHandlerRequest, D> = (
 
 export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(handler: EventHandlerWithSearch<T, D>) {
   return defineEventHandler(async (event) => {
+    const t = await useTranslation(event)
+
     const fullPath = resolve(notesPath)
     const { q: rawQuery } = getQuery(event)
 
     if (!rawQuery || typeof rawQuery !== 'string') {
-      throw createError({ statusCode: 400, message: 'Missing query.' })
+      throw createError({ statusCode: 400, message: t('errors.missingQuery') })
     }
 
     const results: USearchResult[] = []
@@ -43,7 +45,7 @@ export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(h
 
     try {
       const output = execSync(command, execOptions) as string
-      const lines = output.split('\n').filter((line) => line.trim() !== '')
+      const lines = output.split('\n').filter(line => line.trim() !== '')
 
       for (const line of lines) {
         const [type, full] = line.split(':', 2)
@@ -74,13 +76,13 @@ export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(h
         statusCode: 500,
         statusMessage: 'Internal Server Error',
         data: error,
-        message: 'Unable to search. Check console for details.'
+        message: t('errors.unableToSearch')
       })
     }
 
     // Deduplicate and sort by score (descending), and limit to MAX_RESULTS (here, 5)
-    const searchResults: USearchResult[] = Array.from(new Set(results.map((r) => JSON.stringify(r))))
-      .map((r) => JSON.parse(r) as USearchResult)
+    const searchResults: USearchResult[] = Array.from(new Set(results.map(r => JSON.stringify(r))))
+      .map(r => JSON.parse(r) as USearchResult)
       .sort((a, b) => b.score - a.score)
       .slice(0, MAX_RESULTS)
 

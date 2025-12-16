@@ -1,23 +1,38 @@
 <template>
   <div>
-    <div class="flex flex-row items-center justify-between">
-      <h1 class="mb-6 text-2xl font-bold">{{ t('Notebook', 2) }}</h1>
-      <UButton icon="i-lucide-plus" size="md" color="neutral" variant="outline" :title="t('newNotebook')">
-        {{ t('Notebook', 1) }}
-      </UButton>
+    <div class="mb-6 flex flex-row items-center justify-between">
+      <div class="flex flex-row items-center gap-2">
+        <h1 class="text-2xl font-bold">
+          {{ t('Notebook', 2) }}
+        </h1>
+        <UButton
+          icon="i-lucide-fold-vertical"
+          size="md"
+          color="warning"
+          :class="{ invisible: notebookStore.anyOpenBooks === false }"
+          variant="ghost"
+          :title="t('closeNotebooks', 2)"
+          @click="notebookStore.closeAllOpenBooks()" />
+      </div>
+      <NotebooksNew>
+        <template #trigger>
+          <UButton icon="i-lucide-plus" size="md" color="neutral" variant="outline" :title="t('newNotebook')">
+            {{ t('Notebook', 1) }}
+          </UButton>
+        </template>
+      </NotebooksNew>
     </div>
-    <ul v-if="notebookStore.notebooks?.notebooks" class="grid grid-cols-2 gap-4 xl:grid-cols-4">
-      <li v-for="notebook in notebookStore.notebooks?.notebooks">
-        <NotebooksRoot :notebook></NotebooksRoot>
+    <ul v-if="notebookStore.notebooks" class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <li v-for="notebook in notebookStore.notebooks" :key="notebook.apiPath">
+        <NotebooksRoot :notebook />
       </li>
     </ul>
   </div>
 </template>
+
 <script lang="ts" setup>
 const notebookStore = useNotebookStore()
 const { t } = useI18n()
 
 await notebookStore.fetchBooks()
-
-const notebookAddedError: Ref<string | null> = ref(null)
 </script>

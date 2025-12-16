@@ -8,7 +8,7 @@ import { defineEventHandlerWithNotebookAndNote } from '~~/server/wrappers/note'
 
 export default defineEventHandlerWithNotebookAndNote(
   async (event, _cleanNotebook, cleanNote, fullPath): Promise<void> => {
-    //Get info
+    // Get info
     const stats = await stat(fullPath)
 
     const createdAtTime = stats.birthtime.getTime() !== 0 ? stats.birthtime : stats.ctime

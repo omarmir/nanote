@@ -1,21 +1,15 @@
 import { rm } from 'node:fs/promises'
-
 import { defineEventHandlerWithNotebook } from '~~/server/wrappers/notebook'
-import type { DeleteNotebook } from '#shared/types/notebook'
 
 /**
- * Dekete notebook
+ * Delete notebook
  */
 export default defineEventHandlerWithNotebook(
-  async (_event, cleanNotebook, fullPath): Promise<DeleteNotebook> => {
+  async (_event, _cleanNotebook, fullPath): Promise<boolean> => {
     // Read file contents and stats
     await rm(fullPath, { recursive: true, force: true })
 
-    return {
-      notebook: cleanNotebook,
-      deleted: true,
-      timestamp: new Date().toISOString()
-    } satisfies DeleteNotebook
+    return true
   },
   { notebookCheck: true }
 )

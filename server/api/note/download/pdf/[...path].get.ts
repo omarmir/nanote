@@ -10,7 +10,7 @@ export default defineEventHandlerWithNotebookAndNote(async (event, _cleanNoteboo
   // const nanoid = customAlphabet('abcdefghijklmnop')
 
   const content = readFileSync(fullPath, 'utf8')
-  const newContent = content.replace(imageRegex, (matchedUrl) => `${origin}${matchedUrl}`)
+  const newContent = content.replace(imageRegex, matchedUrl => `${origin}${matchedUrl}`)
 
   let htmlContent: string = await convertMarkdownToHtml(newContent)
   htmlContent = replaceFileContent(htmlContent, true, blockRegex)

@@ -1,9 +1,9 @@
 export const splitWords = (text: string): string[] => {
   const segmenter = new Intl.Segmenter(undefined, { granularity: 'word' })
   return Array.from(segmenter.segment(text))
-    .map((segment) => segment.segment)
-    .filter((word) => /\p{L}|\p{N}/u.test(word)) // letters/numbers
-    .map((word) => word.toLowerCase())
+    .map(segment => segment.segment)
+    .filter(word => /\p{L}|\p{N}/u.test(word)) // letters/numbers
+    .map(word => word.toLowerCase())
 }
 
 export const proximityScore = (queryWords: string[], line: string): number => {

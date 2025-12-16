@@ -25,7 +25,7 @@ export default defineEventHandlerWithError(async (event): Promise<USearchResult[
       const searchPath = escape([fullPath])
       // const ugrepPattern = queryWords.map((q) => `-e ${escape([q])}`).join(' ')
       // const lookaheads = queryWords.map((word) => `(?=.*\\b${escape([word])}\\b)`).join('')
-      const lookaheads = queryWords.map((word) => `(?=.*${escape([word])})`).join('')
+      const lookaheads = queryWords.map(word => `(?=.*${escape([word])})`).join('')
 
       // Combine them into the full pattern
       const ugrepPattern = `-P '^${lookaheads}.*$'`
@@ -39,7 +39,7 @@ export default defineEventHandlerWithError(async (event): Promise<USearchResult[
         '--json', // JSON output
         '--ignore-case', // case insensitive
         '--format=json',
-        '--max-files=2000', //if this is too big, then it ends up causing issues
+        '--max-files=2000', // if this is too big, then it ends up causing issues
         ugrepPattern,
         searchPath
       ].join(' ')
@@ -87,7 +87,7 @@ export default defineEventHandlerWithError(async (event): Promise<USearchResult[
         })
       })
 
-      results.push(...contentResults.filter((r) => r.notebook))
+      results.push(...contentResults.filter(r => r.notebook))
     } catch (error) {
       console.dir(error, { depth: null })
       throw createError({
@@ -109,7 +109,7 @@ export default defineEventHandlerWithError(async (event): Promise<USearchResult[
     })
     const sortedContentResults = [
       ...dedupedResults,
-      ...searchResults.map((r) => ({ ...r, lineNum: 0, score: r.score ?? 0 }))
+      ...searchResults.map(r => ({ ...r, lineNum: 0, score: r.score ?? 0 }))
     ]
       .sort((a, b) => b.score - a.score)
       .slice(0, MAX_RESULTS)

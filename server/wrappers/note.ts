@@ -6,11 +6,11 @@ import type { APIError } from '#shared/types/result'
 
 type EventHandlerWithNotebookAndNote<T extends EventHandlerRequest, D> = (
   event: H3Event<T>,
-  notebooks: string[],
+  pathArray: string[],
   note: string,
   fullPath: string,
-  notebookPath: string,
-  isMarkdown: boolean
+  isMarkdown: boolean,
+  targetFolder: string
 ) => Promise<D>
 
 export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequest, D>(
@@ -18,34 +18,36 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
   options?: { noteCheck: boolean }
 ) {
   return defineEventHandler(async (event) => {
+    const t = await useTranslation(event)
+
     // Decode the path and then remove characters we cannot have
     const params = decodeURIComponent(event.context.params?.path ?? '')
     const path = params.split('/').map((p) => p.replace(/[\\/:*?"<>|]/g, '')) || []
-    const notebooks = path.slice(0, -1)
+    const pathArray = path.slice(0, -1)
     const note = path.at(-1)
 
-    if (notebooks.length === 0 || !note) {
+    if (pathArray.length === 0 || !note) {
       throw createError({
         statusCode: 400,
         statusMessage: 'Bad Request',
-        message: 'Missing notebook or note name'
+        message: t('errors.missingNotebookOrNote')
       })
     }
 
     // Construct paths
-    const targetFolder = resolve(join(notesPath, ...notebooks))
+    const targetFolder = resolve(join(notesPath, ...pathArray))
     const filename = note
     const fullPath = join(targetFolder, filename)
 
     const fileExtension = extname(fullPath).toLowerCase()
     const isMarkdown = fileExtension === '.md'
 
-    //Is the name going to exceed limits?
+    // Is the name going to exceed limits?
     if (note.length > 255) {
       throw createError({
         statusCode: 400,
         statusMessage: 'Bad Request',
-        message: `Name exceeds maximum allowed length of 255 characters.`
+        message: t('errors.nameExceedsLimit')
       })
     }
 
@@ -57,7 +59,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
       throw createError({
         statusCode: 400,
         statusMessage: 'Bad Request',
-        message: `Path exceeds maximum allowed length of ${maxPathLength} characters.`
+        message: t('errors.pathExceedsLimit', { maxLength: maxPathLength })
       })
     }
 
@@ -66,7 +68,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
       throw createError({
         statusCode: 400,
         statusMessage: 'Bad Request',
-        message: 'Invalid notebook path'
+        message: t('errors.invalidNotebookPath')
       })
     }
 
@@ -81,9 +83,9 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
       const message =
         err.code === 'ENOENT'
           ? err.path === targetFolder
-            ? `Notebook "${notebooks.join(' > ')}" does not exist`
-            : `Note "${note}" does not exist`
-          : 'Access error'
+            ? t('errors.notebookNotFound', { path: pathArray.join(' > ') })
+            : t('errors.noteNotFound', { note })
+          : t('errors.accessError')
 
       throw createError({
         statusCode: 404,
@@ -92,33 +94,33 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
       })
     }
     try {
-      return await handler(event, notebooks, note, fullPath, targetFolder, isMarkdown)
+      return await handler(event, pathArray, note, fullPath, isMarkdown, targetFolder)
     } catch (error) {
       console.log(event, error)
       if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
         throw createError({
           statusCode: 404,
           statusMessage: 'Not Found',
-          message: 'Note or notebook does not exist'
+          message: t('errors.noteOrNotebookNotFound')
         })
       } else if (error instanceof URIError) {
         throw createError({
           statusCode: 400,
           statusMessage: 'Bad Request',
-          message: 'Invalid URL encoding.'
+          message: t('errors.invalidUrlEncoding')
         })
       } else if (error instanceof Error && 'statusCode' in error) {
         const err = error as APIError
         throw createError({
           statusCode: err.statusCode ?? 500,
           statusMessage: err.statusMessage ?? 'Internal Server Error',
-          message: err.message ?? 'An unexpected error occurred'
+          message: err.message ?? t('errors.unexpectedError')
         })
       } else {
         throw createError({
           statusCode: 500,
           statusMessage: 'Internal Server Error',
-          message: 'An unexpected error occurred'
+          message: t('errors.unexpectedError')
         })
       }
     }

@@ -1,6 +1,8 @@
 <template>
-  <span v-html="String(parsed)"></span>
+  <!-- eslint-disable-next-line vue/no-v-html -->
+  <span v-html="String(parsed)" />
 </template>
+
 <script lang="ts" setup>
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
