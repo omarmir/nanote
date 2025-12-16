@@ -2,7 +2,7 @@
   <UDashboardGroup>
     <UDashboardSidebar collapsible>
       <template #header="{ collapsed }">
-        <div class="flex flex-row items-center gap-4">
+        <NuxtLink class="flex flex-row items-center gap-4" to="/" :title="t('navigation.home')">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="mx-auto size-8"
@@ -20,7 +20,7 @@
           <h1 class="text-xl font-bold text-gray-900 dark:text-white" :class="{ invisible: collapsed }">
             {{ t('appName') }}
           </h1>
-        </div>
+        </NuxtLink>
       </template>
 
       <template #default="{ collapsed }">
@@ -51,13 +51,15 @@
 import type { NavigationMenuItem } from '@nuxt/ui'
 
 const { t } = useI18n()
+const route = useRoute()
 
-const items: Ref<NavigationMenuItem[]> = ref([
+const items = computed<NavigationMenuItem[]>(() => [
   [
     {
       label: t('navigation.home'),
       icon: 'i-lucide-house',
-      active: true
+      active: route.path === '/',
+      to: '/'
     },
     {
       label: t('navigation.settings'),

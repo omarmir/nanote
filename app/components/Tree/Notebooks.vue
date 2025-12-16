@@ -102,13 +102,13 @@ const emit = defineEmits<{
 }>()
 
 const onToggle = (item: NotebookTreeItemClient) => {
-  if (item.isNote) return true
-  emit('toggle', item)
   const isCurrentlyExpanded = expanded.value.includes(item.apiPath)
   if (item.isNote) {
     currentNote.value = item.apiPath
     return
   }
+
+  emit('toggle', item)
 
   if (isCurrentlyExpanded) {
     expanded.value = expanded.value.filter((book) => book !== item.apiPath)

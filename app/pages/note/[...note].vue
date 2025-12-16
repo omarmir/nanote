@@ -7,11 +7,12 @@
       <Suspense>
         <CommonEditor v-if="notebookPath" :notebook-path></CommonEditor>
         <template #fallback>
-          <div class="flex w-full flex-col gap-2">
-            <USkeleton class="h-5 w-2/5"></USkeleton>
-            <USkeleton class="h-5 w-4/5"></USkeleton>
-            <USkeleton class="h-5 w-3/5"></USkeleton>
-            <USkeleton class="h-5 w-1/5"></USkeleton>
+          <div class="ml-[60px] flex w-full flex-col gap-2">
+            <USkeleton class="mb-4 h-8 w-2/5"></USkeleton>
+            <USkeleton class="h-3 w-2/5"></USkeleton>
+            <USkeleton class="h-3 w-4/5"></USkeleton>
+            <USkeleton class="h-3 w-3/5"></USkeleton>
+            <USkeleton class="h-3 w-1/5"></USkeleton>
           </div>
         </template>
       </Suspense>
