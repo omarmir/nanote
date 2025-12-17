@@ -125,12 +125,19 @@ useEditor((root) => {
   return crepe
 })
 </script>
-<style lang="postcss">
+<style>
+@import 'tailwindcss';
+@import '@nuxt/ui';
+
 .milkdown {
   /* Font Families */
   --crepe-font-title: 'Public Sans', sans-serif;
   --crepe-font-default: 'Public Sans', sans-serif;
   --crepe-font-code: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+.milkdown .ProseMirror {
+  padding: 0px !important;
 }
 
 .milkdown-editor .milkdown {
@@ -153,18 +160,11 @@ useEditor((root) => {
   --crepe-color-inline-area: #d8dae0;
   --crepe-shadow-1: 0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
 }
-.dark .milkdown-editor {
-  .milkdown-slash-menu {
-    span.milkdown-icon svg path {
-      fill: white;
-    }
-  }
-}
 
 .dark .milkdown-editor .milkdown {
   --crepe-color-background: transparent;
   --crepe-color-on-background: #f8f9ff;
-  --crepe-color-surface: #111418;
+  --crepe-color-surface: 111418;
   --crepe-color-surface-low: #191c20;
   --crepe-color-on-surface: #e1e2e8;
   --crepe-color-on-surface-variant: #c3c6cf;
@@ -183,112 +183,47 @@ useEditor((root) => {
   --crepe-shadow-2: 0px 1px 2px 0px rgba(255, 255, 255, 0.3), 0px 2px 6px 2px rgba(255, 255, 255, 0.15);
 }
 
-.milkdown-editor:is(.focus, .disabled) div.milkdown {
-  .milkdown-block-handle {
-    display: none;
-  }
-}
+milkdown-file-picker {
+  @apply inline align-middle;
 
-.milkdown-editor div.milkdown .milkdown-block-handle {
-  @apply hidden lg:flex;
-}
-
-.milkdown-toolbar,
-.milkdown-link-preview {
-  z-index: 999 !important;
-}
-
-.milkdown-editor {
-  .milkdown {
-    @apply px-0 py-1;
-    --crepe-color-background: transparent;
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      margin: 10px 0px;
-    }
-
-    .ProseMirror {
-      padding: 0px !important;
-      p {
-        @apply p-0 align-middle;
-      }
-    }
-
-    > div {
-      @apply px-0 py-0 text-gray-900 dark:text-gray-200;
-    }
-
-    .image-inline {
-      @apply inline-block;
-    }
-
-    img.emoji {
-      @apply mr-0.5 inline h-5;
-    }
-
-    milkdown-file-picker {
-      @apply inline align-middle;
-
-      a.attachment-button {
-        @apply hover:bg-accent-hover inline-flex flex-row items-center gap-2 rounded-md bg-slate-600 px-2 py-0.5 text-sm text-white no-underline;
-        div.file-icon {
-          @apply inline-flex size-5;
-        }
-      }
-      a.attachment-button.not-exist {
-        @apply bg-red-500 text-white dark:bg-red-800;
-        div.file-icon svg path {
-          @apply fill-red-200!;
-        }
-      }
-      .file-input {
-        @apply file:bg-accent file:hover:bg-accent-hover inline cursor-pointer items-center rounded-md border border-gray-300 bg-gray-50 text-sm text-gray-900 file:cursor-pointer file:rounded-l-md file:border-none file:py-0.5 file:text-white focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400;
-      }
-      .uploading-icon {
-        @apply inline size-5;
-      }
-      div.empty-file {
-        @apply inline-flex flex-row items-center gap-1;
-      }
-    }
-    milkdown-file-picker[data-inline='false'] {
-      @apply block;
-      .file-input {
-        @apply my-2 file:py-1.5;
-      }
-      a.attachment-button {
-        @apply flex flex-col gap-1 bg-transparent font-bold text-gray-900 hover:underline dark:text-white;
-        div.file-icon {
-          @apply size-10;
-        }
-      }
-      a.attachment-button.not-exist {
-        @apply bg-transparent;
-        div.file-icon svg path {
-          @apply fill-red-500! dark:fill-red-800!;
-        }
-      }
+  a.attachment-button {
+    @apply hover:bg-primary-500 inline-flex flex-row items-center gap-2 rounded-md bg-slate-600 px-2 py-0.5 text-sm text-white no-underline;
+    div.file-icon {
+      @apply inline-flex size-5;
     }
   }
-}
-
-.milkdown-editor.para-spaced {
-  div.milkdown {
-    .ProseMirror {
-      p {
-        @apply py-1;
-      }
+  a.attachment-button.not-exist {
+    @apply bg-red-500 text-white dark:bg-red-800;
+    div.file-icon svg path {
+      @apply fill-red-200!;
     }
   }
+  .file-input {
+    @apply file:text-inverted file:bg-primary hover:file:bg-primary/75 file:active:bg-primary/75 disabled:bg-primary aria-disabled:bg-primary focus-visible:outline-primary inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-neutral-800 pr-2.5 text-sm font-medium transition-colors file:cursor-pointer file:rounded-l-md file:px-1 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:cursor-not-allowed aria-disabled:opacity-75;
+  }
+  .uploading-icon {
+    @apply text-warning flex size-5;
+  }
+  div.empty-file {
+    @apply inline-flex flex-row items-center gap-1;
+  }
 }
-
-.milkdown-editor.disabled div.milkdown {
-  p.crepe-placeholder {
-    opacity: 0;
+milkdown-file-picker[data-inline='false'] {
+  @apply block;
+  .file-input {
+    @apply my-2 file:py-1.5;
+  }
+  a.attachment-button {
+    @apply flex flex-col gap-1 bg-transparent font-bold text-gray-900 hover:underline dark:text-white;
+    div.file-icon {
+      @apply size-10;
+    }
+  }
+  a.attachment-button.not-exist {
+    @apply bg-transparent;
+    div.file-icon svg path {
+      @apply fill-red-500! dark:fill-red-800!;
+    }
   }
 }
 </style>
