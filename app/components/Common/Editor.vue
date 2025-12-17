@@ -51,15 +51,15 @@
       </MilkdownProvider>
       <NuxtCodeMirror
         v-else-if="(!isMD || settingsStore.settings.isCodeViewAllFiles) && !error"
-        :key="isDark.toString()"
+        :key="`${isDark.toString()}-${isReadOnly.toString()}`"
         ref="codemirror"
         v-model="md"
         :theme="isDark ? 'dark' : 'light'"
         class="file-editor mt-4 w-full"
         :placeholder="t('contentHere')"
         :auto-focus="true"
+        :editable="isReadOnly === false"
         :line-wrapping="true"
-        :editable="true"
         :basic-setup="true"
         :extensions="[EditorView.lineWrapping]"
         :indent-with-tab="true"
