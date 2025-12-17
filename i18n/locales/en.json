@@ -82,14 +82,16 @@
     "failedProcessAttachment": "Failed to process attachment",
     "missingQuery": "Missing query.",
     "unableToSearch": "Unable to search. Check console for details.",
-    "noteAlreadyExists": "Note already exists",
-    "notebookAlreadyExists": "Notebook already exists",
-    "failedCreateNotebook": "Failed to create notebook",
+    "noteAlreadyExists": "Note already exists.",
+    "notebookAlreadyExists": "Notebook already exists.",
+    "failedCreateNotebook": "Failed to create notebook.",
     "missingNewNotebookName": "Missing new name for notebook.",
     "missingNewNoteName": "Missing new name for note.",
     "shareNoteNotSpecified": "Share note to be deleted is not specified.",
-    "unexpectedDeleteCount": "Expected to delete one share but deleted {count}",
-    "failedCreateShareLink": "Could not create share link for the note due to a database error."
+    "unexpectedDeleteCount": "Expected to delete one share but deleted {count}.",
+    "failedCreateShareLink": "Could not create share link for the note due to a database error.",
+    "missingFormData": "Missing note data, unable to update note.",
+    "noFileUploaded": "No data associated with the uplaoded file, unable to update note."
   },
   "colours": {
     "red": "Red",
