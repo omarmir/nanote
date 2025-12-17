@@ -6,9 +6,9 @@ import { defineEventHandlerWithAttachmentNotebookNote } from '~~/server/wrappers
  */
 export default defineEventHandlerWithAttachmentNotebookNote(
   async (
-    event,
-    notebook,
-    note,
+    _event,
+    _notebook,
+    _note,
     fullPath,
     _markAttachmentForDeletionIfNeeded,
     deleteAllAttachments
