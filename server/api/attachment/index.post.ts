@@ -5,7 +5,6 @@ import { access, existsSync } from 'node:fs'
 import { uploadPath } from '~~/server/folder'
 import type { MultiPartData } from '#shared/types/upload'
 import { defineEventHandlerWithAttachmentAuthError } from '~~/server/wrappers/attachment-auth'
-// import { waitforme } from '~~/server/utils'
 
 export default defineEventHandlerWithAttachmentAuthError(async (event) => {
   const formData = await readMultipartFormData(event)
@@ -25,7 +24,7 @@ export default defineEventHandlerWithAttachmentAuthError(async (event) => {
       if (entry.name === 'path') acc.pathEntry = entry
       return acc
     },
-    {} as { fileEntry?: MultiPartData, pathEntry?: MultiPartData }
+    {} as { fileEntry?: MultiPartData; pathEntry?: MultiPartData }
   )
 
   if (!fileEntry?.data || !pathEntry?.data) {

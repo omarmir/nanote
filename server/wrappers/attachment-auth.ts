@@ -16,14 +16,14 @@ export function defineEventHandlerWithAttachmentAuthError<T extends EventHandler
     // const verifyShared = checkLogin(cookie, { audience: 'shared' })
     // console.log('verifyShared', verifyShared)
     // if (verifyShared.success) {
-    const file = decodeURIComponent(getRouterParam(event, 'file') ?? '')
+    // const file = decodeURIComponent(getRouterParam(event, 'file') ?? '')
     // @ts-expect-error dynamic attachments
-    const rawAttachments = verifyShared.data.attachments
-    const attachments
-      = Array.isArray(rawAttachments) && rawAttachments.every(a => typeof a === 'string')
-        ? (rawAttachments as string[])
-        : []
-    if (attachments.includes(file)) return await handler(event)
+    // const rawAttachments = verifyShared.data.attachments
+    // const attachments
+    //   = Array.isArray(rawAttachments) && rawAttachments.every(a => typeof a === 'string')
+    //     ? (rawAttachments as string[])
+    //     : []
+    // if (attachments.includes(file)) return await handler(event)
     // }
 
     // throw createError({
@@ -31,5 +31,6 @@ export function defineEventHandlerWithAttachmentAuthError<T extends EventHandler
     //   statusMessage: 'Unauthorized',
     //   message: 'Unauthorized access.'
     // })
+    return await handler(event)
   })
 }
