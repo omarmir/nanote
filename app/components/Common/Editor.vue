@@ -10,7 +10,7 @@
         </template>
       </UAlert> -->
       <MilkdownProvider v-if="isMD && settingsStore.settings.isCodeViewAllFiles !== true">
-        <MilkdownEditor v-model="content" :note :ln :notebooks="notebooksArray" :disabled />
+        <MilkdownEditor v-model="content" :note :ln :api-path :disabled />
       </MilkdownProvider>
       <!-- <NuxtCodeMirror
         v-else-if="(!isMD || settingsStore.settings.isCodeViewAllFiles) && !error"
@@ -39,12 +39,13 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const settingsStore = useSettingsStore()
 
-const { isMD, notebooksArray, disabled, note } = defineProps<{
+const { isMD, apiPath, disabled, note } = defineProps<{
   isMD: boolean
-  notebooksArray: string[]
+  apiPath: string
   disabled: boolean
   note: string
 }>()
+
 const content = defineModel<string>('content', { required: true })
 
 const queryParams = router.currentRoute.value.query

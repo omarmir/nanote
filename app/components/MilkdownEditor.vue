@@ -22,16 +22,15 @@ import { dateTimeTextSubsPlugin } from '#shared/utils/milkdown-text-sub'
 import type { EditorView } from '@milkdown/prose/view' // Import EditorView from ProseMirror
 
 const model = defineModel<string>({ required: true })
-const { disabled, isFocus, note, notebooks, ln } = defineProps<{
+const { disabled, isFocus, note, apiPath, ln } = defineProps<{
   disabled: boolean
   isFocus?: boolean
   note?: string
-  notebooks?: string[]
+  apiPath?: string
   ln?: number
 }>()
 
-const path = notebooks && note ? notePathArrayJoiner([...notebooks, note]) : null
-const customUploader = path ? createUploader(path) : null
+const customUploader = apiPath ? createUploader(apiPath) : null
 
 const settingsStore = useSettingsStore()
 const dateTimeTextSubs = dateTimeTextSubsPlugin(settingsStore.settings.isISODate)
@@ -87,15 +86,15 @@ useEditor((root) => {
           }, 2)
       })
 
-      if (path && customUploader) {
+      if (apiPath && customUploader) {
         ctx.update(imageBlockConfig.key, (defaultConfig) => ({
           ...defaultConfig,
-          onUpload: async (file: File) => onUpload(file, path)
+          onUpload: async (file: File) => onUpload(file, apiPath)
         }))
 
         ctx.update(inlineImageConfig.key, (prev) => ({
           ...prev,
-          onUpload: async (file: File) => onUpload(file, path)
+          onUpload: async (file: File) => onUpload(file, apiPath)
         }))
 
         ctx.update(uploadConfig.key, (prev) => ({
@@ -105,7 +104,7 @@ useEditor((root) => {
 
         ctx.update(filePickerConfig.key, (prev) => ({
           ...prev,
-          onUpload: async (file: File) => onUpload(file, path),
+          onUpload: async (file: File) => onUpload(file, apiPath),
           toCheckUpload: async (url: string) => toCheckUploader(url),
           failedCheckMessage: 'Unable to access file!'
         }))
