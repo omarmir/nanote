@@ -63,7 +63,8 @@ const items = computed<NavigationMenuItem[]>(() => [
     },
     {
       label: t('navigation.settings'),
-      icon: 'i-lucide-settings-2'
+      icon: 'i-lucide-settings-2',
+      to: '/settings'
     },
     {
       label: t('navigation.guide'),
