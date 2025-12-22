@@ -22,10 +22,9 @@ import { dateTimeTextSubsPlugin } from '#shared/utils/milkdown-text-sub'
 import type { EditorView } from '@milkdown/prose/view' // Import EditorView from ProseMirror
 
 const model = defineModel<string>({ required: true })
-const { disabled, isFocus, note, apiPath, ln } = defineProps<{
+const { disabled, isFocus, apiPath, ln } = defineProps<{
   disabled: boolean
   isFocus?: boolean
-  note?: string
   apiPath?: string
   ln?: number
 }>()

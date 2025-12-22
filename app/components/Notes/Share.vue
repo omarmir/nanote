@@ -79,7 +79,10 @@ const shareLink: Ref<string | null> = ref(null)
 async function onSubmit(event: FormSubmitEvent<NewNotebook>) {
   try {
     const shareResp = await $fetch<Result<string>>(`/api/share/${note.apiPath}`, {
-      method: 'POST'
+      method: 'POST',
+      body: {
+        name: event.data.name
+      }
     })
     if (!shareResp.success) {
       shareError.value = shareResp.message
@@ -100,6 +103,7 @@ const copyLink = async () => {
     await copy(shareLink.value)
     isCopied.value = copied.value
   } catch (err) {
+    console.error(err)
     isCopied.value = false
   } finally {
     setTimeout(() => {

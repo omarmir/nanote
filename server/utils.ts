@@ -1,6 +1,6 @@
 import { access, constants } from 'node:fs/promises'
-import SECRET_KEY from '~~/server/key'
-import type { Result } from '#shared/types/result'
+// import SECRET_KEY from '~~/server/key'
+// import type { Result } from '#shared/types/result'
 
 export function waitforme(millisec: number) {
   return new Promise((resolve) => {

@@ -1,7 +1,7 @@
 <template>
   <UDashboardPanel id="home">
     <template #header>
-      <TopBar :name="note" :note-opts="{ isReadOnly: false }" />
+      <TopBar :name="note" :note-opts="{ isReadOnly: false }" @readonly="toggleReadOnlyMode" />
     </template>
     <template #body>
       <UAlert v-if="error" class="mb-4" color="error" variant="outline">
@@ -14,13 +14,7 @@
       </UAlert>
       <template v-if="loadingState === 'success'">
         <NotesMeta :updated :saving-state />
-        <CommonEditor
-          v-if="pathArray && isMD !== null"
-          v-model:content="content"
-          :api-path
-          :is-m-d
-          :disabled="false"
-          :note />
+        <CommonEditor v-if="pathArray && isMD !== null" v-model:content="content" :api-path :is-m-d :disabled="false" :note />
       </template>
       <template v-else-if="loadingState === 'pending'">
         <div class="ml-[60px] flex w-full flex-col gap-2">
@@ -36,14 +30,12 @@
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
 const { t } = useI18n()
 
 const isReadOnly = useState('isReadOnly', () => false)
 
 // Use the composable for all note content logic (including route extraction)
-const { content, isMD, error, updated, savingState, pathArray, note, fetchMarkdown, apiPath, loadingState }
-  = useNoteContent()
+const { content, isMD, error, updated, savingState, pathArray, note, fetchMarkdown, apiPath, loadingState } = useNoteContent()
 
 // Fetch markdown content on component setup
 await fetchMarkdown()

@@ -1,6 +1,6 @@
 // import { checkLogin } from '../utils'
 
-export default defineEventHandler((event) => {
+export default defineEventHandler(() => {
   return // bypass for dev
   // if (
   //   !event.path.startsWith('/api/') ||

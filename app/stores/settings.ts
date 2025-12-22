@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import type { InsertSetting } from '~~/server/db/schema'
 import type { Result } from '#shared/types/result'
+import type { FetchError } from 'ofetch'
 
 export const useSettingsStore = defineStore('settings', () => {
   const isLoaded = ref(false)
@@ -34,8 +35,8 @@ export const useSettingsStore = defineStore('settings', () => {
       } else {
         error.value = resp.message
       }
-    } catch (e: any) {
-      error.value = e.message || 'Failed to load settings'
+    } catch (e) {
+      error.value = (e as FetchError).data.message || 'Failed to load settings'
     } finally {
       isLoaded.value = true
     }

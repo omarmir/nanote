@@ -6,7 +6,7 @@ import { getIcon } from 'material-file-icons'
 import puppeteer from 'puppeteer'
 import { settings } from '~~/server/db/schema'
 // import jwt from 'jsonwebtoken'
-import SECRET_KEY from '~~/server/key'
+// import SECRET_KEY from '~~/server/key'
 
 export const fullRegex = /(?<=\(<|\()\/api\/attachment\/.*?(?=[)>])|(?<=href=")\/api\/attachment\/.*?(?=")/g
 export const imageRegex = /(?<=\(<|\()\/api\/attachment\/.*?(?=[)>])/g
@@ -44,6 +44,7 @@ export const replaceFileContent = (htmlContent: string, isBlock: boolean, regex:
 }
 
 export const printPDF = async (html: string, origin: string, hostname: string) => {
+  console.log(hostname)
   // const token = jwt.sign({ app: 'nanote' }, SECRET_KEY, { expiresIn: '7d', audience: 'authorized' })
 
   const browser = await puppeteer.launch({
@@ -53,15 +54,15 @@ export const printPDF = async (html: string, origin: string, hostname: string) =
   })
   // Create a new browser context
   const context = await browser.createBrowserContext()
-  context.setCookie({
-    httpOnly: true,
-    name: 'token',
-    // value: token,
-    domain: hostname,
-    sameSite: 'Strict',
-    expires: Math.floor(Date.now() / 1000) + 60 * 5, // expires in 5 minutes
-    path: '/'
-  })
+  // context.setCookie({
+  //   httpOnly: true,
+  //   name: 'token',
+  //   // value: token,
+  //   domain: hostname,
+  //   sameSite: 'Strict',
+  //   expires: Math.floor(Date.now() / 1000) + 60 * 5, // expires in 5 minutes
+  //   path: '/'
+  // })
 
   try {
     const page = await context.newPage()

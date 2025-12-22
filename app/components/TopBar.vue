@@ -44,5 +44,5 @@ const { t } = useI18n()
 
 const settingsStore = useSettingsStore()
 
-defineEmits(['edit', 'share', 'pdf', 'delete', 'rename'])
+defineEmits(['edit', 'share', 'pdf', 'delete', 'rename', 'readonly'])
 </script>
