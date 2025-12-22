@@ -24,8 +24,8 @@ export default defineEventHandlerWithError(async (event): Promise<Note[]> => {
   const notes: Note[] = await Promise.all(
     recentFiles.map(async (file) => {
       const relativePath = path.relative(notesPath, file.path)
-      const pathArray
-        = path.dirname(relativePath) !== '.' ? path.dirname(relativePath).split(path.sep).filter(Boolean) : []
+      const pathArray =
+        path.dirname(relativePath) !== '.' ? path.dirname(relativePath).split(path.sep).filter(Boolean) : []
 
       let preview = ''
       try {
@@ -49,9 +49,7 @@ export default defineEventHandlerWithError(async (event): Promise<Note[]> => {
         createdAt: file.stats!.birthtime.toISOString(),
         updatedAt: file.stats!.mtime.toISOString(),
         pathArray: [...pathArray, file.name],
-        isNote: true,
         apiPath: `${pathArray.join('/')}/${file.name}`,
-        size: Math.round(file.stats!.size / 1024),
         isMarkdown,
         preview // Add the preview text
       }

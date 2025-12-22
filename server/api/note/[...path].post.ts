@@ -51,7 +51,7 @@ export default defineEventHandlerWithNotebookAndNote(
       path: fullPath,
       pathArray: fullPathWithNewFile,
       isNote: true,
-      apiPath: `/${fullPathWithNewFile.join('/')}`,
+      apiPath: `${fullPathWithNewFile.join('/')}`,
       disabled: false,
       isMarkdown
     } satisfies NotebookTreeItem

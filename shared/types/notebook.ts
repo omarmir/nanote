@@ -1,6 +1,16 @@
 import type { TreeItem } from '@nuxt/ui'
 import * as v from 'valibot'
 
+export type Note = {
+  name: string
+  createdAt: string
+  updatedAt: string | null
+  pathArray: string[]
+  apiPath: string
+  isMarkdown?: boolean
+  preview?: string // Add the preview text
+}
+
 export type NotebookTreeItem = Omit<TreeItem, 'children'> & {
   label: string
   path: string

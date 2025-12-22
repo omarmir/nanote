@@ -23,7 +23,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
     // Decode the path and then remove characters we cannot have
     const params = decodeURIComponent(event.context.params?.path ?? '')
     const path = params.split('/').map((p) => p.replace(/[\\/:*?"<>|]/g, '')) || []
-    const pathArray = path.slice(0, -1)
+    const pathArray = path.slice(0, -1).filter(Boolean) // filter out the blank path the root
     const note = path.at(-1)
 
     if (pathArray.length === 0 || !note) {
