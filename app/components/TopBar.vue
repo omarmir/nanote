@@ -5,7 +5,7 @@
     </template>
     <template #right>
       <div class="flex flex-row items-center gap-2">
-        <div class="flex flex-row items-center gap-2" v-if="noteOpts">
+        <div v-if="noteOpts" class="flex flex-row items-center gap-2">
           <UButton
             :icon="noteOpts.isReadOnly ? 'i-lucide-pencil' : 'i-lucide-pencil-off'"
             variant="ghost"

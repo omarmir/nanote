@@ -4,7 +4,7 @@ import { Buffer } from 'node:buffer'
 
 import { defineEventHandlerWithNotebookAndNote } from '~~/server/wrappers/note'
 import { checkIfPathExists } from '~~/server/utils'
-import { NotebookTreeItem } from '~~/shared/types/notebook'
+import type { NotebookTreeItem } from '~~/shared/types/notebook'
 
 /**
  * Add note
@@ -16,7 +16,7 @@ export default defineEventHandlerWithNotebookAndNote(
     // Parse form data if available
     const formData = await readMultipartFormData(event)
     if (formData) {
-      const fileEntry = formData.find((entry) => entry.name === 'file')
+      const fileEntry = formData.find(entry => entry.name === 'file')
       if (fileEntry?.data) {
         fileContent = Buffer.from(fileEntry.data)
       }

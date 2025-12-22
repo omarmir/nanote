@@ -2,6 +2,7 @@ import type { MilkdownPlugin } from '@milkdown/kit/ctx'
 import { $inputRule } from '@milkdown/kit/utils'
 import { InputRule } from '@milkdown/prose/inputrules'
 import { formatNoteDate, getSplitISO } from './dates'
+
 export const today = /::today/
 export const now = /::now/
 export const timeNow = /::time/
@@ -10,7 +11,7 @@ export const tomorrow = /::tomorrow/
 
 export function dateTimeTextSubsPlugin(isISODate: boolean): MilkdownPlugin[] {
   const todayInputRule = $inputRule(
-    (_ctx) =>
+    _ctx =>
       new InputRule(today, (state, _match, start, end) => {
         const { date } = getSplitISO(new Date().toString(), isISODate)
         const { tr } = state
@@ -21,7 +22,7 @@ export function dateTimeTextSubsPlugin(isISODate: boolean): MilkdownPlugin[] {
   )
 
   const nowInputRule = $inputRule(
-    (_ctx) =>
+    _ctx =>
       new InputRule(now, (state, _match, start, end) => {
         const currentDate = formatNoteDate(new Date().toString(), isISODate)
         const { tr } = state
@@ -31,7 +32,7 @@ export function dateTimeTextSubsPlugin(isISODate: boolean): MilkdownPlugin[] {
       })
   )
   const timeNowInputRule = $inputRule(
-    (_ctx) =>
+    _ctx =>
       new InputRule(timeNow, (state, _match, start, end) => {
         const { time } = getSplitISO(new Date().toString(), isISODate)
         const { tr } = state
@@ -41,7 +42,7 @@ export function dateTimeTextSubsPlugin(isISODate: boolean): MilkdownPlugin[] {
       })
   )
   const yesterdayInputRule = $inputRule(
-    (_ctx) =>
+    _ctx =>
       new InputRule(yesterday, (state, _match, start, end) => {
         const yesterday = new Date()
         yesterday.setDate(yesterday.getDate() - 1)
@@ -54,7 +55,7 @@ export function dateTimeTextSubsPlugin(isISODate: boolean): MilkdownPlugin[] {
   )
 
   const tomorrowInputRule = $inputRule(
-    (_ctx) =>
+    _ctx =>
       new InputRule(tomorrow, (state, _match, start, end) => {
         const tomorrow = new Date()
         tomorrow.setDate(tomorrow.getDate() + 1)

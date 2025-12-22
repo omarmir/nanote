@@ -12,15 +12,6 @@ export default defineNuxtConfig({
 
   ssr: false,
 
-  fonts: {
-    families: [
-      { name: 'JetBrains Mono', global: true },
-      { name: 'Fira Code', global: true },
-      { name: 'Public Sans', global: true },
-      { name: 'Inter', global: true }
-    ]
-  },
-
   imports: {
     presets: [
       {
@@ -49,6 +40,15 @@ export default defineNuxtConfig({
         braceStyle: '1tbs'
       }
     }
+  },
+
+  fonts: {
+    families: [
+      { name: 'JetBrains Mono', global: true },
+      { name: 'Fira Code', global: true },
+      { name: 'Public Sans', global: true },
+      { name: 'Inter', global: true }
+    ]
   },
 
   i18n: {

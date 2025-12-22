@@ -12,10 +12,11 @@
         })
       }}
     </div>
-    <UIcon v-if="savingState === 'pending'" name="i-lucide-loader-circle" class="text-warning animate-spin"></UIcon>
-    <UIcon v-if="savingState === 'success'" name="i-lucide-circle-check" class="text-primary"></UIcon>
+    <UIcon v-if="savingState === 'pending'" name="i-lucide-loader-circle" class="text-warning animate-spin" />
+    <UIcon v-if="savingState === 'success'" name="i-lucide-circle-check" class="text-primary" />
   </div>
 </template>
+
 <script lang="ts" setup>
 const { updated, savingState } = defineProps<{ updated: Date | null; savingState: SavingState }>()
 const { d } = useI18n()

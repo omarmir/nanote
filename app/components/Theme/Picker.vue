@@ -14,14 +14,16 @@
 
     <template #content>
       <fieldset>
-        <legend class="mb-2 text-[11px] leading-none font-semibold">Primary</legend>
+        <legend class="mb-2 text-[11px] leading-none font-semibold">
+          Primary
+        </legend>
 
         <div class="-mx-2 grid grid-cols-3 gap-1">
           <ThemeButton
-            :aria-label="t(`colours.${colour}`)"
-            :title="t(`colours.${colour}`)"
             v-for="colour in colours"
             :key="colour"
+            :aria-label="t(`colours.${colour}`)"
+            :title="t(`colours.${colour}`)"
             :label="t(`colours.${colour}`)"
             :chip="colour"
             :selected="primary === colour"
@@ -30,7 +32,9 @@
       </fieldset>
 
       <fieldset>
-        <legend class="mb-2 text-[11px] leading-none font-semibold">Neutral</legend>
+        <legend class="mb-2 text-[11px] leading-none font-semibold">
+          Neutral
+        </legend>
 
         <div class="-mx-2 grid grid-cols-3 gap-1">
           <ThemeButton
@@ -44,7 +48,9 @@
       </fieldset>
 
       <fieldset>
-        <legend class="mb-2 text-[11px] leading-none font-semibold">Theme</legend>
+        <legend class="mb-2 text-[11px] leading-none font-semibold">
+          Theme
+        </legend>
 
         <div class="-mx-2 grid grid-cols-3 gap-1">
           <ThemeButton

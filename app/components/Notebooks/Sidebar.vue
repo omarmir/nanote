@@ -13,12 +13,12 @@
         @click="expanded = []" />
     </div>
     <TreeNotebooks
-      :compact="true"
       v-if="notebookStore.notebooks"
       v-model:expanded="expanded"
-      @toggle="toggle"
+      :compact="true"
       type="sidebar"
-      :items="notebookStore.notebooks" />
+      :items="notebookStore.notebooks"
+      @toggle="toggle" />
   </div>
 </template>
 

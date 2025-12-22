@@ -52,7 +52,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     let currentNotebook: NotebookTreeItemClient | null = null
 
     for (const pathSegment of pathArray) {
-      currentNotebook = currentItems.find((item) => item.label === pathSegment) || null
+      currentNotebook = currentItems.find(item => item.label === pathSegment) || null
       if (!currentNotebook) {
         return null
       }
@@ -96,14 +96,14 @@ export const useNotebookStore = defineStore('notebook', () => {
         const targetNotebook = findNotebookByPath(notebooks.value, notebook.pathArray)
         if (targetNotebook) {
           // Add children with childrenLoaded flag
-          targetNotebook.children = children.map((child) => ({
+          targetNotebook.children = children.map(child => ({
             ...child,
             childrenLoaded: false
           }))
           targetNotebook.childrenLoaded = true
         } else if (notebook.pathArray.length === 0) {
           // Handle root-level notebooks
-          notebook.children = children.map((child) => ({
+          notebook.children = children.map(child => ({
             ...child,
             childrenLoaded: false
           }))
@@ -177,7 +177,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
-  const anyOpenBooks: ComputedRef<boolean> = computed(() => notebooks.value?.some((book) => book.isOpen) ?? false)
+  const anyOpenBooks: ComputedRef<boolean> = computed(() => notebooks.value?.some(book => book.isOpen) ?? false)
   const closeAllOpenBooks = () =>
     notebooks.value?.forEach((book) => {
       if (book.isOpen) book.isOpen = false
@@ -186,7 +186,7 @@ export const useNotebookStore = defineStore('notebook', () => {
   const removeItemFromTree = (notebooks: NotebookTreeItemClient[], notebook: NotebookTreeItemClient): void => {
     if (notebook.pathArray.length === 1) {
       // Root-level notebook - remove from notebooks array
-      const index = notebooks.findIndex((item) => item.label === notebook.label)
+      const index = notebooks.findIndex(item => item.label === notebook.label)
       if (index !== -1) {
         notebooks.splice(index, 1)
       }
@@ -195,7 +195,7 @@ export const useNotebookStore = defineStore('notebook', () => {
       const parentPath = notebook.pathArray.slice(0, -1)
       const parentNotebook = findNotebookByPath(notebooks, parentPath)
       if (parentNotebook?.children) {
-        const index = parentNotebook.children.findIndex((item) => item.label === notebook.label)
+        const index = parentNotebook.children.findIndex(item => item.label === notebook.label)
         if (index !== -1) {
           parentNotebook.children.splice(index, 1)
         }
@@ -210,7 +210,7 @@ export const useNotebookStore = defineStore('notebook', () => {
   ): void => {
     if (oldItem.pathArray.length === 1) {
       // Root-level item - replace in notebooks array
-      const index = notebooks.findIndex((item) => item.label === oldItem.label)
+      const index = notebooks.findIndex(item => item.label === oldItem.label)
       if (index !== -1) {
         notebooks.splice(index, 1, newItem)
       }
@@ -219,7 +219,7 @@ export const useNotebookStore = defineStore('notebook', () => {
       const parentPath = oldItem.pathArray.slice(0, -1)
       const parentNotebook = findNotebookByPath(notebooks, parentPath)
       if (parentNotebook?.children) {
-        const index = parentNotebook.children.findIndex((item) => item.label === oldItem.label)
+        const index = parentNotebook.children.findIndex(item => item.label === oldItem.label)
         if (index !== -1) {
           parentNotebook.children.splice(index, 1, newItem)
         }

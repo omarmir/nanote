@@ -8,8 +8,8 @@
               v-bind="
                 item.isNote
                   ? {
-                      to: `/note/${item.apiPath}`
-                    }
+                    to: `/note/${item.apiPath}`
+                  }
                   : {}
               "
               class="target flex grow flex-row items-center justify-between group-hover:bg-neutral-500/20"
@@ -58,24 +58,24 @@
               </slot>
             </UButton>
             <NotebooksActions
+              v-if="!item.isNote && !compact"
               :is-open
               :notebook="item"
-              class="target group-hover:bg-neutral-500/20"
-              v-if="!item.isNote && !compact"></NotebooksActions>
+              class="target group-hover:bg-neutral-500/20" />
             <NotesActions
+              v-else-if="item.isNote && !compact"
               class="target group-hover:bg-neutral-500/20"
               :is-open
-              :item
-              v-else-if="item.isNote && !compact"></NotesActions>
+              :item />
           </UFieldGroup>
 
           <TreeNotebooks
             v-if="item.children && isOpen"
-            :compact
             v-model:current-note="currentNote"
+            :compact
             :items="item.children"
             :depth="depth + 1"
-            @toggle="onToggle"></TreeNotebooks>
+            @toggle="onToggle" />
         </template>
       </TreeItem>
     </ul>
@@ -111,7 +111,7 @@ const onToggle = (item: NotebookTreeItemClient) => {
   emit('toggle', item)
 
   if (isCurrentlyExpanded) {
-    expanded.value = expanded.value.filter((book) => book !== item.apiPath)
+    expanded.value = expanded.value.filter(book => book !== item.apiPath)
   } else {
     expanded.value = [...expanded.value, item.apiPath]
   }

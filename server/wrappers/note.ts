@@ -22,7 +22,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
 
     // Decode the path and then remove characters we cannot have
     const params = decodeURIComponent(event.context.params?.path ?? '')
-    const path = params.split('/').map((p) => p.replace(/[\\/:*?"<>|]/g, '')) || []
+    const path = params.split('/').map(p => p.replace(/[\\/:*?"<>|]/g, '')) || []
     const pathArray = path.slice(0, -1).filter(Boolean) // filter out the blank path the root
     const note = path.at(-1)
 
@@ -80,8 +80,8 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
       console.error('Note error:', error)
 
       const err = error as NodeJS.ErrnoException
-      const message =
-        err.code === 'ENOENT'
+      const message
+        = err.code === 'ENOENT'
           ? err.path === targetFolder
             ? t('errors.notebookNotFound', { path: pathArray.join(' > ') })
             : t('errors.noteNotFound', { note })

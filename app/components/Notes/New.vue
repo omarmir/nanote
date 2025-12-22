@@ -8,8 +8,8 @@
       <slot name="trigger" />
     </template>
     <template #body>
-      <i18n-t :keypath="state.isManual ? 'manualAddNewNote' : 'addNote'" tag="h3" v-if="notebook" class="mb-2">
-        <template v-slot:notebook>
+      <i18n-t v-if="notebook" :keypath="state.isManual ? 'manualAddNewNote' : 'addNote'" tag="h3" class="mb-2">
+        <template #notebook>
           <span class="text-primary">{{ notebook.label }}</span>
         </template>
       </i18n-t>

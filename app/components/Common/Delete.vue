@@ -1,7 +1,7 @@
 <template>
   <UModal
-    :title="t('delete')"
     v-model:open="open"
+    :title="t('delete')"
     :close="{ onClick: () => emit('close', false) }"
     :aria-describedby="t('delete')">
     <template #default>
@@ -9,22 +9,25 @@
     </template>
     <template #body>
       <i18n-t :keypath="item.isNote ? 'deleteNote' : 'deleteNotebook'" tag="h3" class="mb-4">
-        <template v-slot:item>
+        <template #item>
           <span class="text-primary">{{ item.label }}</span>
         </template>
       </i18n-t>
       <div class="flex flex-row place-content-end items-center gap-4">
-        <UButton color="error" @click="deleteItem" :disabled="isDeleting">
+        <UButton color="error" :disabled="isDeleting" @click="deleteItem">
           <template #leading>
-            <UIcon v-if="isDeleting" name="i-lucide-loader-circle" class="animate-spin"></UIcon>
+            <UIcon v-if="isDeleting" name="i-lucide-loader-circle" class="animate-spin" />
           </template>
           {{ t('delete') }}
         </UButton>
-        <UButton color="neutral" @click="cancelDeletion">{{ t('cancel') }}</UButton>
+        <UButton color="neutral" @click="cancelDeletion">
+          {{ t('cancel') }}
+        </UButton>
       </div>
     </template>
   </UModal>
 </template>
+
 <script lang="ts" setup>
 const { item } = defineProps<{ item: NotebookTreeItem }>()
 const { t } = useI18n()

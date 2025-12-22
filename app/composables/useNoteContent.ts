@@ -1,6 +1,6 @@
 import { watchDebounced } from '@vueuse/core'
-import { H3Error } from 'h3'
-import { FetchError } from 'ofetch'
+import type { H3Error } from 'h3'
+import type { FetchError } from 'ofetch'
 import type { Ref } from 'vue'
 
 export interface UseNoteContentReturn {

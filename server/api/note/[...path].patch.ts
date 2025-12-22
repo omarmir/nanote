@@ -22,7 +22,7 @@ export default defineEventHandlerWithAttachmentNotebookNote(
     }
 
     // Find file in form data
-    const fileEntry = formData.find((entry) => entry.name === 'file')
+    const fileEntry = formData.find(entry => entry.name === 'file')
     if (!fileEntry?.data) {
       throw createError({
         statusCode: 400,
@@ -33,8 +33,8 @@ export default defineEventHandlerWithAttachmentNotebookNote(
 
     // Get original stats first to preserve creation date
     const originalStats = await stat(fullPath)
-    const originalStatsCreatedAtTime =
-      originalStats.birthtime.getTime() !== 0 ? originalStats.birthtime : originalStats.ctime
+    const originalStatsCreatedAtTime
+      = originalStats.birthtime.getTime() !== 0 ? originalStats.birthtime : originalStats.ctime
 
     // Overwrite file content
     await writeFile(fullPath, fileEntry.data)

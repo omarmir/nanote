@@ -8,8 +8,8 @@
       <slot name="trigger" />
     </template>
     <template #body>
-      <i18n-t keypath="renameItem" tag="h3" v-if="item" class="mb-2">
-        <template v-slot:item>
+      <i18n-t v-if="item" keypath="renameItem" tag="h3" class="mb-2">
+        <template #item>
           <span class="text-primary">{{ item.label }}</span>
         </template>
       </i18n-t>
@@ -21,11 +21,13 @@
               <UButton type="submit" color="warning" :disabled="isRenaming">
                 {{ t('rename') }}
                 <template #leading>
-                  <UIcon v-if="isRenaming" name="i-lucide-loader-circle" class="animate-spin"></UIcon>
+                  <UIcon v-if="isRenaming" name="i-lucide-loader-circle" class="animate-spin" />
                   <UIcon v-else name="i-custom-gg-rename" />
                 </template>
               </UButton>
-              <UButton color="neutral" @click="cancelRename">{{ t('cancel') }}</UButton>
+              <UButton color="neutral" @click="cancelRename">
+                {{ t('cancel') }}
+              </UButton>
             </div>
           </div>
         </UFormField>

@@ -6,9 +6,7 @@
 
 <script lang="ts" setup>
 import type { DropdownMenuItem } from '@nuxt/ui'
-import { LazyCommonDelete } from '#components'
-import { LazyNotesRename } from '#components'
-import { LazyNotesShare } from '#components'
+import { LazyCommonDelete, LazyNotesRename, LazyNotesShare } from '#components'
 
 const { item, isOpen = false } = defineProps<{ item: NotebookTreeItemClient; isOpen?: boolean }>()
 const { t } = useI18n()

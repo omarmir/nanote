@@ -1,7 +1,7 @@
 <template>
   <UModal
-    :ui="{ content: 'max-w-2xl' }"
     v-model:open="open"
+    :ui="{ content: 'max-w-2xl' }"
     :close="{ onClick: () => emit('close', false) }"
     :aria-describedby="t('share')"
     :title="t('share')">
@@ -9,12 +9,12 @@
       <slot name="trigger" />
     </template>
     <template #body>
-      <i18n-t keypath="shareNote" tag="h3" v-if="note" class="mb-2">
-        <template v-slot:note>
+      <i18n-t v-if="note" keypath="shareNote" tag="h3" class="mb-2">
+        <template #note>
           <span class="text-primary">{{ note.label }}</span>
         </template>
       </i18n-t>
-      <UForm :state="state" class="w-full" @submit="onSubmit" v-if="!shareLink">
+      <UForm v-if="!shareLink" :state="state" class="w-full" @submit="onSubmit">
         <UFormField :label="t('shareName')" name="name" class="w-full">
           <div class="flex w-full flex-row items-center gap-2">
             <UInput v-model="state.name" class="w-full" :placeholder="t('shareName')" />
@@ -33,18 +33,18 @@
           as="div"
           class="mt-2" />
       </UForm>
-      <UAlert class="mt-4" v-if="shareLink" color="info" variant="subtle" :title="t('shareURL')" orientation="vertical">
+      <UAlert v-if="shareLink" class="mt-4" color="info" variant="subtle" :title="t('shareURL')" orientation="vertical">
         <template #description>
           <div class="text-wrap">
             {{ shareLink }}
           </div>
         </template>
-        <template #actions v-if="isSupported">
+        <template v-if="isSupported" #actions>
           <UButton color="primary" variant="soft" @click="copyLink">
             <template #leading>
-              <UIcon v-if="isCopied === null" name="i-lucide-copy"></UIcon>
-              <UIcon v-if="isCopied" name="i-lucide-circle-check" class="text-primary"></UIcon>
-              <UIcon v-if="isCopied === false" name="i-lucide-circle-x" class="text-error"></UIcon>
+              <UIcon v-if="isCopied === null" name="i-lucide-copy" />
+              <UIcon v-if="isCopied" name="i-lucide-circle-check" class="text-primary" />
+              <UIcon v-if="isCopied === false" name="i-lucide-circle-x" class="text-error" />
             </template>
             {{ t('copy') }}
           </UButton>
@@ -56,8 +56,9 @@
 
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui'
-import { FetchError } from 'ofetch'
+import type { FetchError } from 'ofetch'
 import { useClipboard } from '@vueuse/core'
+
 const { copy, copied, isSupported } = useClipboard()
 
 const { note } = defineProps<{ note: NotebookTreeItemClient }>()

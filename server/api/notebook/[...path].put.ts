@@ -1,7 +1,7 @@
 import { rename, access, constants, stat } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { defineEventHandlerWithNotebook } from '~~/server/wrappers/notebook'
-import { RenameTreeItem } from '#shared/types/notebook'
+import type { RenameTreeItem } from '#shared/types/notebook'
 
 /**
  * Rename notebook

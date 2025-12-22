@@ -30,6 +30,7 @@
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
 import { MilkdownProvider } from '@milkdown/vue'
 // import { EditorView } from '@codemirror/view'
@@ -71,6 +72,7 @@ const ln: number | undefined = queryParams.ln && Number.isInteger(+queryParams.l
 //   }
 // }
 </script>
+
 <style lang="postcss">
 .file-editor .cm-editor {
   @apply bg-transparent !important;
