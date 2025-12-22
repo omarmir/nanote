@@ -6,6 +6,7 @@
     square
     :ui="{ leadingIcon: 'text-primary' }" />
 </template>
+
 <script lang="ts" setup>
 const isReadOnly = useState('isReadOnly', () => false)
 </script>
