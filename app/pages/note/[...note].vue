@@ -1,7 +1,13 @@
 <template>
   <UDashboardPanel id="home">
     <template #header>
-      <TopBar :name="note" :note-opts="{ isReadOnly }" @readonly="toggleReadOnlyMode" />
+      <TopBar
+        :name
+        :note-opts="{ isReadOnly }"
+        @readonly="toggleReadOnlyMode"
+        @share="shareNote"
+        @rename="renameNote"
+        @delete="deleteNote" />
     </template>
     <template #body>
       <UAlert v-if="error" class="mb-4" color="error" variant="outline">
@@ -20,7 +26,7 @@
           :api-path
           :is-m-d
           :disabled="isReadOnly"
-          :note />
+          :note="name" />
       </template>
       <template v-else-if="loadingState === 'pending'">
         <div class="ml-[60px] flex w-full flex-col gap-2">
@@ -36,19 +42,44 @@
 </template>
 
 <script setup lang="ts">
-const { t } = useI18n()
+import { LazyCommonDelete, LazyNotesRename, LazyNotesShare } from '#components'
 
+const { t } = useI18n()
+const overlay = useOverlay()
 const isReadOnly = useState('isReadOnly', () => false)
+const router = useRouter()
 
 // Use the composable for all note content logic (including route extraction)
-const { content, isMD, error, updated, savingState, pathArray, note, fetchMarkdown, apiPath, loadingState } =
+const { content, isMD, error, updated, savingState, pathArray, name, fetchMarkdown, apiPath, loadingState } =
   useNoteContent()
 
 // Fetch markdown content on component setup
 await fetchMarkdown()
 
-const toggleReadOnlyMode = () => {
-  console.log('readonly')
-  isReadOnly.value = !isReadOnly.value
+const toggleReadOnlyMode = () => (isReadOnly.value = !isReadOnly.value)
+
+const shareNote = () => overlay.create(LazyNotesShare).open({ name, apiPath })
+
+const deleteNote = async () => {
+  const deleteModal = overlay.create(LazyCommonDelete)
+  const isDeleted = await deleteModal.open({ name, apiPath, pathArray, isNote: true })
+
+  if (isDeleted) {
+    router.push('/')
+  }
+}
+
+const renameNote = async () => {
+  const renameModal = overlay.create(LazyNotesRename)
+  const renamed: boolean | string = await renameModal.open({
+    originalName: name,
+    originalAPIPath: apiPath,
+    originalPathArray: pathArray,
+    isMarkdown: isMD.value ?? false
+  })
+
+  if (renamed) {
+    router.push(`/note/${renamed}`)
+  }
 }
 </script>

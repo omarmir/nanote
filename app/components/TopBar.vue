@@ -14,6 +14,35 @@
             :aria-label="t('toggleEdit')"
             :title="t('toggleEdit')"
             @click="$emit('readonly')" />
+          <UButton
+            icon="i-lucide-share-2"
+            variant="ghost"
+            size="md"
+            :aria-label="t('share')"
+            :title="t('share')"
+            @click="$emit('share')" />
+          <UButton
+            icon="i-custom-gg-rename"
+            variant="ghost"
+            size="md"
+            :aria-label="t('rename')"
+            :title="t('rename')"
+            @click="$emit('rename')" />
+          <UButton
+            icon="i-custom-carbon-generatepdf"
+            variant="ghost"
+            size="md"
+            :aria-label="t('pdf')"
+            :title="t('pdf')"
+            @click="$emit('pdf')" />
+          <UButton
+            icon="i-lucide-trash-2"
+            variant="ghost"
+            size="md"
+            color="error"
+            :aria-label="t('delete')"
+            :title="t('delete')"
+            @click="$emit('delete')" />
         </div>
         <ThemePicker />
         <UButton

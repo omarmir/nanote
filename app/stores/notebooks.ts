@@ -41,18 +41,19 @@ export const useNotebookStore = defineStore('notebook', () => {
   }
 
   // Helper function to traverse the tree and find a notebook by its pathArray
-  const findNotebookByPath = (items: NotebookTreeItemClient[], pathArray: string[]): NotebookTreeItemClient | null => {
+  const findNotebookByPath = (pathArray: string[]): NotebookTreeItemClient | null => {
+    if (!notebooks.value) return null
     // If pathArray is empty, return the root-level notebook
     if (pathArray.length === 0) {
       return null // Root-level notebooks are handled differently
     }
 
     // Navigate through the tree using pathArray as the hierarchy
-    let currentItems = items
+    let currentItems = notebooks.value
     let currentNotebook: NotebookTreeItemClient | null = null
 
     for (const pathSegment of pathArray) {
-      currentNotebook = currentItems.find(item => item.label === pathSegment) || null
+      currentNotebook = currentItems.find((item) => item.label === pathSegment) || null
       if (!currentNotebook) {
         return null
       }
@@ -93,17 +94,17 @@ export const useNotebookStore = defineStore('notebook', () => {
 
       // Find the notebook in the tree using pathArray and add children
       if (notebooks.value) {
-        const targetNotebook = findNotebookByPath(notebooks.value, notebook.pathArray)
+        const targetNotebook = findNotebookByPath(notebook.pathArray)
         if (targetNotebook) {
           // Add children with childrenLoaded flag
-          targetNotebook.children = children.map(child => ({
+          targetNotebook.children = children.map((child) => ({
             ...child,
             childrenLoaded: false
           }))
           targetNotebook.childrenLoaded = true
         } else if (notebook.pathArray.length === 0) {
           // Handle root-level notebooks
-          notebook.children = children.map(child => ({
+          notebook.children = children.map((child) => ({
             ...child,
             childrenLoaded: false
           }))
@@ -136,7 +137,7 @@ export const useNotebookStore = defineStore('notebook', () => {
       })
 
       if (notebook) {
-        const targetNotebook = findNotebookByPath(notebooks.value, notebook.pathArray)
+        const targetNotebook = findNotebookByPath(notebook.pathArray)
         targetNotebook?.children?.push(resp)
       } else {
         notebooks.value.push(resp)
@@ -165,7 +166,7 @@ export const useNotebookStore = defineStore('notebook', () => {
         method: 'POST'
       })
 
-      const targetNotebook = findNotebookByPath(notebooks.value, notebook.pathArray)
+      const targetNotebook = findNotebookByPath(notebook.pathArray)
       targetNotebook?.children?.push(resp)
 
       return {
@@ -177,25 +178,27 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
-  const anyOpenBooks: ComputedRef<boolean> = computed(() => notebooks.value?.some(book => book.isOpen) ?? false)
+  const anyOpenBooks: ComputedRef<boolean> = computed(() => notebooks.value?.some((book) => book.isOpen) ?? false)
   const closeAllOpenBooks = () =>
     notebooks.value?.forEach((book) => {
       if (book.isOpen) book.isOpen = false
     })
 
-  const removeItemFromTree = (notebooks: NotebookTreeItemClient[], notebook: NotebookTreeItemClient): void => {
-    if (notebook.pathArray.length === 1) {
+  const removeItemFromTree = (name: string, pathArray: string[]): void => {
+    if (!notebooks.value) return
+
+    if (pathArray.length === 1) {
       // Root-level notebook - remove from notebooks array
-      const index = notebooks.findIndex(item => item.label === notebook.label)
+      const index = notebooks.value.findIndex((item) => item.label === name)
       if (index !== -1) {
-        notebooks.splice(index, 1)
+        notebooks.value.splice(index, 1)
       }
     } else {
       // Nested notebook - find parent and remove from its children
-      const parentPath = notebook.pathArray.slice(0, -1)
-      const parentNotebook = findNotebookByPath(notebooks, parentPath)
+      const parentPath = pathArray.slice(0, -1)
+      const parentNotebook = findNotebookByPath(parentPath)
       if (parentNotebook?.children) {
-        const index = parentNotebook.children.findIndex(item => item.label === notebook.label)
+        const index = parentNotebook.children.findIndex((item) => item.label === name)
         if (index !== -1) {
           parentNotebook.children.splice(index, 1)
         }
@@ -203,41 +206,37 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
-  const replaceItemInTree = (
-    notebooks: NotebookTreeItemClient[],
-    oldItem: NotebookTreeItemClient,
-    newItem: NotebookTreeItemClient
-  ): void => {
-    if (oldItem.pathArray.length === 1) {
+  const replaceItemInTree = (originalName: string, originalPathArray: string[], renamedItem: RenameTreeItem): void => {
+    if (!notebooks.value) return
+
+    if (renamedItem.pathArray.length === 1) {
       // Root-level item - replace in notebooks array
-      const index = notebooks.findIndex(item => item.label === oldItem.label)
+      const index = notebooks.value.findIndex((item) => item.label === originalName)
       if (index !== -1) {
-        notebooks.splice(index, 1, newItem)
+        const replacedItem: NotebookTreeItemClient = { ...notebooks.value[index]!, ...renamedItem }
+        notebooks.value.splice(index, 1, replacedItem)
       }
     } else {
       // Nested item - find parent and replace in its children
-      const parentPath = oldItem.pathArray.slice(0, -1)
-      const parentNotebook = findNotebookByPath(notebooks, parentPath)
+      const parentPath = originalPathArray.slice(0, -1)
+      const parentNotebook = findNotebookByPath(parentPath)
       if (parentNotebook?.children) {
-        const index = parentNotebook.children.findIndex(item => item.label === oldItem.label)
+        const index = parentNotebook.children.findIndex((item) => item.label === originalName)
         if (index !== -1) {
-          parentNotebook.children.splice(index, 1, newItem)
+          const replacedItem: NotebookTreeItemClient = { ...notebooks.value[index]!, ...renamedItem }
+          parentNotebook.children.splice(index, 1, replacedItem)
         }
       }
     }
   }
 
-  const deleteNote = async (note: NotebookTreeItemClient): Promise<Result<boolean>> => {
-    if (!notebooks.value) {
-      const { t } = useI18n()
-      return { success: false, message: t('errors.notebookNotFound', { path: note.label }) }
-    }
+  const deleteNote = async (name: string, pathArray: string[], apiPath: string): Promise<Result<boolean>> => {
     try {
-      const resp = await $fetch<boolean>(`/api/note/${note.apiPath}`, {
+      const resp = await $fetch<boolean>(`/api/note/${apiPath}`, {
         method: 'DELETE'
       })
 
-      removeItemFromTree(notebooks.value, note)
+      removeItemFromTree(name, pathArray)
 
       return {
         success: true,
@@ -252,18 +251,13 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
-  const deleteNotebook = async (notebook: NotebookTreeItemClient): Promise<Result<boolean>> => {
-    if (!notebooks.value) {
-      const { t } = useI18n()
-      return { success: false, message: t('errors.notebookNotFound', { path: notebook.label }) }
-    }
-
+  const deleteNotebook = async (name: string, pathArray: string[], apiPath: string): Promise<Result<boolean>> => {
     try {
-      const resp = await $fetch<boolean>(`/api/notebook/${notebook.apiPath}`, {
+      const resp = await $fetch<boolean>(`/api/notebook/${apiPath}`, {
         method: 'DELETE'
       })
 
-      removeItemFromTree(notebooks.value, notebook)
+      removeItemFromTree(name, pathArray)
 
       return {
         success: true,
@@ -279,27 +273,22 @@ export const useNotebookStore = defineStore('notebook', () => {
   }
 
   const renameNotebook = async (
-    notebook: NotebookTreeItemClient,
-    newNotebookName: string
-  ): Promise<Result<NotebookTreeItemClient>> => {
-    if (!notebooks.value) {
-      const { t } = useI18n()
-      return { success: false, message: t('errors.notebookNotFound', { path: notebook.label }) }
-    }
-
+    apiPath: string,
+    newNotebookName: string,
+    originalName: string,
+    originalPathArray: string[]
+  ): Promise<Result<RenameTreeItem>> => {
     try {
-      const resp = await $fetch<RenameTreeItem>(`/api/notebook/${notebook.apiPath}`, {
+      const resp = await $fetch<RenameTreeItem>(`/api/notebook/${apiPath}`, {
         method: 'PUT',
         body: {
           newName: newNotebookName
         }
       })
 
-      const replacedItem = { ...notebook, ...resp }
+      replaceItemInTree(originalName, originalPathArray, resp)
 
-      replaceItemInTree(notebooks.value, notebook, replacedItem)
-
-      return { success: true, data: replacedItem }
+      return { success: true, data: resp }
     } catch (err) {
       const error = (err as FetchError).data.message
       return { success: false, message: error }
@@ -307,27 +296,22 @@ export const useNotebookStore = defineStore('notebook', () => {
   }
 
   const renameNote = async (
-    note: NotebookTreeItemClient,
-    newNoteName: string
-  ): Promise<Result<NotebookTreeItemClient>> => {
-    if (!notebooks.value) {
-      const { t } = useI18n()
-      return { success: false, message: t('errors.noteNotFound', { path: note.label }) }
-    }
-
+    apiPath: string,
+    newNoteName: string,
+    originalName: string,
+    originalPathArray: string[]
+  ): Promise<Result<RenameTreeItem>> => {
     try {
-      const resp = await $fetch<RenameTreeItem>(`/api/note/${note.apiPath}`, {
+      const resp = await $fetch<RenameTreeItem>(`/api/note/${apiPath}`, {
         method: 'PUT',
         body: {
           newName: newNoteName
         }
       })
 
-      const replacedItem = { ...note, ...resp }
+      replaceItemInTree(originalName, originalPathArray, resp)
 
-      replaceItemInTree(notebooks.value, note, replacedItem)
-
-      return { success: true, data: replacedItem }
+      return { success: true, data: resp }
     } catch (err) {
       const error = (err as FetchError).data.message
       return { success: false, message: error }

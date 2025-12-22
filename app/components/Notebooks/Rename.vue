@@ -2,21 +2,22 @@
   <UModal
     v-model:open="open"
     :close="{ onClick: () => emit('close', false) }"
-    :aria-describedby="t('rename')"
+    :ui="{ description: 'hidden' }"
+    :description="t('renameItem', { item: originalName })"
     :title="t('rename')">
     <template #default>
       <slot name="trigger" />
     </template>
     <template #body>
-      <i18n-t v-if="item" keypath="renameItem" tag="h3" class="mb-2">
+      <i18n-t v-if="originalName" keypath="renameItem" tag="h3" class="mb-2">
         <template #item>
-          <span class="text-primary">{{ item.label }}</span>
+          <span class="text-primary">{{ originalName }}</span>
         </template>
       </i18n-t>
       <UForm :schema="NewFileFolderSchema" :state="state" class="w-full" @submit="onSubmit">
         <UFormField :label="t('newName')" name="name" class="w-full">
           <div class="flex w-full flex-col items-center gap-4">
-            <UInput v-model="state.name" class="w-full" :placeholder="t('renameItem', { item: item?.label })" />
+            <UInput v-model="state.name" class="w-full" :placeholder="t('renameItem', { item: originalName })" />
             <div class="flex w-full flex-row place-content-end items-center gap-4">
               <UButton type="submit" color="warning" :disabled="isRenaming">
                 {{ t('rename') }}
@@ -47,8 +48,14 @@
 
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui'
+import { description } from 'valibot'
 
-const { item } = defineProps<{ item: NotebookTreeItem }>()
+const { originalName, originalPathArray, originalAPIPath } = defineProps<{
+  originalName: string
+  originalPathArray: string[]
+  originalAPIPath: string
+}>()
+
 const { t } = useI18n()
 
 const open = ref(false)
@@ -61,16 +68,21 @@ const isRenaming = ref(false)
 const renameError: Ref<null | string> = ref(null)
 
 const state = reactive({
-  name: item.label
+  name: originalName
 })
 
 async function onSubmit(event: FormSubmitEvent<NewName>) {
   isRenaming.value = true
-  const renamedResp = await notebookStore.renameNotebook(item, event.data.name)
+  const renamedResp = await notebookStore.renameNotebook(
+    originalAPIPath,
+    event.data.name,
+    originalName,
+    originalPathArray
+  )
   if (renamedResp.success) {
     toast.add({
       title: t('success'),
-      description: t('renamedItem', { item: item.label, newName: renamedResp.data.label }),
+      description: t('renamedItem', { item: originalName, newName: renamedResp.data.label }),
       color: 'success'
     })
     renameError.value = null

@@ -20,7 +20,12 @@ const items: DropdownMenuItem[][] = [
       class: 'cursor-pointer',
       onSelect: () => {
         const modal = overlay.create(LazyNotesRename)
-        modal.open({ item })
+        modal.open({
+          originalName: item.label,
+          originalPathArray: item.pathArray,
+          originalAPIPath: item.apiPath,
+          isMarkdown: item.isMarkdown ?? false
+        })
       }
     },
     {
@@ -29,7 +34,7 @@ const items: DropdownMenuItem[][] = [
       class: 'cursor-pointer',
       onSelect: () => {
         const modal = overlay.create(LazyNotesShare)
-        modal.open({ note: item })
+        modal.open({ name: item.label, apiPath: item.apiPath })
       }
     }
   ],
@@ -41,7 +46,7 @@ const items: DropdownMenuItem[][] = [
       class: 'cursor-pointer',
       onSelect: () => {
         const modal = overlay.create(LazyCommonDelete)
-        modal.open({ item })
+        modal.open({ name: item.label, pathArray: item.pathArray, apiPath: item.apiPath, isNote: item.isNote })
       }
     }
   ]

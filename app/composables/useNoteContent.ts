@@ -10,7 +10,7 @@ export interface UseNoteContentReturn {
   updated: Ref<Date | null>
   savingState: Ref<SavingState>
   loadingState: Ref<SavingState>
-  note: string
+  name: string
   pathArray: string[]
   apiPath: string
   fetchMarkdown: () => Promise<void>
@@ -30,7 +30,7 @@ export const useNoteContent = (): UseNoteContentReturn => {
       ? [route.params.note]
       : []
 
-  const note = pathArray.at(-1) ?? ''
+  const name = pathArray.at(-1) ?? ''
   const apiPath = notePathArrayJoiner(pathArray)
 
   // Reactive state
@@ -45,7 +45,7 @@ export const useNoteContent = (): UseNoteContentReturn => {
    * Validates that required parameters are present
    */
   const validateParams = (): boolean => {
-    if (!note || pathArray.length === 0) {
+    if (!name || pathArray.length === 0) {
       error.value = t('errors.missingNotebookOrNote')
       savingState.value = 'error'
       return false
@@ -192,8 +192,8 @@ export const useNoteContent = (): UseNoteContentReturn => {
     const blob = new Blob([markdownText], { type: isMD.value ? 'text/markdown' : 'text/plain' })
 
     const formData = new FormData()
-    formData.append('file', blob, note) // The file to upload
-    formData.append('filename', note) // The filename to use when saving
+    formData.append('file', blob, name) // The file to upload
+    formData.append('filename', name) // The filename to use when saving
 
     try {
       // @ts-expect-error PATCH is perfectly fine - no idea why its freaking out
@@ -221,7 +221,7 @@ export const useNoteContent = (): UseNoteContentReturn => {
     updated,
     savingState,
     pathArray,
-    note,
+    name,
     apiPath,
     fetchMarkdown,
     loadingState

@@ -1,17 +1,17 @@
 <template>
   <UModal
     v-model:open="open"
-    :ui="{ content: 'max-w-2xl' }"
+    :ui="{ content: 'max-w-2xl', description: 'hidden' }"
+    :description="t('shareNote', { note: name })"
     :close="{ onClick: () => emit('close', false) }"
-    :aria-describedby="t('share')"
     :title="t('share')">
     <template #default>
       <slot name="trigger" />
     </template>
     <template #body>
-      <i18n-t v-if="note" keypath="shareNote" tag="h3" class="mb-2">
+      <i18n-t v-if="name" keypath="shareNote" tag="h3" class="mb-2">
         <template #note>
-          <span class="text-primary">{{ note.label }}</span>
+          <span class="text-primary">{{ name }}</span>
         </template>
       </i18n-t>
       <UForm v-if="!shareLink" :state="state" class="w-full" @submit="onSubmit">
@@ -61,7 +61,7 @@ import { useClipboard } from '@vueuse/core'
 
 const { copy, copied, isSupported } = useClipboard()
 
-const { note } = defineProps<{ note: NotebookTreeItemClient }>()
+const { name, apiPath } = defineProps<{ name: string; apiPath: string }>()
 const { t } = useI18n()
 
 const emit = defineEmits<{ close: [boolean] }>()
@@ -78,7 +78,7 @@ const shareLink: Ref<string | null> = ref(null)
 
 async function onSubmit(event: FormSubmitEvent<NewNotebook>) {
   try {
-    const shareResp = await $fetch<Result<string>>(`/api/share/${note.apiPath}`, {
+    const shareResp = await $fetch<Result<string>>(`/api/share/${apiPath}`, {
       method: 'POST',
       body: {
         name: event.data.name
