@@ -71,6 +71,7 @@
   "toggleEdit": "Toggle edit mode",
   "toggleMetadata": "Toggle metadata",
   "errors": {
+    "unableToAccessFile": "Unable to access file!",
     "failedNotebookLoad": "Failed to load notebook children",
     "notebookPathTooLong": "Notebook name is too long. The full path exceeds the maximum allowed length of {maxLength} characters.",
     "invalidNotebookPath": "Invalid notebook path",

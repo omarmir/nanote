@@ -13,7 +13,7 @@
             size="md"
             :aria-label="t('toggleEdit')"
             :title="t('toggleEdit')"
-            @click="$emit('edit')" />
+            @click="$emit('readonly')" />
         </div>
         <ThemePicker />
         <UButton
@@ -44,5 +44,5 @@ const { t } = useI18n()
 
 const settingsStore = useSettingsStore()
 
-defineEmits(['edit', 'share', 'pdf', 'delete', 'rename', 'readonly'])
+defineEmits(['share', 'pdf', 'delete', 'rename', 'readonly'])
 </script>

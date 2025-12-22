@@ -1,7 +1,7 @@
 <template>
   <Milkdown
     class="milkdown-editor"
-    :class="{ 'focus': isFocus, disabled, 'para-spaced': settingsStore.settings.isParagraphSpaced }" />
+    :class="{ focus: isFocus, disabled, 'para-spaced': settingsStore.settings.isParagraphSpaced }" />
 </template>
 
 <script setup lang="ts">
@@ -29,6 +29,8 @@ const { disabled, isFocus, apiPath, ln } = defineProps<{
   ln?: number
 }>()
 
+const { t } = useI18n()
+
 const customUploader = apiPath ? createUploader(apiPath) : null
 
 const settingsStore = useSettingsStore()
@@ -39,7 +41,8 @@ useEditor((root) => {
     root,
     defaultValue: model.value,
     features: {
-      [Crepe.Feature.Latex]: true
+      [Crepe.Feature.Latex]: true,
+      [Crepe.Feature.BlockEdit]: !disabled
     },
     featureConfigs: {
       'block-edit': {
@@ -86,30 +89,30 @@ useEditor((root) => {
       })
 
       if (apiPath && customUploader) {
-        ctx.update(imageBlockConfig.key, defaultConfig => ({
+        ctx.update(imageBlockConfig.key, (defaultConfig) => ({
           ...defaultConfig,
           onUpload: async (file: File) => onUpload(file, apiPath)
         }))
 
-        ctx.update(inlineImageConfig.key, prev => ({
+        ctx.update(inlineImageConfig.key, (prev) => ({
           ...prev,
           onUpload: async (file: File) => onUpload(file, apiPath)
         }))
 
-        ctx.update(uploadConfig.key, prev => ({
+        ctx.update(uploadConfig.key, (prev) => ({
           ...prev,
           uploader: customUploader
         }))
 
-        ctx.update(filePickerConfig.key, prev => ({
+        ctx.update(filePickerConfig.key, (prev) => ({
           ...prev,
           onUpload: async (file: File) => onUpload(file, apiPath),
           toCheckUpload: async (url: string) => toCheckUploader(url),
-          failedCheckMessage: 'Unable to access file!'
+          failedCheckMessage: t('errors.unableToAccessFile')
         }))
       }
 
-      ctx.update(editorViewOptionsCtx, prev => ({
+      ctx.update(editorViewOptionsCtx, (prev) => ({
         ...prev,
         editable: () => !disabled
       }))
@@ -224,5 +227,9 @@ milkdown-file-picker[data-inline='false'] {
       @apply fill-red-500! dark:fill-red-800!;
     }
   }
+}
+
+.milkdown-editor.disabled .milkdown-block-handle {
+  display: none !important;
 }
 </style>
