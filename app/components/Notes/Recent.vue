@@ -8,12 +8,14 @@
         <UCard class="flex-1">
           <h3 class="flex flex-row items-center gap-x-2 font-bold">
             <FileIcon :name="note.name" :is-markdown="note.isMarkdown" />
-            <span v-if="note.isMarkdown">
-              {{ note.name.replace(/\.[^.]+$/, '') }}
-            </span>
-            <span v-else>
-              {{ note.name }}
-            </span>
+            <ULink raw :to="`/note/${note.apiPath}`" class="hover:text-primary">
+              <span v-if="note.isMarkdown">
+                {{ note.name.replace(/\.[^.]+$/, '') }}
+              </span>
+              <span v-else>
+                {{ note.name }}
+              </span>
+            </ULink>
           </h3>
           <div class="mt-1 flex flex-col gap-2 text-neutral-500">
             <small>
