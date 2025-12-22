@@ -5,6 +5,8 @@
         size="md"
         icon="i-lucide-swatch-book"
         color="neutral"
+        :aria-label="t('theme')"
+        :title="t('theme')"
         :variant="open ? 'soft' : 'ghost'"
         square
         :ui="{ leadingIcon: 'text-primary' }" />
@@ -16,6 +18,8 @@
 
         <div class="-mx-2 grid grid-cols-3 gap-1">
           <ThemeButton
+            :aria-label="t(`colours.${colour}`)"
+            :title="t(`colours.${colour}`)"
             v-for="colour in colours"
             :key="colour"
             :label="t(`colours.${colour}`)"

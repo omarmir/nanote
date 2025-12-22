@@ -1,7 +1,7 @@
 <template>
   <UDashboardPanel id="home">
     <template #header>
-      <TopBar :name="note" />
+      <TopBar :name="note" :note-opts="{ isReadOnly: false }" />
     </template>
     <template #body>
       <UAlert class="mb-4" color="error" variant="outline" v-if="error">
