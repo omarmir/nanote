@@ -6,7 +6,7 @@ export default withNuxt(
   // Your custom configs here
   ...vueI18n.configs['flat/recommended'],
   {
-    ignores: ['*.json', '.vscode/*', '!/src', 'data/*'],
+    ignores: ['**/*.json', '.vscode/*', '!/src', 'data/*'],
     rules: {
       'vue/max-attributes-per-line': 'off',
       'vue/html-closing-bracket-newline': 'off',
