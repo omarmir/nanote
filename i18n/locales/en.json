@@ -51,6 +51,7 @@
   "cancel": "Cancel",
   "shareNote": "Share {note} with secret URL",
   "shareNoteInstruction": "Generate a sharable link. Note that they will only be able to view the note only.",
+  "searchShared": "Search shared notes",
   "shareName": "Share name (optional)",
   "link": "Link",
   "copy": "Copy",
