@@ -48,7 +48,6 @@
 
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui'
-import { description } from 'valibot'
 
 const { originalName, originalPathArray, originalAPIPath } = defineProps<{
   originalName: string

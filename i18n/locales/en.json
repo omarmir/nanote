@@ -122,7 +122,10 @@
   "modes": {
     "light": "Light",
     "dark": "Dark",
-    "system": "System"
+    "system": "System",
+    "primary": "Primary",
+    "theme": "Theme",
+    "neutral": "@:colours.neutral"
   },
   "settings": {
     "navigation": {
