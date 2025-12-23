@@ -50,8 +50,8 @@ const isReadOnly = useState('isReadOnly', () => false)
 const router = useRouter()
 
 // Use the composable for all note content logic (including route extraction)
-const { content, isMD, error, updated, savingState, pathArray, name, fetchMarkdown, apiPath, loadingState } =
-  useNoteContent()
+const { content, isMD, error, updated, savingState, pathArray, name, fetchMarkdown, apiPath, loadingState }
+  = useNoteContent()
 
 // Fetch markdown content on component setup
 await fetchMarkdown()

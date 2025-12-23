@@ -5,7 +5,7 @@
       description="These informations will be displayed publicly."
       variant="naked"
       orientation="horizontal"
-      class="mb-4"></UPageCard>
+      class="mb-4" />
 
     <UPageCard variant="subtle">
       <USwitch
@@ -37,6 +37,7 @@
     </UPageCard>
   </UForm>
 </template>
+
 <script setup lang="ts">
 const store = useSettingsStore()
 const { t } = useI18n()

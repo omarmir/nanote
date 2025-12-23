@@ -51,6 +51,7 @@
     "view": "link:@milkdown/prose/view"
   },
   "devDependencies": {
+    "@intlify/eslint-plugin-vue-i18n": "^4.1.0",
     "@nuxt/eslint": "^1.10.0",
     "@types/content-disposition": "^0.5.8",
     "@types/node": "^24.10.1",
