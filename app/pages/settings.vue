@@ -1,12 +1,7 @@
 <template>
   <UDashboardPanel id="settings">
     <template #header>
-      <UDashboardNavbar :title="t('navigation.settings')">
-        <template #leading>
-          <UDashboardSidebarCollapse />
-        </template>
-      </UDashboardNavbar>
-
+      <TopBar :name="t('navigation.settings')" />
       <UDashboardToolbar>
         <!-- NOTE: The `-mx-1` class is used to align with the `DashboardSidebarCollapse` button here. -->
         <UNavigationMenu :items="links" highlight class="-mx-1 flex-1" />

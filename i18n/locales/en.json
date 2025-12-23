@@ -54,7 +54,6 @@
   "shareName": "Share name (optional)",
   "link": "Link",
   "copy": "Copy",
-  "settingsSubtitle": "Customize your nanote experience",
   "contentHere": "Enter your content here...",
   "theme": "Theme",
   "github": "Follow this project or report issues on github",
@@ -130,6 +129,14 @@
       "general": "General",
       "shared": "Shared",
       "health": "Health"
+    },
+    "pageSubtitles": {
+      "general": "Customize your nanote experience",
+      "shared": "Manage shared notes",
+      "health": {
+        "hasWarnings": "Consider addressing these warnings!",
+        "noWarnings": "No warnings!"
+      }
     },
     "hideDateTime": {
       "value": "Hide note date and time",
