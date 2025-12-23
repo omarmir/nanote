@@ -52,19 +52,9 @@
   "shareNote": "Share {note} with secret URL",
   "shareNoteInstruction": "Generate a sharable link. Note that they will only be able to view the note only.",
   "shareName": "Share name (optional)",
-  "sharedNotes": "Shared Notes",
-  "sharedNotesInstructions": "Manage shared notes",
   "link": "Link",
   "copy": "Copy",
   "settingsSubtitle": "Customize your nanote experience",
-  "hideNoteDateTime": "Hide note date and time",
-  "hideNoteDateTimeHelp": "Don't show date and time in the user interface when listing notes",
-  "standardISOTime": "Use ISO standard date and time",
-  "standardISOTimeHelp": "Dates as YYYY-MM-DD and time using 24 hour clock as Thh:mm:ss",
-  "spacePara": "Space paragraphs",
-  "spaceParaHelp": "Automatically put some spacing between paragraphs",
-  "alwaysCodeView": "Use code view for all files?",
-  "alwaysCodeViewHelp": "Use a plain text editor view for all files including markdown files?",
   "contentHere": "Enter your content here...",
   "theme": "Theme",
   "github": "Follow this project or report issues on github",
@@ -134,5 +124,28 @@
     "light": "Light",
     "dark": "Dark",
     "system": "System"
+  },
+  "settings": {
+    "navigation": {
+      "general": "General",
+      "shared": "Shared",
+      "health": "Health"
+    },
+    "hideDateTime": {
+      "value": "Hide note date and time",
+      "help": "Don't show date and time in the user interface when listing notes"
+    },
+    "standardISOTime": {
+      "value": "Use ISO standard date and time",
+      "help": "Dates as YYYY-MM-DD and time using 24 hour clock as Thh:mm:ss"
+    },
+    "spacePara": {
+      "value": "Space paragraphs",
+      "help": "Automatically put some spacing between paragraphs"
+    },
+    "alwaysCodeView": {
+      "value": "Use code view for all files?",
+      "help": "Use a plain text editor view for all files including markdown files?"
+    }
   }
 }
