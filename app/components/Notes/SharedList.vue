@@ -4,7 +4,8 @@
       <div class="flex min-w-0 items-center gap-3">
         <div class="min-w-0 text-sm">
           <p class="text-highlighted truncate font-medium">
-            {{ note.name }}
+            <span v-if="note.name">{{ note.name }}</span>
+            <span v-else>{{ note.key }}</span>
           </p>
           <p class="text-muted truncate">
             {{ note.path }}
@@ -13,30 +14,22 @@
       </div>
 
       <div class="flex items-center gap-3">
-        <UButton
+        <CommonStatusedButton
+          icon="i-lucide-copy"
           v-if="isSupported"
           size="sm"
           :label="t('copy')"
-          @click="copyLink(note.key)"
+          :async-fn="() => copyLink(note.key)"
           color="primary"
-          variant="soft">
-          <template #leading>
-            <CommonStatusIcon :state="isCopied" icon="i-lucide-copy" />
-          </template>
-        </UButton>
-        <UButton
+          variant="soft"></CommonStatusedButton>
+        <CommonStatusedButton
           v-if="isSupported"
           size="sm"
+          icon="i-lucide-trash-2"
           :label="t('delete')"
-          @click="deletedShared(note.key)"
-          color="primary"
-          variant="soft">
-          <template #leading>
-            <CommonStatusIcon
-              :state="isCopied"
-              :icon="{ idle: 'i-lucide-copy', success: 'i-lucide-circle-check', error: 'i-lucide-circle-x' }" />
-          </template>
-        </UButton>
+          :async-fn="() => deletedShared(note.key, note.name)"
+          color="error"
+          variant="soft"></CommonStatusedButton>
       </div>
     </li>
   </ul>
@@ -45,37 +38,55 @@
 <script setup lang="ts">
 import type { SelectShared } from '~~/server/db/schema'
 import { useClipboard } from '@vueuse/core'
+import { FetchError } from 'ofetch'
 
-const { copy, copied, isSupported } = useClipboard()
+const { searchString } = defineProps<{ searchString: string }>()
+
+const { copy, isSupported } = useClipboard()
 const { t } = useI18n()
+const toast = useToast()
 
-const {
-  data: notes,
-  status,
-  error
-} = await useFetch<SelectShared[]>('/api/settings/shared', { method: 'GET', immediate: true })
-const origin = window.location.origin
+const { data, error } = await useFetch<SelectShared[]>('/api/settings/shared', {
+  method: 'GET',
+  immediate: true
+})
 
-const isDeleted: Ref<ActionStatus> = ref('idle')
-const deletedShared = (key: string) => {
-  isDeleted.value = ''
-  // data.value = data.value?.filter((sharedNote) => sharedNote.key !== key) ?? []
+const notes = ref([...(data.value ?? [])])
+
+watch(
+  () => searchString,
+  () => {
+    notes.value =
+      data.value?.filter((item) => item.name?.includes(searchString) || item.path.includes(searchString)) ?? []
+  }
+)
+
+const deletedShared = async (key: string, name: string | null): Promise<Result<boolean>> => {
+  try {
+    const deletingResp = await $fetch<boolean>(`/api/share/${key}`, { method: 'DELETE' })
+    if (deletingResp) {
+      toast.add({ title: t('success'), description: t('deleted', { item: name ?? key }), color: 'success' })
+      notes.value = notes.value?.filter((sharedNote) => sharedNote.key !== key) ?? []
+      return { success: true, data: true }
+    } else {
+      toast.add({ title: t('failure'), description: t('errors.failedDeleteShareLink'), color: 'error' })
+      return { success: false, message: t('errors.failedDeleteShareLink') }
+    }
+  } catch (err) {
+    const errorMsg = (err as FetchError).data.message
+    toast.add({ title: t('failure'), description: errorMsg, color: 'error' })
+    return { success: false, message: errorMsg }
+  }
 }
 
-const isCopied: Ref<ActionStatus> = ref('idle')
-const copyLink = async (shareKey: string) => {
+const copyLink = async (shareKey: string): Promise<Result<boolean>> => {
   const shareLink = `${window.location.origin}/share/${shareKey}`
-  if (!shareLink) return
   try {
     await copy(shareLink)
-    isCopied.value = 'success'
+    return { success: true, data: true }
   } catch (err) {
     console.error(err)
-    isCopied.value = 'error'
-  } finally {
-    setTimeout(() => {
-      isCopied.value = 'idle'
-    }, 5000)
+    return { success: false, message: err instanceof Error ? err.message : String(err) }
   }
 }
 </script>
