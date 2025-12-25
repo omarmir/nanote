@@ -7,16 +7,24 @@ export default defineEventHandlerWithError(async (event) => {
   const t = await useTranslation(event)
 
   if (!sharingKey)
-    return {
-      success: false,
-      message: t('errors.sharingKeyRequired')
-    }
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Bad Request',
+      message: t('errors.shareNoteNotSpecified')
+    })
 
   try {
-    await db.delete(shared).where(eq(shared.key, sharingKey))
-    console.log('del')
-    // Return success response with the generated key
-    return true
+    const deleteNote = await db.delete(shared).where(eq(shared.key, sharingKey))
+
+    if (deleteNote.rowsAffected === 1) {
+      return true
+    } else {
+      throw createError({
+        statusCode: 500,
+        statusMessage: 'Internal Server Error',
+        message: t('errors.unexpectedDeleteCount', { count: deleteNote.rowsAffected })
+      })
+    }
   } catch (dbError) {
     console.error('Database error while deleting link:', dbError)
     // Handle potential database errors (e.g., connection issues, constraint violations)

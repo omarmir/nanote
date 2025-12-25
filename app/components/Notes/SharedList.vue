@@ -1,5 +1,12 @@
 <template>
   <ul role="list" class="divide-default divide-y">
+    <li v-if="error">
+      <UAlert
+        :title="t('failure')"
+        :description="error?.data.message ?? error?.message"
+        color="error"
+        class="rounded-t-none"></UAlert>
+    </li>
     <li v-for="note in notes" :key="note.id" class="flex items-center justify-between gap-3 px-4 py-3 sm:px-6">
       <div class="flex min-w-0 items-center gap-3">
         <div class="min-w-0 text-sm">
@@ -46,7 +53,7 @@ const { copy, isSupported } = useClipboard()
 const { t } = useI18n()
 const toast = useToast()
 
-const { data, error } = await useFetch<SelectShared[]>('/api/settings/shared', {
+const { data, error } = await useFetch<SelectShared[]>('/api/share', {
   method: 'GET',
   immediate: true
 })

@@ -86,6 +86,7 @@
     "unexpectedDeleteCount": "Expected to delete one share but deleted {count}.",
     "failedCreateShareLink": "Could not create share link for the note due to a database error.",
     "failedDeleteShareLink": "Could not delete share link for the note due to a database error.",
+    "failedToFetchShared": "Could not fetch shared notes due to a database error.",
     "missingFormData": "Missing note data, unable to update note.",
     "noFileUploaded": "No data associated with the uplaoded file, unable to update note.",
     "failedFetchNote": "Failed to fetch note: {message}",
@@ -94,8 +95,7 @@
     "failedReadContent": "Failed to read content: {message}",
     "streamLocked": "Stream is already being read by another process",
     "streamAborted": "Stream was cancelled or aborted",
-    "unableToSave": "Unable to save: {message}",
-    "sharingKeyRequired": "Sharing key is rquired"
+    "unableToSave": "Unable to save: {message}"
   },
   "colours": {
     "red": "Red",
