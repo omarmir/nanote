@@ -160,5 +160,15 @@
       "value": "Use code view for all files?",
       "help": "Use a plain text editor view for all files including markdown files?"
     }
+  },
+  "health": {
+    "ok": "OK",
+    "warning": "Warnings",
+    "warnings": {
+      "secretKey": "Secret key should be changed from the default.",
+      "storageLocation": "Storage location is not set, this could result in loss of notes.",
+      "uploadsLocation": "Uploads location is not set, this could result in loss of uploads.",
+      "configPath": "Config location is not set, this could result in loss of settings and shared notes."
+    }
   }
 }

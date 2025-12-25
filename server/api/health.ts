@@ -3,26 +3,22 @@ import { envNotesPath, envUploadsPath, envConfigPath } from '~~/server/folder'
 import { defineEventHandlerWithError } from '../wrappers/error'
 
 type Health = {
-  status: 'OK'
-  message: 'Service is running'
+  status: 'OK' | 'Warnings'
   warnings: string[]
 }
 
-export default defineEventHandlerWithError(async (_event): Promise<Health> => {
+export default defineEventHandlerWithError(async (event): Promise<Health> => {
   const warnings = []
 
-  if (SECRET_KEY === 'nanote') warnings.push('Secret key should be changed from the default.')
-  if (!envNotesPath)
-    if (!envNotesPath) warnings.push('Storage location is not set, this could result in loss of notes.')
-  if (!envUploadsPath)
-    if (!envUploadsPath) warnings.push('Uploads location is not set, this could result in loss of uploads.')
+  const t = await useTranslation(event)
 
-  if (!envConfigPath)
-    warnings.push('Config location is not set, this could result in loss of settings and shared notes.')
+  if (SECRET_KEY === 'nanote') warnings.push(t('health.warnings.secretKey'))
+  if (!envNotesPath) if (!envNotesPath) warnings.push(t('health.warnings.storageLocation'))
+  if (!envUploadsPath) if (!envUploadsPath) warnings.push(t('health.warnings.uploadsLocation'))
+  if (!envConfigPath) warnings.push(t('health.warnings.configPath'))
 
   return {
     status: 'OK',
-    message: 'Service is running',
     warnings
   }
 })
