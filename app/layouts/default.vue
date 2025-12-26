@@ -86,7 +86,8 @@ const items = computed<NavigationMenuItem[]>(() => [
     },
     {
       label: t('navigation.guide'),
-      icon: 'i-lucide-circle-question-mark'
+      icon: 'i-lucide-circle-question-mark',
+      to: '/guide'
     },
     {
       label: t('navigation.logout'),

@@ -130,6 +130,25 @@
     "theme": "Theme",
     "neutral": "@:colours.neutral"
   },
+  "guide": {
+    "tips": {
+      "title": "Markdown tips",
+      "subtitle": "Nanote is a simple, powerful markdown editor. Here's how to get started on using markdown syntax"
+    },
+    "directives": {
+      "title": "Nanote Directives",
+      "subtitle": "Nanote extends markdown to allow for some quick actions",
+      "actions": {
+        "file": "Create an inline file picker allowing you to upload files",
+        "fileBlock": "Create an file block (a larger icon taking up the whole line) picker allowing you to upload files",
+        "today": "Will replace the directive with todays's date",
+        "now": "Will replace the directive with todays's date and time",
+        "tomorrow": "Will replace the directive with tomorrow's date",
+        "yesterday": "Will replace the directive with yesterday's date",
+        "time": "Will replace the directive with the current time"
+      }
+    }
+  },
   "settings": {
     "navigation": {
       "general": "General",
