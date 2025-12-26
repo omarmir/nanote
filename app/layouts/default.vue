@@ -63,8 +63,26 @@ const items = computed<NavigationMenuItem[]>(() => [
     },
     {
       label: t('navigation.settings'),
-      icon: 'i-lucide-settings-2',
-      to: '/settings'
+      icon: 'i-lucide-settings',
+      to: '/settings',
+      children: [
+        {
+          label: t('settings.navigation.general'),
+          icon: 'i-lucide-settings-2',
+          to: '/settings',
+          exact: true
+        },
+        {
+          label: t('settings.navigation.shared'),
+          icon: 'i-lucide-share-2',
+          to: '/settings/shared'
+        },
+        {
+          label: t('settings.navigation.health'),
+          icon: 'i-lucide-activity',
+          to: '/settings/health'
+        }
+      ]
     },
     {
       label: t('navigation.guide'),
