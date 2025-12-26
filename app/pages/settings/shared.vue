@@ -3,8 +3,7 @@
     :title="t('settings.navigation.shared')"
     :description="t('settings.pageSubtitles.shared')"
     variant="naked"
-    orientation="horizontal"
-    class="mb-4"></UPageCard>
+    orientation="horizontal"></UPageCard>
 
   <UPageCard
     variant="subtle"

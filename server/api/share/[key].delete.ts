@@ -2,7 +2,6 @@ import { defineEventHandlerWithError } from '../../wrappers/error'
 import { shared } from '~~/server/db/schema'
 
 export default defineEventHandlerWithError(async (event) => {
-  await waitforme(3000)
   const sharingKey = decodeURIComponent(event.context.params?.key ?? '')
   const t = await useTranslation(event)
 

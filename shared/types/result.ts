@@ -16,3 +16,8 @@ export type APIError = Partial<H3Error<unknown>> & {
 }
 
 export type ActionStatus = 'idle' | 'success' | 'error' | 'pending'
+
+export type Health = {
+  status: 'OK' | 'Warnings'
+  warnings: string[]
+}

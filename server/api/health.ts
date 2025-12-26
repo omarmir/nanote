@@ -2,11 +2,6 @@ import SECRET_KEY from '~~/server/key'
 import { envNotesPath, envUploadsPath, envConfigPath } from '~~/server/folder'
 import { defineEventHandlerWithError } from '../wrappers/error'
 
-type Health = {
-  status: 'OK' | 'Warnings'
-  warnings: string[]
-}
-
 export default defineEventHandlerWithError(async (event): Promise<Health> => {
   const warnings = []
 
@@ -18,7 +13,7 @@ export default defineEventHandlerWithError(async (event): Promise<Health> => {
   if (!envConfigPath) warnings.push(t('health.warnings.configPath'))
 
   return {
-    status: 'OK',
+    status: warnings.length > 0 ? 'Warnings' : 'OK',
     warnings
   }
 })
