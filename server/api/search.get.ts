@@ -1,4 +1,4 @@
-import path, { resolve } from 'node:path'
+import { resolve } from 'node:path'
 import type { ExecException, ExecSyncOptionsWithStringEncoding } from 'node:child_process'
 import { execSync } from 'node:child_process'
 import escape from 'shell-escape'
@@ -116,13 +116,7 @@ export default defineEventHandlerWithError(async (event): Promise<USearchResult[
       .sort((a, b) => b.score - a.score)
       .slice(0, MAX_RESULTS)
 
-    // Deduplicate and sort
-    // const sortedContentResults = Array.from(new Set(results.map((r) => JSON.stringify(r))))
-    //   .map((r) => JSON.parse(r) as USearchResult)
-    //   .sort((a, b) => b.score - a.score)
-    //   .slice(0, MAX_RESULTS)
-
-    // sortedContentResults.push(...searchResults.map((r) => ({ ...r, lineNum: 0, score: r.score ?? 0 }))) // Folders returned from search wrapper have no line number, we can fix this later
+    sortedContentResults.push(...searchResults.map((r) => ({ ...r, lineNum: 0, score: r.score ?? 0 })))
     return sortedContentResults
   })(event)
 })

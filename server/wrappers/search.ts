@@ -45,7 +45,7 @@ export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(h
 
     try {
       const output = execSync(command, execOptions) as string
-      const lines = output.split('\n').filter(line => line.trim() !== '')
+      const lines = output.split('\n').filter((line) => line.trim() !== '')
 
       for (const line of lines) {
         const [type, full] = line.split(':', 2)
@@ -61,14 +61,29 @@ export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(h
 
         const queryWords = splitWords(rawQuery)
         const score = matchScore(queryWords, baseName)
-        results.push({
-          notebook: relativePath.slice(0, -1),
-          name: baseName,
-          matchType: isFolder ? 'folder' : 'note',
-          snippet: `${isFolder ? 'Folder' : 'File'} name contains "${rawQuery}"`,
-          score: score,
-          lineNum: undefined
-        })
+        const pathArray = relativePath.slice(0, -1)
+
+        if (isFolder) {
+          results.push({
+            pathArray: [...pathArray, baseName],
+            name: baseName,
+            matchType: 'folder',
+            snippet: t('folderNameContains', { name: rawQuery }),
+            score: score,
+            lineNum: undefined,
+            childrenLoaded: false,
+            children: [{ pathArray: [''], name: '', snippet: '', score: 0, lineNum: undefined, matchType: 'loading' }]
+          })
+        } else {
+          results.push({
+            pathArray: [...pathArray, baseName],
+            name: baseName,
+            matchType: 'note',
+            snippet: t('fileNameContains', { name: rawQuery }),
+            score: score,
+            lineNum: undefined
+          })
+        }
       }
     } catch (error) {
       console.error(error)
@@ -81,8 +96,8 @@ export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(h
     }
 
     // Deduplicate and sort by score (descending), and limit to MAX_RESULTS (here, 5)
-    const searchResults: USearchResult[] = Array.from(new Set(results.map(r => JSON.stringify(r))))
-      .map(r => JSON.parse(r) as USearchResult)
+    const searchResults: USearchResult[] = Array.from(new Set(results.map((r) => JSON.stringify(r))))
+      .map((r) => JSON.parse(r) as USearchResult)
       .sort((a, b) => b.score - a.score)
       .slice(0, MAX_RESULTS)
 

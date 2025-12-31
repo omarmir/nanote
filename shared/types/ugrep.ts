@@ -11,11 +11,18 @@ export type UgrepResult = {
 export type USearchResult = {
   pathArray: string[]
   name: string
-  matchType: 'folder' | 'note' | 'content'
   snippet: string
   score: number
   lineNum: number | undefined
-}
-
+} & (
+  | {
+      matchType: 'note' | 'content' | 'loading'
+    }
+  | {
+      matchType: 'folder'
+      childrenLoaded: boolean
+      children: USearchResult[]
+    }
+)
 export const MAX_RESULTS = 10
 export const CONTEXT_CHARS = 50

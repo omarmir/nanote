@@ -12,6 +12,9 @@
 
       <template #default="{ collapsed }">
         <UDashboardSearch
+          :title="t('search')"
+          :placeholder="t('searchAll')"
+          spellcheck="false"
           v-model:search-term="search"
           shortcut="meta_k"
           :groups="groups"
@@ -48,7 +51,7 @@ const { search, results, searchStatus, error } = useSearch()
 const groups = computed(() => [
   {
     id: 'search-notes',
-    label: search.value ? `Notes matching “${search.value}”...` : 'Notes',
+    label: t('searchResults', { searchTerm: search.value }),
     items: results.value || [],
     ignoreFilter: true
   }
