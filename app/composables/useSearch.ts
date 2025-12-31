@@ -36,7 +36,8 @@ export function useSearch() {
             suffix: item.snippet,
             score: item.score,
             type: item.matchType,
-            pathArray: item.pathArray
+            pathArray: item.pathArray,
+            to: item.matchType !== 'folder' ? `/note/${item.pathArray.join('/')}?ln=${item.lineNum}` : undefined
           }
         }) ?? []
       )

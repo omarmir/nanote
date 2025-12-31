@@ -16,7 +16,12 @@
           shortcut="meta_k"
           :groups="groups"
           :loading="searchStatus === 'pending'" />
-        <UDashboardSearchButton :label="collapsed ? undefined : t('search')">
+        <UDashboardSearchButton
+          :label="collapsed ? undefined : t('search')"
+          color="neutral"
+          variant="outline"
+          block
+          :square="collapsed">
           <template v-if="!collapsed" #trailing>
             <div class="ms-auto flex items-center gap-0.5">
               <UKbd value="meta" variant="subtle" />
