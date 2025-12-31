@@ -9,8 +9,8 @@ export type UgrepResult = {
 }
 
 export type USearchResult = {
-  notebook: string[]
-  name: string | null
+  pathArray: string[]
+  name: string
   matchType: 'folder' | 'note' | 'content'
   snippet: string
   score: number
