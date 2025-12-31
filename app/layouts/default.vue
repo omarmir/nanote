@@ -24,21 +24,24 @@
       </template>
 
       <template #default="{ collapsed }">
-        <UButton
-          :label="collapsed ? undefined : t('search')"
-          icon="i-lucide-search"
-          color="neutral"
-          variant="outline"
-          block
-          :square="collapsed">
-          <template v-if="!collapsed" #trailing>
-            <div class="ms-auto flex items-center gap-0.5">
-              <UKbd value="meta" variant="subtle" />
-              <UKbd value="K" variant="subtle" />
-            </div>
+        <SearchModal>
+          <template #trigger>
+            <UButton
+              :label="collapsed ? undefined : t('search')"
+              icon="i-lucide-search"
+              color="neutral"
+              variant="outline"
+              block
+              :square="collapsed">
+              <template v-if="!collapsed" #trailing>
+                <div class="ms-auto flex items-center gap-0.5">
+                  <UKbd value="meta" variant="subtle" />
+                  <UKbd value="K" variant="subtle" />
+                </div>
+              </template>
+            </UButton>
           </template>
-        </UButton>
-
+        </SearchModal>
         <UNavigationMenu :collapsed :items="items" orientation="vertical" color="primary" />
         <NotebooksSidebar :collapsed />
       </template>
