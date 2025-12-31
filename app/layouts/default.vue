@@ -18,7 +18,11 @@
           v-model:search-term="search"
           shortcut="meta_k"
           :groups="groups"
-          :loading="searchStatus === 'pending'" />
+          :loading="searchStatus === 'pending'">
+          <template #item-trailing="{ item }">
+            {{ item }}
+          </template>
+        </UDashboardSearch>
         <UDashboardSearchButton
           :label="collapsed ? undefined : t('search')"
           color="neutral"

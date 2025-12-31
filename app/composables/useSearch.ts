@@ -1,25 +1,14 @@
 import { watchDebounced } from '@vueuse/core'
-import { ref } from 'vue'
+import { ref, triggerRef } from 'vue'
 import type { Ref } from 'vue'
-import type { USearchResult } from '#shared/types/ugrep'
+import type { SearchMatchType, USearchResult } from '#shared/types/ugrep'
 import type { CommandPaletteItem } from '@nuxt/ui'
 
 type SearchDisplayResult = CommandPaletteItem & {
   score: number
-
+  type: SearchMatchType
   pathArray: string[]
-} & (
-    | {
-        type: 'folder'
-        childrenLoaded: boolean
-        children: USearchResult[]
-      }
-    | {
-        type: 'note' | 'content' | 'loading'
-        childrenLoaded: undefined
-        children: undefined
-      }
-  )
+}
 
 export function useSearch() {
   const search: Ref<string> = ref('')
@@ -79,7 +68,7 @@ export function useSearch() {
     }
   })
 
-  const findNotebookByPath = (pathArray: string[]): SearchDisplayResult | null => {
+  const findItemByPathArray = (pathArray: string[]): SearchDisplayResult | null => {
     if (!results.value || pathArray.length === 0) return null
 
     // We treat the current level as an array of SearchDisplayResult
@@ -98,15 +87,7 @@ export function useSearch() {
 
       // If we aren't at the last segment of the path, we need to go deeper
       if (i < pathArray.length - 1) {
-        // Check if it's a folder and has children
-        if (match.type === 'folder' && match.children) {
-          // Here we must cast because USearchResult[] needs to be
-          // viewed as SearchDisplayResult[] for the next iteration
-          currentLevel = match.children as unknown as SearchDisplayResult[]
-        } else {
-          // We need to go deeper but this item isn't a folder or has no children
-          return null
-        }
+        return match.type === 'folder' ? match : null
       }
     }
 
@@ -115,21 +96,38 @@ export function useSearch() {
 
   const updateChildren = async (originalPathArray: string[]): Promise<void> => {
     const loadChilren = await $fetch<NotebookTreeItem[]>(`/api/notebook/${originalPathArray.join('/')}`)
-    const item = findNotebookByPath(originalPathArray)
-
+    const item = findItemByPathArray(originalPathArray)
     if (item && loadChilren) {
       item.childrenLoaded = true
-      item.children = loadChilren.map((child) => {
-        return {
-          pathArray: child.pathArray,
-          name: child.label,
+      item.children = [
+        {
+          pathArray: '',
+          name: 'test',
           matchType: 'note',
           snippet: 'Test',
           score: 0,
           lineNum: 0
         }
-      })
+      ]
+      // loadChilren.map((child) => {
+      //   return {
+      //     pathArray: child.pathArray,
+      //     name: child.label,
+      //     matchType: 'note',
+      //     snippet: 'Test',
+      //     score: 0,
+      //     lineNum: 0
+      //   }
+      // })
+
+      if (results.value) {
+        results.value = [...results.value]
+      }
     }
+
+    console.log('item', item)
+
+    console.log('result', results)
   }
 
   watch(status, (newStatus) => {
@@ -151,7 +149,7 @@ export function useSearch() {
   watch(search, (newVal) => {
     searchStatus.value = 'pending'
     if (!newVal || newVal.length === 0) {
-      clear()
+      // clear()
     }
   })
 
@@ -162,7 +160,7 @@ export function useSearch() {
         query.value = { q: search.value }
         refresh()
       } else {
-        clear()
+        // clear()
       }
     },
     { debounce: 500 }
