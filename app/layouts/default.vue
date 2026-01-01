@@ -18,11 +18,7 @@
           v-model:search-term="search"
           shortcut="meta_k"
           :groups="groups"
-          :loading="searchStatus === 'pending'">
-          <template #item-trailing="{ item }">
-            {{ item }}
-          </template>
-        </UDashboardSearch>
+          :loading="searchStatus === 'pending'"></UDashboardSearch>
         <UDashboardSearchButton
           :label="collapsed ? undefined : t('search')"
           color="neutral"
@@ -50,16 +46,11 @@ import type { NavigationMenuItem } from '@nuxt/ui'
 const { t } = useI18n()
 const route = useRoute()
 
-const { search, results, searchStatus, error } = useSearch()
+const { search, results, searchStatus, error, groups } = useSearch()
 
-const groups = computed(() => [
-  {
-    id: 'search-notes',
-    label: t('searchResults', { searchTerm: search.value }),
-    items: results.value || [],
-    ignoreFilter: true
-  }
-])
+function onSelect(item: any) {
+  console.log(item)
+}
 
 const items = computed<NavigationMenuItem[]>(() => [
   [

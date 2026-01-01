@@ -70,10 +70,7 @@ export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(h
             matchType: 'folder',
             snippet: t('folderNameContains', { name: rawQuery }),
             score: score,
-            lineNum: undefined,
-            children: [
-              { pathArray: [''], name: 'Loading...', snippet: '', score: 0, lineNum: undefined, matchType: 'loading' }
-            ]
+            lineNum: undefined
           })
         } else {
           results.push({
