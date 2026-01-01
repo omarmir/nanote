@@ -100,15 +100,14 @@ export default defineEventHandlerWithError(async (event): Promise<USearchResult[
       })
     }
 
-    // const searchSortedResults = Array.from(new Set(results))
-
     const seen = new Set<string>()
     const dedupedResults = results.filter((r) => {
-      const key = `${r.pathArray.join('')}|${r.name}|${r.lineNum}`
+      const key = `${r.pathArray.join('')}:${r.lineNum}`
       if (seen.has(key)) return false
       seen.add(key)
       return true
     })
+
     const sortedContentResults = [
       ...dedupedResults,
       ...searchResults.map((r) => ({ ...r, lineNum: 0, score: r.score ?? 0 }))
@@ -116,7 +115,7 @@ export default defineEventHandlerWithError(async (event): Promise<USearchResult[
       .sort((a, b) => b.score - a.score)
       .slice(0, MAX_RESULTS)
 
-    sortedContentResults.push(...searchResults.map((r) => ({ ...r, lineNum: 0, score: r.score ?? 0 })))
+    // sortedContentResults.push(...searchResults.map((r) => ({ ...r, lineNum: 0, score: r.score ?? 0 })))
     return sortedContentResults
   })(event)
 })
