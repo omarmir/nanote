@@ -18,15 +18,7 @@
           spellcheck="false"
           shortcut="meta_k"
           :groups="groups"
-          :loading="searchStatus === 'pending'">
-          <template #item-leading="{ item }">
-            <UIcon
-              v-if="item.icon"
-              :name="item.icon"
-              class="size-5 shrink-0"
-              :class="`text-${item.chip?.color}`" />
-          </template>
-        </UDashboardSearch>
+          :loading="searchStatus === 'pending'"></UDashboardSearch>
         <UDashboardSearchButton
           :label="collapsed ? undefined : t('search')"
           color="neutral"
@@ -54,7 +46,7 @@ import type { NavigationMenuItem } from '@nuxt/ui'
 const { t } = useI18n()
 const route = useRoute()
 
-const { search, results, searchStatus, error, groups } = useSearch()
+const { search, searchStatus, error, groups } = useSearch()
 
 function onSelect(item: any) {
   console.log(item)

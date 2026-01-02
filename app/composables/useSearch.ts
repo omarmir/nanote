@@ -27,10 +27,7 @@ export function useSearch() {
         const base = {
           id,
           label: item.name,
-          suffix: item.snippet,
-          chip: {
-            color: item.score > 90 ? ('primary' as const) : item.score > 50 ? ('warning' as const) : ('error' as const)
-          }
+          suffix: item.snippet
         }
 
         // 2. Explicitly separate the branches of your union
