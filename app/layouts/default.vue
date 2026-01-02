@@ -18,7 +18,15 @@
           v-model:search-term="search"
           shortcut="meta_k"
           :groups="groups"
-          :loading="searchStatus === 'pending'"></UDashboardSearch>
+          :loading="searchStatus === 'pending'">
+          <template #item-leading="{ item }">
+            <UIcon
+              v-if="item.icon"
+              :name="item.icon"
+              class="size-5 shrink-0"
+              :class="`text-${item.chip?.color}`"></UIcon>
+          </template>
+        </UDashboardSearch>
         <UDashboardSearchButton
           :label="collapsed ? undefined : t('search')"
           color="neutral"

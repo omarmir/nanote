@@ -2,7 +2,6 @@ import { watchDebounced } from '@vueuse/core'
 import { ref } from 'vue'
 import type { Ref } from 'vue'
 import type { USearchResult } from '#shared/types/ugrep'
-import type { CommandPaletteItem, CommandPaletteGroup } from '@nuxt/ui'
 
 export function useSearch() {
   const { t } = useI18n()
@@ -28,14 +27,18 @@ export function useSearch() {
         const base = {
           id,
           label: item.name,
-          suffix: item.snippet
+          suffix: item.snippet,
+          chip: {
+            color: item.score > 90 ? ('primary' as const) : item.score > 50 ? ('warning' as const) : ('error' as const)
+          }
         }
 
         // 2. Explicitly separate the branches of your union
         if (item.matchType === 'folder') {
           return {
             ...base,
-            icon: 'i-lucide-book'
+            icon: 'i-lucide-book',
+            disabled: true
           }
         }
 
@@ -44,7 +47,6 @@ export function useSearch() {
           ...base,
           icon: item.matchType === 'note' ? 'i-lucide-file' : 'i-lucide-text',
           children: undefined,
-          onClick: () => {},
           to: `/note/${item.pathArray.join('/')}?ln=${item.lineNum}`
         }
       }) ?? []
