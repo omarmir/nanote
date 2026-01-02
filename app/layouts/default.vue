@@ -38,6 +38,9 @@ import type { NavigationMenuItem } from '@nuxt/ui'
 
 const { t } = useI18n()
 const route = useRoute()
+const router = useRouter()
+
+const { loggedIn, clear } = useUserSession()
 
 const items = computed<NavigationMenuItem[]>(() => [
   [
@@ -76,8 +79,14 @@ const items = computed<NavigationMenuItem[]>(() => [
       to: '/guide'
     },
     {
-      label: t('navigation.logout'),
-      icon: 'i-lucide-log-out'
+      label: loggedIn.value ? t('navigation.logout') : t('loginTitle'),
+      icon: loggedIn.value ? 'i-lucide-log-out' : 'i-lucide-key-round',
+      class: 'cursor-pointer',
+      onSelect: async (e: Event) => {
+        e.preventDefault()
+        await clear()
+        router.push('/login')
+      }
     }
   ]
 ])

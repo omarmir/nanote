@@ -1,24 +1,25 @@
 // server/middleware/auth.ts
 export default defineEventHandler(async event => {
   const { path } = event
-  const t = await useTranslation(event)
 
-  // 1. Define public paths (whitelist)
+  // 1. Immediate whitelist check (No async calls before this!)
   const isPublicApi =
     !path.startsWith('/api/') ||
+    path.startsWith('/api/_auth/') ||
     path === '/api/auth/login' ||
     path === '/api/health' ||
     path.startsWith('/api/share') ||
-    path.startsWith('/api/attachment/')
+    path.startsWith('/api/attachment/') ||
+    path.startsWith('/api/_nuxt_icon/')
 
   if (isPublicApi) return
 
-  // 2. Check for the session
-  // getUserSession handles the decryption and cookie parsing for you
+  // 2. Check session
   const session = await getUserSession(event)
 
-  // 3. If no user object exists in the session, they aren't logged in
   if (!session.user) {
+    // 3. ONLY call translation/extra logic if we are actually throwing an error
+    const t = await useTranslation(event)
     throw createError({
       statusCode: 401,
       message: t('errors.authRequired')

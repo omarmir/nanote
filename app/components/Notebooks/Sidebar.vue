@@ -31,7 +31,8 @@ const expanded = ref([])
 const openError: Ref<string | null> = ref(null)
 
 const toggle = async (item: NotebookTreeItemClient) => {
-  const resp = await notebookStore.toggleNotebook(item)
+  if (!notebookStore.notebooks) return
+  const resp = await notebookStore.toggleNotebook(item, notebookStore.notebooks)
   if (!resp.success) {
     openError.value = resp.message
   } else {

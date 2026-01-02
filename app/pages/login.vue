@@ -31,7 +31,7 @@ definePageMeta({
   layout: 'auth'
 })
 
-const { loggedIn, fetch } = useUserSession()
+const { fetch } = useUserSession()
 
 const error: Ref<null | string> = ref(null)
 
@@ -53,16 +53,9 @@ const onSubmit = async (event: FormSubmitEvent<{ secretKey: string }>) => {
     })
 
     if (login) {
-      // 1. Await the session update
       await fetch()
-
       error.value = null
-
-      // 2. Now this will reflect the updated state
-      console.log(loggedIn.value) // Should now be true
-
-      // 3. Usually, you'd navigate here
-      // await navigateTo('/dashboard')
+      await navigateTo('/')
     }
   } catch (e) {
     const err = e as FetchError

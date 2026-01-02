@@ -22,12 +22,4 @@ useHead({
     dir
   }
 })
-
-const settingsStore = useSettingsStore()
-const notebookStore = useNotebookStore()
-
-onMounted(async () => {
-  await settingsStore.loadSettings()
-  await notebookStore.fetchBooks()
-})
 </script>

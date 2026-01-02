@@ -13,7 +13,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     lazy: true,
     deep: true,
     transform: (books: NotebookTreeItem[]): NotebookTreeItemClient[] => {
-      return books.map((book) => {
+      return books.map(book => {
         return { ...book, childrenLoaded: false, isOpen: false }
       })
     }
@@ -31,10 +31,10 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
 
     if (status.value === 'pending') {
-      await new Promise<void>((resolve) => {
+      await new Promise<void>(resolve => {
         const stopWatching = watch(
           status,
-          (newStatus) => {
+          newStatus => {
             if (newStatus !== 'pending') {
               stopWatching() // Stop watching once the status changes
               resolve()
@@ -122,7 +122,7 @@ export const useNotebookStore = defineStore('notebook', () => {
 
   const anyOpenBooks: ComputedRef<boolean> = computed(() => notebooks.value?.some(book => book.isOpen) ?? false)
   const closeAllOpenBooks = () =>
-    notebooks.value?.forEach((book) => {
+    notebooks.value?.forEach(book => {
       if (book.isOpen) book.isOpen = false
     })
 
