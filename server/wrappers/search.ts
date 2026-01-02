@@ -45,7 +45,7 @@ export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(h
 
     try {
       const output = execSync(command, execOptions) as string
-      const lines = output.split('\n').filter(line => line.trim() !== '')
+      const lines = output.split('\n').filter((line) => line.trim() !== '')
 
       for (const line of lines) {
         const [type, full] = line.split(':', 2)
@@ -61,11 +61,13 @@ export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(h
 
         const queryWords = splitWords(rawQuery)
         const score = matchScore(queryWords, baseName)
-        const pathArray = relativePath.slice(0, -1)
+        const pathArray = [...relativePath.slice(0, -1), baseName]
+        const apiPath = pathArray.join('/')
 
         if (isFolder) {
           results.push({
-            pathArray: [...pathArray, baseName],
+            pathArray,
+            apiPath,
             name: baseName,
             matchType: 'folder',
             snippet: t('folderNameContains', { name: rawQuery }),
@@ -74,7 +76,8 @@ export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(h
           })
         } else {
           results.push({
-            pathArray: [...pathArray, baseName],
+            pathArray,
+            apiPath,
             name: baseName,
             matchType: 'note',
             snippet: t('fileNameContains', { name: rawQuery }),
@@ -94,8 +97,8 @@ export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(h
     }
 
     // Deduplicate and sort by score (descending), and limit to MAX_RESULTS (here, 5)
-    const searchResults: USearchResult[] = Array.from(new Set(results.map(r => JSON.stringify(r))))
-      .map(r => JSON.parse(r) as USearchResult)
+    const searchResults: USearchResult[] = Array.from(new Set(results.map((r) => JSON.stringify(r))))
+      .map((r) => JSON.parse(r) as USearchResult)
       .sort((a, b) => b.score - a.score)
       .slice(0, MAX_RESULTS)
 

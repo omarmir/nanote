@@ -129,11 +129,11 @@ export const useNotebookStore = defineStore('notebook', () => {
 
   const addNotebook = async (
     name: string,
-    notebook?: NotebookTreeItemClient
+    notebook?: { name: string; apiPath: string; pathArray: string[] }
   ): Promise<Result<NotebookTreeItemClient>> => {
     if (!notebooks.value) {
       const { t } = useI18n()
-      return { success: false, message: t('errors.notebookNotFound', { path: notebook?.label }) }
+      return { success: false, message: t('errors.notebookNotFound', { path: notebook?.name }) }
     }
     const notebookPath = notebook ? `${notebook.apiPath}/${name}` : name
 
@@ -158,10 +158,13 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
-  const addNote = async (state: NewNote, notebook: NotebookTreeItemClient): Promise<Result<NotebookTreeItem>> => {
+  const addNote = async (
+    state: NewNote,
+    notebook: { name: string; apiPath: string; pathArray: string[] }
+  ): Promise<Result<NotebookTreeItem>> => {
     if (!notebooks.value) {
       const { t } = useI18n()
-      return { success: false, message: t('errors.notebookNotFound', { path: notebook.label }) }
+      return { success: false, message: t('errors.notebookNotFound', { path: notebook.name }) }
     }
 
     const name = state.isManual ? state.name : `${state.name}.md`

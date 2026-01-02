@@ -36,8 +36,6 @@
   </UDashboardSearch>
 </template>
 <script lang="ts" setup>
-import type { dashboardSearch } from '#build/ui'
-
 const { t } = useI18n()
 
 const notebookStore = useNotebookStore()

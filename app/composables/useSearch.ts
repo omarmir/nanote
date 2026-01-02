@@ -2,10 +2,11 @@ import { watchDebounced } from '@vueuse/core'
 import { ref } from 'vue'
 import type { Ref } from 'vue'
 import type { USearchResult } from '#shared/types/ugrep'
-import { id } from '@nuxt/ui/runtime/locale/index.js'
+import { LazyNotebooksNew, LazyNotesNew, LazyCommonDelete, LazyNotebooksRename } from '#components'
 
 export function useSearch(recentNotes?: Note[]) {
   const { t } = useI18n()
+  const overlay = useOverlay()
 
   const search: Ref<string> = ref('')
   const query: Ref<{ q: string | null }> = ref({ q: null })
@@ -39,15 +40,31 @@ export function useSearch(recentNotes?: Note[]) {
             children: [
               {
                 label: t('newNote'),
-                icon: 'i-lucide-plus'
+                icon: 'i-lucide-plus',
+                onSelect: () => {
+                  const modal = overlay.create(LazyNotesNew)
+                  modal.open({ notebook: { name: item.name, apiPath: item.apiPath, pathArray: item.pathArray } })
+                }
               },
               {
                 label: t('newNotebook'),
-                icon: 'i-lucide-plus'
+                icon: 'i-lucide-plus',
+                onSelect: () => {
+                  const modal = overlay.create(LazyNotebooksNew)
+                  modal.open({ notebook: { name: item.name, apiPath: item.apiPath, pathArray: item.pathArray } })
+                }
               },
               {
                 label: t('rename'),
-                icon: 'i-custom-gg-rename'
+                icon: 'i-custom-gg-rename',
+                onSelect: () => {
+                  const modal = overlay.create(LazyNotebooksRename)
+                  modal.open({
+                    originalAPIPath: item.apiPath,
+                    originalPathArray: item.pathArray,
+                    originalName: item.name
+                  })
+                }
               },
               {
                 label: t('browse'),
@@ -61,7 +78,7 @@ export function useSearch(recentNotes?: Note[]) {
         return {
           ...base,
           children: undefined,
-          to: `/note/${item.pathArray.join('/')}?ln=${item.lineNum}`
+          to: `/note/${item.apiPath}?ln=${item.lineNum}`
         }
       }) ?? []
   })

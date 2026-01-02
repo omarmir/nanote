@@ -15,6 +15,7 @@ export type USearchResult = {
   score: number
   lineNum: number | undefined
   matchType: 'note' | 'content' | 'folder'
+  apiPath: string
 }
 
 export const MAX_RESULTS = 10

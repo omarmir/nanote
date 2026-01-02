@@ -20,7 +20,11 @@ const items: DropdownMenuItem[][] = [
       class: 'cursor-pointer',
       onSelect: () => {
         const modal = overlay.create(LazyNotebooksRename)
-        modal.open({ apiPath: notebook.apiPath, originalPathArray: notebook.pathArray, originalName: notebook.label })
+        modal.open({
+          originalAPIPath: notebook.apiPath,
+          originalPathArray: notebook.pathArray,
+          originalName: notebook.label
+        })
       }
     },
     {
@@ -29,7 +33,7 @@ const items: DropdownMenuItem[][] = [
       class: 'cursor-pointer',
       onSelect: () => {
         const modal = overlay.create(LazyNotesNew)
-        modal.open({ notebook })
+        modal.open({ notebook: { name: notebook.label, apiPath: notebook.apiPath, pathArray: notebook.pathArray } })
       }
     },
     {
@@ -38,7 +42,7 @@ const items: DropdownMenuItem[][] = [
       class: 'cursor-pointer',
       onSelect: () => {
         const modal = overlay.create(LazyNotebooksNew)
-        modal.open({ notebook })
+        modal.open({ notebook: { name: notebook.label, apiPath: notebook.apiPath, pathArray: notebook.pathArray } })
       }
     }
   ],

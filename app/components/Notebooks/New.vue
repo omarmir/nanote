@@ -10,7 +10,7 @@
     <template #body>
       <i18n-t v-if="notebook" keypath="addNotebook" tag="h3" class="mb-2">
         <template #notebook>
-          <span class="text-primary">{{ notebook.label }}</span>
+          <span class="text-primary">{{ notebook.name }}</span>
         </template>
       </i18n-t>
       <UForm :schema="NewFileFolderSchema" :state="state" class="w-full" @submit="onSubmit">
@@ -39,7 +39,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui'
 
-const { notebook } = defineProps<{ notebook?: NotebookTreeItemClient }>()
+const { notebook } = defineProps<{ notebook?: { name: string; apiPath: string; pathArray: string[] } }>()
 const { t } = useI18n()
 
 const emit = defineEmits<{ close: [boolean] }>()
