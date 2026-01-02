@@ -61,7 +61,7 @@ export default defineEventHandlerWithError(async (event): Promise<USearchResult[
           console.dir(error, { depth: null })
           throw createError({
             statusCode: 500,
-            statusMessage: 'Internal Server Error',
+            statusMessage: t('errors.httpCodes.500'),
             data: error,
             message: 'Unable to search. Check console for details.'
           })
@@ -96,14 +96,14 @@ export default defineEventHandlerWithError(async (event): Promise<USearchResult[
       console.dir(error, { depth: null })
       throw createError({
         statusCode: 500,
-        statusMessage: 'Internal Server Error',
+        statusMessage: t('errors.httpCodes.500'),
         data: error,
         message: 'Unable to search. Check console for details.'
       })
     }
 
     const seen = new Set<string>()
-    const dedupedResults = results.filter((r) => {
+    const dedupedResults = results.filter(r => {
       const key = `${r.pathArray.join('')}:${r.lineNum}`
       if (seen.has(key)) return false
       seen.add(key)

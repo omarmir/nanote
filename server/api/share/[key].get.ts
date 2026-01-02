@@ -10,8 +10,9 @@ import { readFileSync } from 'node:fs'
 
 // import type { Note } from '#shared/types/notebook'
 
-export default defineEventHandlerWithError(async (event) => {
+export default defineEventHandlerWithError(async event => {
   const key = decodeURIComponent(event.context.params?.key ?? '')
+  const t = await useTranslation(event)
 
   if (!key)
     return {
@@ -40,7 +41,7 @@ export default defineEventHandlerWithError(async (event) => {
     const message = 'Access error: Applicaiton does not have access to the note or is no longer on filesystem.'
     throw createError({
       statusCode: 404,
-      statusMessage: 'Not Found',
+      statusMessage: t('errors.httpCodes.404'),
       message
     })
   }

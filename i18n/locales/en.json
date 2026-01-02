@@ -67,6 +67,10 @@
   "browse": "Browse contents",
   "navigate": "Navigate",
   "open": "Open command",
+  "secretKey": "Secret Key",
+  "secretKeyPlaceholder": "Enter your secret key",
+  "loginMessage": "Enter your secret key to access your notes.",
+  "loginTitle": "Login",
   "errors": {
     "unableToAccessFile": "Unable to access file!",
     "failedNotebookLoad": "Failed to load notebook children",
@@ -94,7 +98,7 @@
     "failedCreateShareLink": "Could not create share link for the note due to a database error.",
     "failedDeleteShareLink": "Could not delete share link for the note due to a database error.",
     "failedToFetchShared": "Could not fetch shared notes due to a database error.",
-    "missingFormData": "Missing note data, unable to update note.",
+    "missingNoteFormData": "Missing note data, unable to update note.",
     "noFileUploaded": "No data associated with the uplaoded file, unable to update note.",
     "failedFetchNote": "Failed to fetch note: {message}",
     "noResponseBody": "No response body received from server",
@@ -102,7 +106,24 @@
     "failedReadContent": "Failed to read content: {message}",
     "streamLocked": "Stream is already being read by another process",
     "streamAborted": "Stream was cancelled or aborted",
-    "unableToSave": "Unable to save: {message}"
+    "unableToSave": "Unable to save: {message}",
+    "wrongKey": "Invalid secret key",
+    "authRequired": "Authorization required",
+    "attachmentNotWritable": "'Attachment folder is not read/write accessible.'",
+    "noFileOrPath": "No file uploaded or note path unspecified",
+    "fileNameExceed": "Filename {fileName} will exceed allowed length of 255 characters.",
+    "pathWillExceedOS": "Attachment file path is going to exceed maximum path length for your operating system.",
+    "missingFormData": "Missing form data",
+    "missingFileInQuery": "No file specified in query parameters",
+    "unableToGetFileName": "Unable to get file name from the query parameters",
+    "missingFileParam": "No file specified",
+    "fileDoesNotExist": "File does not exist",
+    "httpCodes": {
+      "500": "Internal Server Error",
+      "400": "Bad Request",
+      "404": "Not Found",
+      "401": "Unauthorized"
+    }
   },
   "colours": {
     "red": "Red",

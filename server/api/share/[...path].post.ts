@@ -27,7 +27,7 @@ export default defineEventHandlerWithNotebookAndNote(async (event, pathArray, no
     // Handle potential database errors (e.g., connection issues, constraint violations)
     throw createError({
       statusCode: 500,
-      statusMessage: 'Internal Server Error',
+      statusMessage: t('errors.httpCodes.500'),
       message: t('errors.failedCreateShareLink')
     })
   }

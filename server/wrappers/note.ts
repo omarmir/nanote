@@ -17,7 +17,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
   handler: EventHandlerWithNotebookAndNote<T, D>,
   options?: { noteCheck: boolean }
 ) {
-  return defineEventHandler(async (event) => {
+  return defineEventHandler(async event => {
     const t = await useTranslation(event)
 
     // Decode the path and then remove characters we cannot have
@@ -29,7 +29,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
     if (pathArray.length === 0 || !note) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'Bad Request',
+        statusMessage: t('errors.httpCodes.400'),
         message: t('errors.missingNotebookOrNote')
       })
     }
@@ -46,7 +46,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
     if (note.length > 255) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'Bad Request',
+        statusMessage: t('errors.httpCodes.400'),
         message: t('errors.nameExceedsLimit')
       })
     }
@@ -58,7 +58,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
     if (fullPath.length > maxPathLength) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'Bad Request',
+        statusMessage: t('errors.httpCodes.400'),
         message: t('errors.pathExceedsLimit', { maxLength: maxPathLength })
       })
     }
@@ -67,7 +67,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
     if (!targetFolder.startsWith(resolve(notesPath))) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'Bad Request',
+        statusMessage: t('errors.httpCodes.400'),
         message: t('errors.invalidNotebookPath')
       })
     }
@@ -80,8 +80,8 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
       console.error('Note error:', error)
 
       const err = error as NodeJS.ErrnoException
-      const message
-        = err.code === 'ENOENT'
+      const message =
+        err.code === 'ENOENT'
           ? err.path === targetFolder
             ? t('errors.notebookNotFound', { path: pathArray.join(' > ') })
             : t('errors.noteNotFound', { note })
@@ -89,7 +89,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
 
       throw createError({
         statusCode: 404,
-        statusMessage: 'Not Found',
+        statusMessage: t('errors.httpCodes.404'),
         message
       })
     }
@@ -100,13 +100,13 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
       if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
         throw createError({
           statusCode: 404,
-          statusMessage: 'Not Found',
+          statusMessage: t('errors.httpCodes.404'),
           message: t('errors.noteOrNotebookNotFound')
         })
       } else if (error instanceof URIError) {
         throw createError({
           statusCode: 400,
-          statusMessage: 'Bad Request',
+          statusMessage: t('errors.httpCodes.400'),
           message: t('errors.invalidUrlEncoding')
         })
       } else if (error instanceof Error && 'statusCode' in error) {
@@ -119,7 +119,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
       } else {
         throw createError({
           statusCode: 500,
-          statusMessage: 'Internal Server Error',
+          statusMessage: t('errors.httpCodes.500'),
           message: t('errors.unexpectedError')
         })
       }

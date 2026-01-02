@@ -15,7 +15,7 @@ export default defineEventHandlerWithNotebookAndNote(
     if (!body?.newName) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'Bad Request',
+        statusMessage: t('errors.httpCodes.400'),
         message: t('errors.missingNewNoteName')
       })
     }

@@ -4,7 +4,9 @@ import type { APIError } from '#shared/types/result'
 type EventHandlerWithError<T extends EventHandlerRequest, D> = (event: H3Event<T>) => Promise<D>
 
 export function defineEventHandlerWithError<T extends EventHandlerRequest, D>(handler: EventHandlerWithError<T, D>) {
-  return defineEventHandler(async (event) => {
+  return defineEventHandler(async event => {
+    const t = await useTranslation(event)
+
     try {
       return await handler(event)
     } catch (error) {
@@ -12,7 +14,7 @@ export function defineEventHandlerWithError<T extends EventHandlerRequest, D>(ha
       if (error instanceof URIError) {
         throw createError({
           statusCode: 400,
-          statusMessage: 'Bad Request',
+          statusMessage: t('errors.httpCodes.400'),
           message: 'Invalid URL encoding.'
         })
       } else if (error instanceof Error && 'statusCode' in error) {
@@ -25,7 +27,7 @@ export function defineEventHandlerWithError<T extends EventHandlerRequest, D>(ha
       } else if (error instanceof Error && (error as NodeJS.ErrnoException).code === 'ENOENT') {
         throw createError({
           statusCode: 404,
-          statusMessage: 'Not Found',
+          statusMessage: t('errors.httpCodes.404'),
           message: 'The requested file does not exist.'
         })
       } else if (error instanceof Error && (error as NodeJS.ErrnoException).code === 'EACCES') {
@@ -37,7 +39,7 @@ export function defineEventHandlerWithError<T extends EventHandlerRequest, D>(ha
       } else {
         throw createError({
           statusCode: 500,
-          statusMessage: 'Internal Server Error',
+          statusMessage: t('errors.httpCodes.500'),
           message: 'An unexpected error occurred'
         })
       }

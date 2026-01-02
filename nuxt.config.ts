@@ -7,7 +7,8 @@ export default defineNuxtConfig({
     '@nuxt/hints',
     '@nuxtjs/i18n',
     '@pinia/nuxt',
-    'nuxt-codemirror'
+    'nuxt-codemirror',
+    'nuxt-auth-utils'
   ],
 
   ssr: false,

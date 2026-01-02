@@ -1,6 +1,6 @@
-import SECRET_KEY from '~~/server/key'
 import { envNotesPath, envUploadsPath, envConfigPath } from '~~/server/folder'
 import { defineEventHandlerWithError } from '../wrappers/error'
+import SECRET_KEY from '~~/server/utils/key'
 
 export default defineEventHandlerWithError(async (event): Promise<Health> => {
   const warnings = []

@@ -1,24 +1,27 @@
-// import { checkLogin } from '../utils'
+// server/middleware/auth.ts
+export default defineEventHandler(async event => {
+  const { path } = event
+  const t = await useTranslation(event)
 
-export default defineEventHandler(() => {
-  return // bypass for dev
-  // if (
-  //   !event.path.startsWith('/api/') ||
-  //   event.path === '/api/auth/login' ||
-  //   event.path === '/api/health' ||
-  //   event.path.startsWith('/api/share') ||
-  //   event.path.startsWith('/api/attachment/') // Attachment has its own auth logic
-  // )
-  //   return
+  // 1. Define public paths (whitelist)
+  const isPublicApi =
+    !path.startsWith('/api/') ||
+    path === '/api/auth/login' ||
+    path === '/api/health' ||
+    path.startsWith('/api/share') ||
+    path.startsWith('/api/attachment/')
 
-  // const cookie = getCookie(event, 'token')
+  if (isPublicApi) return
 
-  // const verifyResult = checkLogin(cookie)
+  // 2. Check for the session
+  // getUserSession handles the decryption and cookie parsing for you
+  const session = await getUserSession(event)
 
-  // if (!verifyResult.success)
-  //   throw createError({
-  //     statusCode: 401,
-  //     statusMessage: 'Unauthorized',
-  //     message: verifyResult.message
-  //   })
+  // 3. If no user object exists in the session, they aren't logged in
+  if (!session.user) {
+    throw createError({
+      statusCode: 401,
+      message: t('errors.authRequired')
+    })
+  }
 })

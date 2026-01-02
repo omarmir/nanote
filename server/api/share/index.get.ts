@@ -14,7 +14,7 @@ export default defineEventHandlerWithError(async (event): Promise<SelectShared[]
     // Handle potential database errors (e.g., connection issues, constraint violations)
     throw createError({
       statusCode: 500,
-      statusMessage: 'Internal Server Error',
+      statusMessage: t('errors.httpCodes.500'),
       message: t('errors.failedToFetchShared')
     })
   }

@@ -16,7 +16,7 @@ export function defineEventHandlerWithNotebook<T extends EventHandlerRequest, D>
   handler: EventHandlerWithNotebook<T, D>,
   options?: { notebookCheck: boolean }
 ) {
-  return defineEventHandler(async (event) => {
+  return defineEventHandler(async event => {
     const t = await useTranslation(event)
 
     // Decode the path and then remove characters we cannot have
@@ -37,7 +37,7 @@ export function defineEventHandlerWithNotebook<T extends EventHandlerRequest, D>
     if (fullPath.length > maxPathLength) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'Bad Request',
+        statusMessage: t('errors.httpCodes.400'),
         message: t('errors.notebookPathTooLong', { maxLength: maxPathLength })
       })
     }
@@ -53,7 +53,7 @@ export function defineEventHandlerWithNotebook<T extends EventHandlerRequest, D>
     if (!targetFolder.startsWith(resolve(notesPath))) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'Bad Request',
+        statusMessage: t('errors.httpCodes.400'),
         message: t('errors.invalidNotebookPath')
       })
     }
@@ -63,7 +63,7 @@ export function defineEventHandlerWithNotebook<T extends EventHandlerRequest, D>
     } catch {
       throw createError({
         statusCode: 404,
-        statusMessage: 'Not Found',
+        statusMessage: t('errors.httpCodes.404'),
         message: t('errors.notebookNotFound', { path: pathArray.join(' > ') })
       })
     }
@@ -74,13 +74,13 @@ export function defineEventHandlerWithNotebook<T extends EventHandlerRequest, D>
       if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
         throw createError({
           statusCode: 404,
-          statusMessage: 'Not Found',
+          statusMessage: t('errors.httpCodes.404'),
           message: t('errors.noteOrNotebookNotFound')
         })
       } else if (error instanceof URIError) {
         throw createError({
           statusCode: 400,
-          statusMessage: 'Bad Request',
+          statusMessage: t('errors.httpCodes.400'),
           message: t('errors.invalidUrlEncoding')
         })
       } else if (error instanceof Error && 'statusCode' in error) {
@@ -93,7 +93,7 @@ export function defineEventHandlerWithNotebook<T extends EventHandlerRequest, D>
       } else {
         throw createError({
           statusCode: 500,
-          statusMessage: 'Internal Server Error',
+          statusMessage: t('errors.httpCodes.500'),
           message: t('errors.unexpectedError')
         })
       }

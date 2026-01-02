@@ -41,7 +41,7 @@ export default defineEventHandlerWithNotebook(
       console.error('Error creating notebook:', error)
       throw createError({
         statusCode: 500,
-        statusMessage: 'Internal Server Error',
+        statusMessage: t('errors.httpCodes.500'),
         message: t('errors.failedCreateNotebook')
       })
     }

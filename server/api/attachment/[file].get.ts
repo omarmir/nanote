@@ -7,12 +7,13 @@ import { defineEventHandlerWithAttachmentAuthError } from '~~/server/wrappers/at
 
 export default defineEventHandlerWithAttachmentAuthError(async (event): Promise<ReadStream> => {
   const file = event.context.params?.file
+  const t = await useTranslation(event)
 
   if (!file) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Bad Request',
-      message: 'No file specified'
+      statusMessage: t('errors.httpCodes.400'),
+      message: t('errors.missingFileParam')
     })
   }
   // Construct the path to your file. Adjust the base folder as needed.
@@ -22,7 +23,8 @@ export default defineEventHandlerWithAttachmentAuthError(async (event): Promise<
   if (!existsSync(filePath)) {
     throw createError({
       statusCode: 404,
-      statusMessage: 'File not found'
+      statusMessage: t('errors.httpCodes.404'),
+      message: t('errors.fileDoesNotExist')
     })
   }
 

@@ -13,7 +13,7 @@ type EventHandlerWithSearch<T extends EventHandlerRequest, D> = (
 ) => Promise<D>
 
 export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(handler: EventHandlerWithSearch<T, D>) {
-  return defineEventHandler(async (event) => {
+  return defineEventHandler(async event => {
     const t = await useTranslation(event)
 
     const fullPath = resolve(notesPath)
@@ -90,7 +90,7 @@ export function defineEventHandlerWithSearch<T extends EventHandlerRequest, D>(h
       console.error(error)
       throw createError({
         statusCode: 500,
-        statusMessage: 'Internal Server Error',
+        statusMessage: t('errors.httpCodes.500'),
         data: error,
         message: t('errors.unableToSearch')
       })

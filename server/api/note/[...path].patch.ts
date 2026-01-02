@@ -16,8 +16,8 @@ export default defineEventHandlerWithAttachmentNotebookNote(
     if (!formData) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'Bad Request',
-        message: t('errors.missingFormData')
+        statusMessage: t('errors.httpCodes.400'),
+        message: t('errors.missingNoteFormData')
       })
     }
 
@@ -26,15 +26,15 @@ export default defineEventHandlerWithAttachmentNotebookNote(
     if (!fileEntry?.data) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'Bad Request',
+        statusMessage: t('errors.httpCodes.400'),
         message: t('errors.noFileUploaded')
       })
     }
 
     // Get original stats first to preserve creation date
     const originalStats = await stat(fullPath)
-    const originalStatsCreatedAtTime
-      = originalStats.birthtime.getTime() !== 0 ? originalStats.birthtime : originalStats.ctime
+    const originalStatsCreatedAtTime =
+      originalStats.birthtime.getTime() !== 0 ? originalStats.birthtime : originalStats.ctime
 
     // Overwrite file content
     await writeFile(fullPath, fileEntry.data)

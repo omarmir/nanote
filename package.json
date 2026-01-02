@@ -39,6 +39,7 @@
     "mime": "^4.0.7",
     "nanoid": "^5.1.5",
     "nuxt": "^4.2.1",
+    "nuxt-auth-utils": "0.5.26",
     "nuxt-codemirror": "0.0.16",
     "pinia": "^3.0.4",
     "puppeteer": "^24.31.0",
