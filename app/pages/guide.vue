@@ -16,15 +16,15 @@
         <div class="py-3 text-sm font-medium sm:px-6">
           <pre class="py-2 whitespace-pre-line">
             <code># Heading
-            **Bold**
-            *Italic*
-            - Bullet Item
-            [Link](https://example.com)
-            `Inline code`
+            **{{t('guide.tips.formatHelp.bold')}}**
+            *{{t('guide.tips.formatHelp.italic')}}*
+            - {{t('guide.tips.formatHelp.bulletItem')}}
+            [{{t('guide.tips.formatHelp.link')}}](https://example.com)
+            `{{t('guide.tips.formatHelp.inlineCode')}}`
 
             ```
-            // Code block
-            console.log("Hello world");
+            // {{t('guide.tips.formatHelp.codeBlock')}}
+            console.log("{{t('guide.tips.formatHelp.helloWorld')}}");
             ```</code>
           </pre>
         </div>

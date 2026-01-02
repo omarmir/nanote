@@ -140,7 +140,16 @@
   "guide": {
     "tips": {
       "title": "Markdown tips",
-      "subtitle": "Nanote is a simple, powerful markdown editor. Here's how to get started on using markdown syntax"
+      "subtitle": "Nanote is a simple, powerful markdown editor. Here's how to get started on using markdown syntax",
+      "formatHelp": {
+        "bold": "Bold",
+        "italic": "Italic",
+        "bulletItem": "Bullet item",
+        "link": "Link Name",
+        "inlineCode": "Inline code",
+        "codeBlock": "Code block",
+        "helloWorld": "Hello world"
+      }
     },
     "directives": {
       "title": "Nanote Directives",
