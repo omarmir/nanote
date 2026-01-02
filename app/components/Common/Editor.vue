@@ -1,44 +1,32 @@
 <template>
-  <div class="mb-5 flex flex-wrap sm:mx-[60px]">
+  <div class="mb-5 flex flex-wrap" :class="{ 'sm:mx-[60px]': isMD }">
     <div class="mb-6 w-full max-w-full px-3 sm:flex-none">
-      <!-- <UAlert v-if="error" class="mb-4">
-        <template #title>
-          {{ t('failure') }}
-        </template>
-        <template #description>
-          {{ error }}
-        </template>
-      </UAlert> -->
       <MilkdownProvider v-if="isMD && settingsStore.settings.isCodeViewAllFiles !== true">
         <MilkdownEditor v-model="content" :ln :api-path :disabled />
       </MilkdownProvider>
-      <!-- <NuxtCodeMirror
-        v-else-if="(!isMD || settingsStore.settings.isCodeViewAllFiles) && !error"
-        :key="`${isDark.toString()}-${isReadOnly.toString()}`"
+      <NuxtCodeMirror
+        v-else-if="!isMD || settingsStore.settings.isCodeViewAllFiles"
+        :key="`${disabled.toString()}`"
         ref="codemirror"
-        v-model="md"
-        :theme="isDark ? 'dark' : 'light'"
+        v-model="content"
         class="file-editor mt-4 w-full"
         :placeholder="t('contentHere')"
         :auto-focus="true"
-        :editable="isReadOnly === false"
+        :editable="!disabled"
         :line-wrapping="true"
         :basic-setup="true"
         :extensions="[EditorView.lineWrapping]"
         :indent-with-tab="true"
-        @on-create-editor="({ view, state }: { view: EditorView; state: EditorState }) => cmCreated(view, state)" /> -->
+        @on-create-editor="({ view, state }: { view: EditorView; state: EditorState }) => cmCreated(view, state)" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { MilkdownProvider } from '@milkdown/vue'
-// import { EditorView } from '@codemirror/view'
+import { EditorView } from '@codemirror/view'
 import { useRouter } from 'vue-router'
-// import type { EditorState } from '@codemirror/state'
-
-const router = useRouter()
-const settingsStore = useSettingsStore()
+import type { EditorState } from '@codemirror/state'
 
 const { isMD, apiPath, disabled } = defineProps<{
   isMD: boolean
@@ -46,46 +34,68 @@ const { isMD, apiPath, disabled } = defineProps<{
   disabled: boolean
 }>()
 
+const router = useRouter()
+const settingsStore = useSettingsStore()
+const { t } = useI18n()
+
 const content = defineModel<string>('content', { required: true })
 
 const queryParams = router.currentRoute.value.query
-// const colorMode = useColorMode()
 
 const ln: number | undefined = queryParams.ln && Number.isInteger(+queryParams.ln) ? +queryParams.ln : undefined
 
-// const cmCreated = (view: EditorView, state: EditorState) => {
-//   if (ln && Number.isInteger(+ln)) {
-//     const line = state.doc.line(+ln)
+const cmCreated = (view: EditorView, state: EditorState) => {
+  if (ln && Number.isInteger(+ln)) {
+    const line = state.doc.line(+ln)
 
-//     view.dispatch({
-//       selection: { head: line.from, anchor: line.to }
-//     })
-//     setTimeout(() => {
-//       const { top } = view.lineBlockAt(line.from)
-//       window.scrollTo({
-//         top,
-//         left: 0,
-//         behavior: 'smooth'
-//       })
-//     }, 2)
-//   }
-// }
+    view.dispatch({
+      selection: { head: line.from, anchor: line.to }
+    })
+    setTimeout(() => {
+      const { top } = view.lineBlockAt(line.from)
+      window.scrollTo({
+        top,
+        left: 0,
+        behavior: 'smooth'
+      })
+    }, 2)
+  }
+}
 </script>
 
-<style lang="postcss">
-.file-editor .cm-editor {
-  @apply bg-transparent !important;
+<style>
+@import 'tailwindcss';
+@import '@nuxt/ui';
+
+.cm-editor {
+  @apply bg-transparent!;
 }
 
-.file-editor .cm-focused {
-  @apply outline-none;
+.cm-activeLine {
+  @apply bg-primary/15! dark:bg-primary/10!;
 }
 
-.file-editor .cm-activeLine {
-  @apply bg-accent/10! dark:bg-accent/20!;
+.cm-gutters {
+  @apply border-none! bg-gray-100! dark:bg-neutral-800!;
 }
 
-.file-editor .cm-line {
+.cm-activeLineGutter {
+  @apply bg-primary/25! dark:bg-primary/35!;
+}
+
+.cm-gutterElement {
+  @apply dark:text-gray-300;
+}
+
+.cm-line {
   @apply text-base;
+}
+
+.cm-selectionBackground {
+  @apply bg-primary-400/40!;
+}
+
+.dark .cm-line::selection {
+  @apply text-black;
 }
 </style>
