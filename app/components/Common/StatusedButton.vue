@@ -8,8 +8,10 @@
     </template>
   </UButton>
 </template>
+
 <script lang="ts" setup>
 import type { ButtonProps } from '@nuxt/ui'
+
 const { size, label, color, variant, icon, asyncFn } = defineProps<
   ButtonProps & { icon: string; asyncFn: () => Promise<Result<boolean>> }
 >()

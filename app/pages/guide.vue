@@ -9,7 +9,7 @@
         :title="t('guide.tips.title')"
         :description="t('guide.tips.subtitle')"
         variant="naked"
-        orientation="horizontal"></UPageCard>
+        orientation="horizontal" />
       <UPageCard
         variant="subtle"
         :ui="{ container: 'p-0 sm:p-0 gap-y-0', wrapper: 'items-stretch', header: 'p-4 mb-0 border-b border-default' }">
@@ -34,14 +34,14 @@
         :title="t('guide.directives.title')"
         :description="t('guide.directives.subtitle')"
         variant="naked"
-        orientation="horizontal"></UPageCard>
+        orientation="horizontal" />
       <UPageCard
         variant="subtle"
         :ui="{ container: 'p-0 sm:p-0 gap-y-0', wrapper: 'items-stretch', header: 'p-4 mb-0 border-b border-default' }">
         <li
-          class="flex items-center justify-between gap-3 px-4 py-3 sm:px-6"
           v-for="directive in directives"
-          :key="directive">
+          :key="directive"
+          class="flex items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <p class="flex flex-row gap-2 truncate text-sm font-medium">
             <span class="text-primary">
               <pre>{{ `::${directive}` }}</pre>

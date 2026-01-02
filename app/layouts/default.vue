@@ -3,7 +3,7 @@
     <UDashboardSidebar collapsible>
       <template #header="{ collapsed }">
         <NuxtLink class="flex flex-row items-center gap-4" to="/" :title="t('navigation.home')">
-          <CommonLogo class="mx-auto size-8" :class="{ 'size-6': collapsed }"></CommonLogo>
+          <CommonLogo class="mx-auto size-8" :class="{ 'size-6': collapsed }" />
           <h1 class="text-xl font-bold text-gray-900 dark:text-white" :class="{ invisible: collapsed }">
             {{ t('appName') }}
           </h1>
@@ -12,10 +12,10 @@
 
       <template #default="{ collapsed }">
         <UDashboardSearch
+          v-model:search-term="search"
           :title="t('search')"
           :placeholder="t('searchAll')"
           spellcheck="false"
-          v-model:search-term="search"
           shortcut="meta_k"
           :groups="groups"
           :loading="searchStatus === 'pending'">
@@ -24,7 +24,7 @@
               v-if="item.icon"
               :name="item.icon"
               class="size-5 shrink-0"
-              :class="`text-${item.chip?.color}`"></UIcon>
+              :class="`text-${item.chip?.color}`" />
           </template>
         </UDashboardSearch>
         <UDashboardSearchButton

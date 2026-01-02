@@ -32,7 +32,9 @@
       </fieldset>
 
       <fieldset>
-        <legend class="mb-2 text-[11px] leading-none font-semibold">{{ t('modes.neutral') }}</legend>
+        <legend class="mb-2 text-[11px] leading-none font-semibold">
+          {{ t('modes.neutral') }}
+        </legend>
 
         <div class="-mx-2 grid grid-cols-3 gap-1">
           <ThemeButton
@@ -46,7 +48,9 @@
       </fieldset>
 
       <fieldset>
-        <legend class="mb-2 text-[11px] leading-none font-semibold">{{ t('modes.theme') }}</legend>
+        <legend class="mb-2 text-[11px] leading-none font-semibold">
+          {{ t('modes.theme') }}
+        </legend>
 
         <div class="-mx-2 grid grid-cols-3 gap-1">
           <ThemeButton

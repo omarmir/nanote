@@ -1,14 +1,14 @@
 import type { H3Error } from 'h3'
 
-export type Result<T> =
+export type Result<T>
+  = | {
+    success: false
+    message: string
+  }
   | {
-      success: false
-      message: string
-    }
-  | {
-      success: true
-      data: T
-    }
+    success: true
+    data: T
+  }
 
 export type APIError = Partial<H3Error<unknown>> & {
   status?: number

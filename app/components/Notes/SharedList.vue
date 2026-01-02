@@ -5,7 +5,7 @@
         :title="t('failure')"
         :description="error?.data.message ?? error?.message"
         color="error"
-        class="rounded-t-none"></UAlert>
+        class="rounded-t-none" />
     </li>
     <li v-for="note in notes" :key="note.id" class="flex items-center justify-between gap-3 px-4 py-3 sm:px-6">
       <div class="flex min-w-0 items-center gap-3">
@@ -22,13 +22,13 @@
 
       <div class="flex items-center gap-3">
         <CommonStatusedButton
-          icon="i-lucide-copy"
           v-if="isSupported"
+          icon="i-lucide-copy"
           size="sm"
           :label="t('copy')"
           :async-fn="() => copyLink(note.key)"
           color="primary"
-          variant="soft"></CommonStatusedButton>
+          variant="soft" />
         <CommonStatusedButton
           v-if="isSupported"
           size="sm"
@@ -36,7 +36,7 @@
           :label="t('delete')"
           :async-fn="() => deletedShared(note.key, note.name)"
           color="error"
-          variant="soft"></CommonStatusedButton>
+          variant="soft" />
       </div>
     </li>
   </ul>
@@ -45,7 +45,7 @@
 <script setup lang="ts">
 import type { SelectShared } from '~~/server/db/schema'
 import { useClipboard } from '@vueuse/core'
-import { FetchError } from 'ofetch'
+import type { FetchError } from 'ofetch'
 
 const { searchString } = defineProps<{ searchString: string }>()
 
@@ -63,8 +63,8 @@ const notes = ref([...(data.value ?? [])])
 watch(
   () => searchString,
   () => {
-    notes.value =
-      data.value?.filter((item) => item.name?.includes(searchString) || item.path.includes(searchString)) ?? []
+    notes.value
+      = data.value?.filter(item => item.name?.includes(searchString) || item.path.includes(searchString)) ?? []
   }
 )
 
@@ -73,7 +73,7 @@ const deletedShared = async (key: string, name: string | null): Promise<Result<b
     const deletingResp = await $fetch<boolean>(`/api/share/${key}`, { method: 'DELETE' })
     if (deletingResp) {
       toast.add({ title: t('success'), description: t('deleted', { item: name ?? key }), color: 'success' })
-      notes.value = notes.value?.filter((sharedNote) => sharedNote.key !== key) ?? []
+      notes.value = notes.value?.filter(sharedNote => sharedNote.key !== key) ?? []
       return { success: true, data: true }
     } else {
       toast.add({ title: t('failure'), description: t('errors.failedDeleteShareLink'), color: 'error' })
