@@ -21,8 +21,6 @@ const { t } = useI18n()
 const open = ref(false)
 const emit = defineEmits<{ close: [boolean] }>()
 
-const cancelBrowse = async () => emit('close', false)
-
 const { data: contents } = await useFetch<NotebookTreeItem[]>(`/api/notebook/${apiPath}`, {
   deep: true,
   immediate: true

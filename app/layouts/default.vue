@@ -11,7 +11,7 @@
       </template>
 
       <template #default="{ collapsed }">
-        <SearchCommands></SearchCommands>
+        <SearchCommands />
         <UDashboardSearchButton
           :label="collapsed ? undefined : t('search')"
           color="neutral"

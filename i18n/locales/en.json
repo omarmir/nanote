@@ -142,6 +142,7 @@
       "title": "Markdown tips",
       "subtitle": "Nanote is a simple, powerful markdown editor. Here's how to get started on using markdown syntax",
       "formatHelp": {
+        "heading": "Heading",
         "bold": "Bold",
         "italic": "Italic",
         "bulletItem": "Bullet item",

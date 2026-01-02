@@ -1,7 +1,8 @@
 <template>
   <UDashboardSearch
-    class="h-auto!"
+    v-if="!error"
     v-model:search-term="search"
+    class="h-auto!"
     :title="t('search')"
     :placeholder="t('searchAll')"
     spellcheck="false"
@@ -16,7 +17,7 @@
     </template>
     <template #footer>
       <div class="flex items-center justify-between gap-2">
-        <CommonLogo class="text-dimmed ml-1 size-5"></CommonLogo>
+        <CommonLogo class="text-dimmed ml-1 size-5" />
         <div class="flex items-center gap-1">
           <UButton color="neutral" variant="ghost" :label="t('open')" class="text-dimmed" size="xs">
             <template #trailing>
@@ -34,7 +35,17 @@
       </div>
     </template>
   </UDashboardSearch>
+  <UAlert
+    v-else
+    color="error"
+    variant="outline"
+    icon="i-lucide-circle-alert"
+    :title="t('failure')"
+    :description="error.data.message ?? error.message ?? error.statusMessage"
+    as="div"
+    class="mt-2" />
 </template>
+
 <script lang="ts" setup>
 const { t } = useI18n()
 

@@ -120,7 +120,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
-  const anyOpenBooks: ComputedRef<boolean> = computed(() => notebooks.value?.some((book) => book.isOpen) ?? false)
+  const anyOpenBooks: ComputedRef<boolean> = computed(() => notebooks.value?.some(book => book.isOpen) ?? false)
   const closeAllOpenBooks = () =>
     notebooks.value?.forEach((book) => {
       if (book.isOpen) book.isOpen = false
@@ -131,7 +131,7 @@ export const useNotebookStore = defineStore('notebook', () => {
 
     if (pathArray.length === 1) {
       // Root-level notebook - remove from notebooks array
-      const index = notebooks.value.findIndex((item) => item.label === name)
+      const index = notebooks.value.findIndex(item => item.label === name)
       if (index !== -1) {
         notebooks.value.splice(index, 1)
       }
@@ -140,7 +140,7 @@ export const useNotebookStore = defineStore('notebook', () => {
       const parentPath = pathArray.slice(0, -1)
       const parentNotebook = findNotebookByPath(parentPath, notebooks.value)
       if (parentNotebook?.children) {
-        const index = parentNotebook.children.findIndex((item) => item.label === name)
+        const index = parentNotebook.children.findIndex(item => item.label === name)
         if (index !== -1) {
           parentNotebook.children.splice(index, 1)
         }
@@ -153,7 +153,7 @@ export const useNotebookStore = defineStore('notebook', () => {
 
     if (renamedItem.pathArray.length === 1) {
       // Root-level item - replace in notebooks array
-      const index = notebooks.value.findIndex((item) => item.label === originalName)
+      const index = notebooks.value.findIndex(item => item.label === originalName)
       if (index !== -1) {
         const replacedItem: NotebookTreeItemClient = { ...notebooks.value[index]!, ...renamedItem }
         notebooks.value.splice(index, 1, replacedItem)
@@ -163,7 +163,7 @@ export const useNotebookStore = defineStore('notebook', () => {
       const parentPath = originalPathArray.slice(0, -1)
       const parentNotebook = findNotebookByPath(parentPath, notebooks.value)
       if (parentNotebook?.children) {
-        const index = parentNotebook.children.findIndex((item) => item.label === originalName)
+        const index = parentNotebook.children.findIndex(item => item.label === originalName)
         if (index !== -1) {
           const replacedItem: NotebookTreeItemClient = { ...notebooks.value[index]!, ...renamedItem }
           parentNotebook.children.splice(index, 1, replacedItem)

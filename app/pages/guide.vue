@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/mustache-interpolation-spacing -->
 <template>
   <UDashboardPanel id="guide">
     <template #header>
@@ -14,8 +15,9 @@
         variant="subtle"
         :ui="{ container: 'p-0 sm:p-0 gap-y-0', wrapper: 'items-stretch', header: 'p-4 mb-0 border-b border-default' }">
         <div class="py-3 text-sm font-medium sm:px-6">
+          <!-- eslint-disable @intlify/vue-i18n/no-raw-text -->
           <pre class="py-2 whitespace-pre-line">
-            <code># Heading
+            <code># {{t('guide.tips.formatHelp.heading')}}
             **{{t('guide.tips.formatHelp.bold')}}**
             *{{t('guide.tips.formatHelp.italic')}}*
             - {{t('guide.tips.formatHelp.bulletItem')}}
@@ -27,6 +29,7 @@
             console.log("{{t('guide.tips.formatHelp.helloWorld')}}");
             ```</code>
           </pre>
+          <!-- eslint-enable @intlify/vue-i18n/no-raw-text -->
         </div>
       </UPageCard>
 

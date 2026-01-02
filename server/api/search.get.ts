@@ -1,4 +1,4 @@
-import path, { resolve } from 'node:path'
+import { resolve } from 'node:path'
 import type { ExecException, ExecSyncOptionsWithStringEncoding } from 'node:child_process'
 import { execSync } from 'node:child_process'
 import escape from 'shell-escape'
@@ -25,7 +25,7 @@ export default defineEventHandlerWithError(async (event): Promise<USearchResult[
       const searchPath = escape([fullPath])
       // const ugrepPattern = queryWords.map((q) => `-e ${escape([q])}`).join(' ')
       // const lookaheads = queryWords.map((word) => `(?=.*\\b${escape([word])}\\b)`).join('')
-      const lookaheads = queryWords.map((word) => `(?=.*${escape([word])})`).join('')
+      const lookaheads = queryWords.map(word => `(?=.*${escape([word])})`).join('')
 
       // Combine them into the full pattern
       const ugrepPattern = `-P '^${lookaheads}.*$'`
@@ -91,7 +91,7 @@ export default defineEventHandlerWithError(async (event): Promise<USearchResult[
         })
       })
 
-      results.push(...contentResults.filter((r) => r.pathArray))
+      results.push(...contentResults.filter(r => r.pathArray))
     } catch (error) {
       console.dir(error, { depth: null })
       throw createError({
@@ -112,7 +112,7 @@ export default defineEventHandlerWithError(async (event): Promise<USearchResult[
 
     const sortedContentResults = [
       ...dedupedResults,
-      ...searchResults.map((r) => ({ ...r, lineNum: 0, score: r.score ?? 0 }))
+      ...searchResults.map(r => ({ ...r, lineNum: 0, score: r.score ?? 0 }))
     ]
       .sort((a, b) => b.score - a.score)
       .slice(0, MAX_RESULTS)

@@ -17,7 +17,7 @@ export const findNotebookByPath = (
   let currentNotebook: NotebookTreeItemClient | null = null
 
   for (const pathSegment of pathArray) {
-    currentNotebook = currentItems.find((item) => item.label === pathSegment) || null
+    currentNotebook = currentItems.find(item => item.label === pathSegment) || null
     if (!currentNotebook) {
       return null
     }
@@ -52,14 +52,14 @@ export const toggleNotebook = async (
     const targetNotebook = findNotebookByPath(notebook.pathArray, notebooks)
     if (targetNotebook) {
       // Add children with childrenLoaded flag
-      targetNotebook.children = children.map((child) => ({
+      targetNotebook.children = children.map(child => ({
         ...child,
         childrenLoaded: false
       }))
       targetNotebook.childrenLoaded = true
     } else if (notebook.pathArray.length === 0) {
       // Handle root-level notebooks
-      notebook.children = children.map((child) => ({
+      notebook.children = children.map(child => ({
         ...child,
         childrenLoaded: false
       }))

@@ -1,5 +1,6 @@
 <template>
   <div class="line-clamp-6 overflow-hidden">
+    <!-- eslint-disable-next-line vue/no-v-html -->
     <span v-html="String(parsed)" />
   </div>
 </template>
