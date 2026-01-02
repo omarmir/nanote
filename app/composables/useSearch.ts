@@ -2,8 +2,9 @@ import { watchDebounced } from '@vueuse/core'
 import { ref } from 'vue'
 import type { Ref } from 'vue'
 import type { USearchResult } from '#shared/types/ugrep'
+import { id } from '@nuxt/ui/runtime/locale/index.js'
 
-export function useSearch() {
+export function useSearch(recentNotes?: Note[]) {
   const { t } = useI18n()
 
   const search: Ref<string> = ref('')
@@ -35,14 +36,30 @@ export function useSearch() {
           return {
             ...base,
             icon: 'i-lucide-book',
-            disabled: true
+            children: [
+              {
+                label: t('newNote'),
+                icon: 'i-lucide-plus'
+              },
+              {
+                label: t('newNotebook'),
+                icon: 'i-lucide-plus'
+              },
+              {
+                label: t('rename'),
+                icon: 'i-custom-gg-rename'
+              },
+              {
+                label: t('browse'),
+                icon: 'i-lucide-list-tree'
+              }
+            ]
           }
         }
 
         // 3. The non-folder branch
         return {
           ...base,
-          icon: item.matchType === 'note' ? 'i-lucide-file' : 'i-lucide-text',
           children: undefined,
           to: `/note/${item.pathArray.join('/')}?ln=${item.lineNum}`
         }
@@ -91,6 +108,18 @@ export function useSearch() {
       label: t('searchResults', { searchTerm: search.value }),
       items: results.value || [],
       ignoreFilter: true
+    },
+    {
+      id: 'recent-notes',
+      label: t('recentNotes'),
+      items:
+        recentNotes?.map((recent, id) => {
+          return {
+            label: recent.name,
+            id
+          }
+        }) ?? [],
+      ignoreFilter: false
     }
   ])
 

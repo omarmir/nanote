@@ -19,6 +19,12 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   })
 
+  const { data: recentNotes, refresh: refreshRecentNotes } = useFetch<Note[]>('/api/notes', {
+    immediate: true,
+    lazy: true,
+    query: { display: 4 }
+  })
+
   const fetchBooks = async () => {
     if (status.value === 'idle' && !notebooks.value) {
       await execute()
@@ -53,7 +59,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     let currentNotebook: NotebookTreeItemClient | null = null
 
     for (const pathSegment of pathArray) {
-      currentNotebook = currentItems.find(item => item.label === pathSegment) || null
+      currentNotebook = currentItems.find((item) => item.label === pathSegment) || null
       if (!currentNotebook) {
         return null
       }
@@ -97,14 +103,14 @@ export const useNotebookStore = defineStore('notebook', () => {
         const targetNotebook = findNotebookByPath(notebook.pathArray)
         if (targetNotebook) {
           // Add children with childrenLoaded flag
-          targetNotebook.children = children.map(child => ({
+          targetNotebook.children = children.map((child) => ({
             ...child,
             childrenLoaded: false
           }))
           targetNotebook.childrenLoaded = true
         } else if (notebook.pathArray.length === 0) {
           // Handle root-level notebooks
-          notebook.children = children.map(child => ({
+          notebook.children = children.map((child) => ({
             ...child,
             childrenLoaded: false
           }))
@@ -178,7 +184,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
-  const anyOpenBooks: ComputedRef<boolean> = computed(() => notebooks.value?.some(book => book.isOpen) ?? false)
+  const anyOpenBooks: ComputedRef<boolean> = computed(() => notebooks.value?.some((book) => book.isOpen) ?? false)
   const closeAllOpenBooks = () =>
     notebooks.value?.forEach((book) => {
       if (book.isOpen) book.isOpen = false
@@ -189,7 +195,7 @@ export const useNotebookStore = defineStore('notebook', () => {
 
     if (pathArray.length === 1) {
       // Root-level notebook - remove from notebooks array
-      const index = notebooks.value.findIndex(item => item.label === name)
+      const index = notebooks.value.findIndex((item) => item.label === name)
       if (index !== -1) {
         notebooks.value.splice(index, 1)
       }
@@ -198,7 +204,7 @@ export const useNotebookStore = defineStore('notebook', () => {
       const parentPath = pathArray.slice(0, -1)
       const parentNotebook = findNotebookByPath(parentPath)
       if (parentNotebook?.children) {
-        const index = parentNotebook.children.findIndex(item => item.label === name)
+        const index = parentNotebook.children.findIndex((item) => item.label === name)
         if (index !== -1) {
           parentNotebook.children.splice(index, 1)
         }
@@ -211,7 +217,7 @@ export const useNotebookStore = defineStore('notebook', () => {
 
     if (renamedItem.pathArray.length === 1) {
       // Root-level item - replace in notebooks array
-      const index = notebooks.value.findIndex(item => item.label === originalName)
+      const index = notebooks.value.findIndex((item) => item.label === originalName)
       if (index !== -1) {
         const replacedItem: NotebookTreeItemClient = { ...notebooks.value[index]!, ...renamedItem }
         notebooks.value.splice(index, 1, replacedItem)
@@ -221,7 +227,7 @@ export const useNotebookStore = defineStore('notebook', () => {
       const parentPath = originalPathArray.slice(0, -1)
       const parentNotebook = findNotebookByPath(parentPath)
       if (parentNotebook?.children) {
-        const index = parentNotebook.children.findIndex(item => item.label === originalName)
+        const index = parentNotebook.children.findIndex((item) => item.label === originalName)
         if (index !== -1) {
           const replacedItem: NotebookTreeItemClient = { ...notebooks.value[index]!, ...renamedItem }
           parentNotebook.children.splice(index, 1, replacedItem)
@@ -335,6 +341,9 @@ export const useNotebookStore = defineStore('notebook', () => {
     fetchBooks,
     // state
     anyOpenBooks,
-    closeAllOpenBooks
+    closeAllOpenBooks,
+    // Recents
+    recentNotes,
+    refreshRecentNotes
   }
 })

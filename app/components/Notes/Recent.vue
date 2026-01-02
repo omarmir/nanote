@@ -3,8 +3,8 @@
     <h1 class="mb-6 text-2xl font-bold">
       {{ t('recentNotes') }}
     </h1>
-    <ul v-if="notes" class="grid grid-cols-2 gap-4 xl:grid-cols-4">
-      <li v-for="note in notes" :key="note.apiPath" class="flex">
+    <ul v-if="notebookStore.recentNotes" class="grid grid-cols-2 gap-4 xl:grid-cols-4">
+      <li v-for="note in notebookStore.recentNotes" :key="note.apiPath" class="flex">
         <UCard class="flex-1">
           <h3 class="flex flex-row items-center gap-x-2 font-bold">
             <FileIcon :name="note.name" :is-markdown="note.isMarkdown" />
@@ -37,9 +37,8 @@
 
 <script lang="ts" setup>
 const { t } = useI18n()
-const { data: notes } = await useFetch<NotebookTreeItem[]>('/api/notes', {
-  immediate: true,
-  lazy: true,
-  query: { display: 4 }
-})
+
+const notebookStore = useNotebookStore()
+
+await notebookStore.refreshRecentNotes()
 </script>

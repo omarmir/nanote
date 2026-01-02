@@ -64,6 +64,9 @@
   "searchResults": "Notes matching “{searchTerm}”...",
   "fileNameContains": "Note name contains {name}",
   "folderNameContains": "Notebook name contains {name}",
+  "browse": "Browse contents",
+  "navigate": "Navigate",
+  "open": "Open command",
   "errors": {
     "unableToAccessFile": "Unable to access file!",
     "failedNotebookLoad": "Failed to load notebook children",

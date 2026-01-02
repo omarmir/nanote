@@ -11,14 +11,7 @@
       </template>
 
       <template #default="{ collapsed }">
-        <UDashboardSearch
-          v-model:search-term="search"
-          :title="t('search')"
-          :placeholder="t('searchAll')"
-          spellcheck="false"
-          shortcut="meta_k"
-          :groups="groups"
-          :loading="searchStatus === 'pending'"></UDashboardSearch>
+        <SearchCommands></SearchCommands>
         <UDashboardSearchButton
           :label="collapsed ? undefined : t('search')"
           color="neutral"
@@ -45,12 +38,6 @@ import type { NavigationMenuItem } from '@nuxt/ui'
 
 const { t } = useI18n()
 const route = useRoute()
-
-const { search, searchStatus, error, groups } = useSearch()
-
-function onSelect(item: any) {
-  console.log(item)
-}
 
 const items = computed<NavigationMenuItem[]>(() => [
   [
