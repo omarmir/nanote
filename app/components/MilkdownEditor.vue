@@ -1,7 +1,7 @@
 <template>
   <Milkdown
     class="milkdown-editor"
-    :class="{ 'focus': isFocus, disabled, 'para-spaced': settingsStore.settings.isParagraphSpaced }" />
+    :class="{ focus: isFocus, disabled, 'para-spaced': settingsStore.settings.isParagraphSpaced }" />
 </template>
 
 <script setup lang="ts">
@@ -89,22 +89,22 @@ useEditor((root) => {
       })
 
       if (apiPath && customUploader) {
-        ctx.update(imageBlockConfig.key, defaultConfig => ({
+        ctx.update(imageBlockConfig.key, (defaultConfig) => ({
           ...defaultConfig,
           onUpload: async (file: File) => onUpload(file, apiPath)
         }))
 
-        ctx.update(inlineImageConfig.key, prev => ({
+        ctx.update(inlineImageConfig.key, (prev) => ({
           ...prev,
           onUpload: async (file: File) => onUpload(file, apiPath)
         }))
 
-        ctx.update(uploadConfig.key, prev => ({
+        ctx.update(uploadConfig.key, (prev) => ({
           ...prev,
           uploader: customUploader
         }))
 
-        ctx.update(filePickerConfig.key, prev => ({
+        ctx.update(filePickerConfig.key, (prev) => ({
           ...prev,
           onUpload: async (file: File) => onUpload(file, apiPath),
           toCheckUpload: async (url: string) => toCheckUploader(url),
@@ -112,7 +112,7 @@ useEditor((root) => {
         }))
       }
 
-      ctx.update(editorViewOptionsCtx, prev => ({
+      ctx.update(editorViewOptionsCtx, (prev) => ({
         ...prev,
         editable: () => !disabled
       }))
@@ -231,5 +231,9 @@ milkdown-file-picker[data-inline='false'] {
 
 .milkdown-editor.disabled .milkdown-block-handle {
   display: none !important;
+}
+
+.milkdown-editor.para-spaced div.milkdown p {
+  @apply mb-2!;
 }
 </style>
