@@ -4,7 +4,8 @@
       :title="t('settings.navigation.shared')"
       :description="t('settings.pageSubtitles.shared')"
       variant="naked"
-      orientation="horizontal" />
+      orientation="horizontal"
+      class="mb-4" />
 
     <UPageCard
       variant="subtle"
@@ -29,5 +30,5 @@
 
 <script lang="ts" setup>
 const { t } = useI18n()
-const searchString = defineModel<string>({ required: true })
+const searchString = ref('')
 </script>

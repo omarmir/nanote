@@ -9,7 +9,8 @@
           : t('settings.pageSubtitles.health.hasWarnings')
       "
       variant="naked"
-      orientation="horizontal" />
+      orientation="horizontal"
+      class="mb-4" />
 
     <UPageCard
       variant="subtle"
