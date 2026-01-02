@@ -40,6 +40,4 @@ const { t } = useI18n()
 
 const notebookStore = useNotebookStore()
 const { search, searchStatus, error, groups } = useSearch(notebookStore.recentNotes)
-
-console.log(groups)
 </script>

@@ -2,7 +2,7 @@ import { watchDebounced } from '@vueuse/core'
 import { ref } from 'vue'
 import type { Ref } from 'vue'
 import type { USearchResult } from '#shared/types/ugrep'
-import { LazyNotebooksNew, LazyNotesNew, LazyCommonDelete, LazyNotebooksRename } from '#components'
+import { LazyNotebooksNew, LazyNotesNew, LazyNotebooksBrowse, LazyNotebooksRename } from '#components'
 
 export function useSearch(recentNotes?: Note[]) {
   const { t } = useI18n()
@@ -68,7 +68,11 @@ export function useSearch(recentNotes?: Note[]) {
               },
               {
                 label: t('browse'),
-                icon: 'i-lucide-list-tree'
+                icon: 'i-lucide-list-tree',
+                onSelect: () => {
+                  const modal = overlay.create(LazyNotebooksBrowse)
+                  modal.open({ name: item.name, apiPath: item.apiPath, pathArray: item.pathArray })
+                }
               }
             ]
           }

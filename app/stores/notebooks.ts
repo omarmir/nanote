@@ -46,32 +46,6 @@ export const useNotebookStore = defineStore('notebook', () => {
     }
   }
 
-  // Helper function to traverse the tree and find a notebook by its pathArray
-  const findNotebookByPath = (pathArray: string[]): NotebookTreeItemClient | null => {
-    if (!notebooks.value) return null
-    // If pathArray is empty, return the root-level notebook
-    if (pathArray.length === 0) {
-      return null // Root-level notebooks are handled differently
-    }
-
-    // Navigate through the tree using pathArray as the hierarchy
-    let currentItems = notebooks.value
-    let currentNotebook: NotebookTreeItemClient | null = null
-
-    for (const pathSegment of pathArray) {
-      currentNotebook = currentItems.find((item) => item.label === pathSegment) || null
-      if (!currentNotebook) {
-        return null
-      }
-      // If not at the end, continue to children
-      if (currentNotebook.children && pathArray.indexOf(pathSegment) < pathArray.length - 1) {
-        currentItems = currentNotebook.children
-      }
-    }
-
-    return currentNotebook
-  }
-
   const toggleRootNotebook = async (notebook: NotebookTreeItemClient): Promise<Result<null>> => {
     // if its already open close it
     if (notebook.isOpen) {
@@ -80,51 +54,10 @@ export const useNotebookStore = defineStore('notebook', () => {
     } else {
       notebook.isOpen = true
     }
-    return toggleNotebook(notebook)
-  }
 
-  const toggleNotebook = async (notebook: NotebookTreeItemClient): Promise<Result<null>> => {
-    // If it's a note (not a notebook/folder), nothing to load
-    if (notebook.isNote) {
-      return { success: true, data: null }
-    }
+    if (!notebooks.value) return { success: true, data: null }
 
-    // If children are already loaded, nothing to do
-    if (notebook.childrenLoaded) {
-      return { success: true, data: null }
-    }
-
-    try {
-      // Fetch children from the API
-      const children = await $fetch<NotebookTreeItemClient[]>(`/api/notebook/${notebook.apiPath}`)
-
-      // Find the notebook in the tree using pathArray and add children
-      if (notebooks.value) {
-        const targetNotebook = findNotebookByPath(notebook.pathArray)
-        if (targetNotebook) {
-          // Add children with childrenLoaded flag
-          targetNotebook.children = children.map((child) => ({
-            ...child,
-            childrenLoaded: false
-          }))
-          targetNotebook.childrenLoaded = true
-        } else if (notebook.pathArray.length === 0) {
-          // Handle root-level notebooks
-          notebook.children = children.map((child) => ({
-            ...child,
-            childrenLoaded: false
-          }))
-          notebook.childrenLoaded = true
-        }
-      }
-
-      return { success: true, data: null }
-    } catch (err) {
-      return {
-        success: false,
-        message: err instanceof Error ? err.message : 'Failed to load notebook children'
-      }
-    }
+    return toggleNotebook(notebook, notebooks.value)
   }
 
   const addNotebook = async (
@@ -143,7 +76,7 @@ export const useNotebookStore = defineStore('notebook', () => {
       })
 
       if (notebook) {
-        const targetNotebook = findNotebookByPath(notebook.pathArray)
+        const targetNotebook = findNotebookByPath(notebook.pathArray, notebooks.value)
         targetNotebook?.children?.push(resp)
       } else {
         notebooks.value.push(resp)
@@ -175,7 +108,7 @@ export const useNotebookStore = defineStore('notebook', () => {
         method: 'POST'
       })
 
-      const targetNotebook = findNotebookByPath(notebook.pathArray)
+      const targetNotebook = findNotebookByPath(notebook.pathArray, notebooks.value)
       targetNotebook?.children?.push(resp)
 
       return {
@@ -205,7 +138,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     } else {
       // Nested notebook - find parent and remove from its children
       const parentPath = pathArray.slice(0, -1)
-      const parentNotebook = findNotebookByPath(parentPath)
+      const parentNotebook = findNotebookByPath(parentPath, notebooks.value)
       if (parentNotebook?.children) {
         const index = parentNotebook.children.findIndex((item) => item.label === name)
         if (index !== -1) {
@@ -228,7 +161,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     } else {
       // Nested item - find parent and replace in its children
       const parentPath = originalPathArray.slice(0, -1)
-      const parentNotebook = findNotebookByPath(parentPath)
+      const parentNotebook = findNotebookByPath(parentPath, notebooks.value)
       if (parentNotebook?.children) {
         const index = parentNotebook.children.findIndex((item) => item.label === originalName)
         if (index !== -1) {
