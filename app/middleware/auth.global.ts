@@ -1,5 +1,8 @@
 // middleware/auth.global.ts
 export default defineNuxtRouteMiddleware(async to => {
+  // 0. Bypass for shared notes
+  if (to.path.startsWith('/share/')) return
+
   const { loggedIn } = useUserSession()
 
   // 1. Auth Guard
