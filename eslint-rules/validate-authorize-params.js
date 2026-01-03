@@ -47,7 +47,10 @@ export default {
     // Only check files in server/api directory
     const filename = context.filename || context.getFilename()
 
-    if (!filename.includes('/server/api/')) {
+    // normalizes slash for cross-platform check (Windows uses backslash)
+    const normalizedFilename = filename.split('\\').join('/')
+
+    if (!normalizedFilename.includes('server/api/')) {
       return {}
     }
 
