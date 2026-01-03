@@ -8,15 +8,15 @@
               v-bind="
                 item.isNote
                   ? {
-                    to: `/note/${item.apiPath}`
-                  }
+                      to: `/note/${item.apiPath}`
+                    }
                   : {}
               "
               class="target flex grow flex-row items-center justify-between group-hover:bg-neutral-500/20"
               :style="{ paddingLeft: `${depth * 24 + 10}px` }"
               :variant="isOpen ? 'soft' : 'ghost'"
               color="neutral"
-              @click="onToggle(item)">
+              @click="item.isNote ? emit('selected') : onToggle(item)">
               <div class="flex w-full flex-row items-start gap-1">
                 <slot name="leading">
                   <template v-if="item.isPlaceholder">
@@ -75,6 +75,7 @@
             :compact
             :items="item.children"
             :depth="depth + 1"
+            @selected="emit('selected')"
             @toggle="onToggle" />
         </template>
       </TreeItem>
@@ -99,6 +100,7 @@ const currentNote = defineModel<string>('currentNote', { required: false, defaul
 
 const emit = defineEmits<{
   (e: 'toggle', payload: NotebookTreeItemClient): void
+  (e: 'selected'): void
 }>()
 
 const onToggle = (item: NotebookTreeItemClient) => {

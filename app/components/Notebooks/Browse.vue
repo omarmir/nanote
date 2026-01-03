@@ -4,7 +4,7 @@
       <slot name="trigger" />
     </template>
     <template #body>
-      <TreeNotebooks v-if="contents" :items="contents" type="root" @toggle="onToggle" />
+      <TreeNotebooks v-if="contents" :items="contents" type="root" @toggle="onToggle" @selected="emit('close', true)" />
     </template>
   </UModal>
 </template>
