@@ -1,277 +1,148 @@
-# Custom ESLint Rules
+# Custom ESLint Authorization Rules
 
-This directory contains custom ESLint rules for the GCT-OSC project to enforce security best practices and type safety for API authorization.
+This directory contains custom ESLint rules designed to enforce security and type-safety practices for the application's authorization system.
 
-## Rules Overview
+## Rules Summary
 
-1. **require-authorize** - Ensures all API endpoints have authorization checks
-2. **validate-authorize-params** - Validates that `authorize()` calls have correct parameters based on the ability
+| Rule                              | Description                                                          | Type                   |
+| --------------------------------- | -------------------------------------------------------------------- | ---------------------- |
+| `local/require-authorize`         | Ensures API handlers include an authorization check.                 | Security               |
+| `local/validate-authorize-params` | Validates that `authorize()` arguments match the ability definition. | Type Safety / Security |
 
 ---
 
-## Rule 1: require-authorize
+## 1. `require-authorize`
 
-This ESLint rule enforces that all API route handlers in the `server/api/` directory must call the `authorize()` function to ensure proper security checks are in place.
+**File:** [`require-authorize.js`](./require-authorize.js)
 
 ### Purpose
 
-Security is critical for API endpoints. This rule helps prevent accidentally creating unsecured endpoints by requiring an explicit authorization check in every API handler.
+To prevent the accidental exposure of API endpoints. This rule requires that every API route handler (specifically in `server/api/`) calls the `authorize()` function at least once.
 
-### What it checks
+### Logic
 
-The rule triggers an error when it finds:
+The rule checks any file in `server/api/` that exports a handler using:
 
 - `defineEventHandler`
 - `defineEventHandlerWithDB`
 - `defineEventHandlerWithId`
 
-...in files under `server/api/` that **do not** contain a call to `authorize()`.
-
 ### Exceptions
 
-The following files/paths are automatically excluded from this rule:
+The rule automatically skips:
 
-- `server/wrappers/**` - Wrapper utility functions (like `defineEventHandlerWithId`, `defineEventHandlerWithDB`)
-- `server/api/[...].ts` - Catch-all error handler
-- `server/api/auth/**` - Authentication endpoints
+- Files in `server/api/auth/` (Login/Registration endpoints)
+- Wrapper functions in `server/wrappers/`
+- Catch-all routes (`[...].ts`)
+- Handlers using `NuxtAuthHandler`
 
-**Note**: The wrappers themselves don't need authorization because they're just utility functions that wrap `defineEventHandler`. Only the actual API endpoint files that _use_ these wrappers need authorization.
-
-### Example
-
-#### ❌ Fails the rule:
-
-```typescript
-// server/api/organizations/[id].get.ts
-import { defineEventHandlerWithId } from '~~/server/wrappers/id'
-
-export default defineEventHandlerWithId(async (event, id): Promise<Organization> => {
-  const orgQuery = await event.context.$db
-    .selectFrom('organizations')
-    .selectAll()
-    .where('id', '=', id)
-    .executeTakeFirstOrThrow()
-
-  return orgQuery
-})
-```
-
-#### ✅ Passes the rule:
-
-```typescript
-// server/api/agreements/[id].get.ts
-import { defineEventHandlerWithId } from '~~/server/wrappers/id'
-import { jsonObjectFrom, jsonArrayFrom } from 'kysely/helpers/postgres'
-
-export default defineEventHandlerWithId(async (event, id): Promise<Agreement> => {
-  const db = event.context.$db
-
-  const agreement = db
-    .selectFrom('agreements')
-    .select('programId')
-    .where('agreements.id', '=', id)
-    .executeTakeFirstOrThrow()
-
-  // Authorization check is present ✓
-  await authorize(event, readAgreement, agreement, event.context.$roleMap)
-
-  const agreementWithFD = await db
-    .selectFrom('agreements')
-    .selectAll('agreements')
-    // ... rest of the query
-    .executeTakeFirstOrThrow()
-
-  return agreementWithFD as Agreement
-})
-```
-
-### Disabling the rule for specific endpoints
-
-If you have a legitimate reason for an endpoint to be public (not require authorization), you can disable the rule with a comment:
-
-```typescript
-// eslint-disable-next-line local/require-authorize
-export default defineEventHandler(async (event) => {
-  // This is a public endpoint
-  return { status: 'ok' }
-})
-```
-
-**Important:** Only disable this rule if you're absolutely certain the endpoint should be public. Document why it's public in a comment.
-
----
-
-## Rule 2: validate-authorize-params
-
-This ESLint rule validates that `authorize()` calls have the correct parameters based on the ability being used. This catches parameter mismatches at lint time rather than at runtime or in tests.
-
-**Dynamic Detection**: The rule automatically reads ability definitions from `shared/utils/abilities/**/*.ts` to determine parameter requirements. No manual configuration needed!
-
-### Purpose
-
-When calling `authorize()`, different abilities require different parameters. For example, `readAgreement` needs a `programId`, but `listAgreements` doesn't. This rule ensures you pass the correct parameters every time.
-
-### What it checks
-
-The rule validates:
-
-1. First parameter is the `event` object
-2. Second parameter is an ability identifier
-3. Remaining parameters match the ability's signature
-4. Last parameter is `event.context.$roleMap`
-
-### Ability Parameter Requirements
-
-#### Abilities Requiring `programId`
-
-These abilities operate on program-specific resources:
-
-- `createAgreement`
-- `readAgreement`
-- `updateAgreement`
-
-**Expected signature:**
-
-```typescript
-await authorize(event, abilityName, programId, event.context.$roleMap)
-```
-
-#### Abilities Without `programId`
-
-These abilities operate globally:
-
-- `listAgreements`
-- `listOrganizations`
-- `createOrganizations`
-- `readOrganizations`
-- `updateOrganizations`
-
-**Expected signature:**
-
-```typescript
-await authorize(event, abilityName, event.context.$roleMap)
-```
-
-### Examples
+### Usage
 
 #### ✅ Correct Usage
 
-```typescript
-// Ability requiring programId
-await authorize(event, readAgreement, agreement.programId, event.context.$roleMap)
+```javascript
+export default defineEventHandler(async event => {
+  // Verification is present
+  await authorize(event, 'read_dashboard')
 
-// Ability without programId
-await authorize(event, listAgreements, event.context.$roleMap)
+  return { success: true }
+})
 ```
 
 #### ❌ Incorrect Usage
 
-```typescript
-// Missing programId for readAgreement
-await authorize(event, readAgreement, event.context.$roleMap)
-// Error: authorize(readAgreement) requires programId as the third parameter
-
-// Extra programId for listAgreements
-await authorize(event, listAgreements, programId, event.context.$roleMap)
-// Error: authorize(listAgreements) does not take programId
-
-// Missing roleMap
-await authorize(event, readAgreement, programId)
-// Error: Last parameter must be event.context.$roleMap
-```
-
-### Adding New Abilities
-
-**No configuration needed!** The rule automatically detects new abilities.
-
-When you add a new ability, just define it in `shared/utils/abilities/*.ts`:
-
-```typescript
-// Without programId
-export const listResources = defineAbility((user: Session, roleAbilityMap?: RoleToAbilityMap | null) => {
-  // ...
+```javascript
+export default defineEventHandler(async event => {
+  // Error: API route handler must call authorize() to secure the endpoint.
+  return fetchSensitiveData()
 })
-
-// With programId
-export const readResource = defineAbility(
-  (user: Session, programId: number, roleAbilityMap?: RoleToAbilityMap | null) => {
-    // ...
-  }
-)
 ```
 
-The ESLint rule will automatically:
+#### Public Endpoints (Exempting the Rule)
 
-- Detect the new ability
-- Determine if it requires `programId` by analyzing the function signature
-- Validate all `authorize()` calls that use it
+If an endpoint is intentionally public (e.g., a webhook or public data), you must explicitly disable the rule for that file or line to acknowledge the security decision:
 
----
-
-## Running the Rules
-
-The rules run automatically when you run ESLint:
-
-````bash
-# Check all files
-npm run lint
-
----
-
-## Running the Rules
-
-The rules run automatically when you run ESLint:
-
-```bash
-# Check all files
-npm run lint
-
-# Check specific file
-npx eslint server/api/organizations/[id].get.ts
-
-# Check all API files
-npx eslint 'server/api/**/*.ts'
-````
-
-## Disabling Rules
-
-### Disable for a specific line
-
-```typescript
+```javascript
 // eslint-disable-next-line local/require-authorize
-// eslint-disable-next-line local/validate-authorize-params
-await authorize(event, customAbility, customParams)
+export default defineEventHandler(async event => {
+  return { publicData: true }
+})
 ```
 
-### Disable for an entire file
+---
+
+## 2. `validate-authorize-params`
+
+**File:** [`validate-authorize-params.js`](./validate-authorize-params.js)
+
+### Purpose
+
+To ensure that calls to `authorize()` are consistent with the ability definitions found in `shared/utils/abilities/`. Since `authorize()` is a wrapper around the ability check, passing incorrect arguments can lead to false negatives or runtime errors.
+
+### Mechanism
+
+The rule performs static analysis by:
+
+1. Dynamically scanning `shared/utils/abilities/*.ts` for `defineAbility` blocks.
+2. Parsing the parameter signature of each ability.
+3. Verifying that `authorize()` calls in your API handlers match these signatures.
+
+**Note:** The `authorize` function automatically injects the `user` session as the first argument to the ability callback. Therefore, your `authorize()` call in the API handler should **pass the Event object first**, followed by the remaining arguments expected by the ability.
+
+### Example
+
+**Ability Definition:**
 
 ```typescript
-/* eslint-disable local/require-authorize */
-/* eslint-disable local/validate-authorize-params */
+// defined in shared/utils/abilities/posts.ts
+export const editPost = defineAbility((user, postId: number, isDraft: boolean) => {
+  return user.id === postId || isDraft
+})
 ```
 
-## Benefits
+**Expected Authorize Call:**
+`authorize(event, 'editPost', postId, isDraft)`
 
-1. **Security**: Prevents accidentally creating unsecured API endpoints
-2. **Type Safety**: Catches parameter mismatches at development time
-3. **Early Detection**: No need to wait for tests to catch errors
-4. **Documentation**: Serves as inline documentation for correct usage
-5. **Maintainability**: Makes refactoring safer and easier
-6. **Consistency**: Enforces consistent patterns across the codebase
+### Usage
 
-## Development
+#### ✅ Correct Usage
 
-The rules are defined in:
+```javascript
+// Matches signature: event + ability + postId + isDraft
+await authorize(event, 'editPost', 123, true)
+```
 
-- `/eslint-rules/require-authorize.js`
-- `/eslint-rules/validate-authorize-params.js`
+#### ❌ Incorrect Usage
 
-Configuration is in `eslint.config.mjs`.
+**Missing Event:**
 
-## Additional Documentation
+```javascript
+// Error: First parameter of authorize() must be the event object
+await authorize('editPost', 123, true)
+```
 
-- [VALIDATE_AUTHORIZE_PARAMS.md](./VALIDATE_AUTHORIZE_PARAMS.md) - Detailed documentation for the validate-authorize-params rule
-- [DYNAMIC_DETECTION.md](./DYNAMIC_DETECTION.md) - Technical details on how dynamic ability detection works
-- [TESTING.md](./TESTING.md) - Testing guide for both rules
-- [QUICK_REFERENCE.md](./QUICK_REFERENCE.md) - Quick reference for ability signatures
-- [SUMMARY.md](./SUMMARY.md) - Project summary and benefits
+**Wrong Parameter Count:**
+
+```javascript
+// Error: authorize(editPost) expects 4 parameters but got 3.
+// Expected signature: authorize(event, editPost, postId, isDraft)
+await authorize(event, 'editPost', 123)
+```
+
+**Unknown Ability:**
+
+```javascript
+// Error: Unknown ability "deleteWorld".
+await authorize(event, 'deleteWorld')
+```
+
+## Configuration
+
+To enable these rules, add them to your `.eslintrc.js` (or `package.json` config):
+
+```javascript
+rules: {
+  'local/require-authorize': 'error',
+  'local/validate-authorize-params': 'error'
+}
+```
