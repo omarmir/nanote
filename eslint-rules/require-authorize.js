@@ -53,24 +53,27 @@ export default {
 
     // Track whether we found an authorize call
     let hasAuthorizeCall = false
-    let handlerNode = null
+    let exportDefaultNode = null
+    let isNuxtAuthHandler = false
 
     return {
-      // Check for defineEventHandler, defineEventHandlerWithDB, defineEventHandlerWithId
-      CallExpression(node) {
-        // Check if this is a call to one of our event handler functions
-        const isEventHandler =
-          node.callee.type === 'Identifier' &&
-          ['defineEventHandler', 'defineEventHandlerWithDB', 'defineEventHandlerWithId', 'NuxtAuthHandler'].includes(
-            node.callee.name
-          )
+      // Find the main handler (default export)
+      ExportDefaultDeclaration(node) {
+        exportDefaultNode = node
 
-        if (isEventHandler && !handlerNode) {
-          // Store the handler node to report on it later
-          handlerNode = node
+        // Check if it's NuxtAuthHandler immediately
+        if (
+          node.declaration.type === 'CallExpression' &&
+          node.declaration.callee.type === 'Identifier' &&
+          node.declaration.callee.name === 'NuxtAuthHandler'
+        ) {
+          isNuxtAuthHandler = true
         }
+      },
 
-        // Check if this is an authorize call (await authorize(...) or authorize(...))
+      // Check for valid authorize calls
+      CallExpression(node) {
+        // Check if this is an authorize call (authorize(...))
         if (node.callee.type === 'Identifier' && node.callee.name === 'authorize') {
           hasAuthorizeCall = true
         }
@@ -89,15 +92,10 @@ export default {
 
       // At the end of the program, check if we found a handler without authorize
       'Program:exit'() {
-        // If we found a handler but no authorize call, report an error
-        if (handlerNode && !hasAuthorizeCall) {
-          // Skip NuxtAuthHandler as it's the auth handler itself
-          if (handlerNode.callee.name === 'NuxtAuthHandler') {
-            return
-          }
-
+        // If we found a default export but no authorize call, report an error
+        if (exportDefaultNode && !hasAuthorizeCall && !isNuxtAuthHandler) {
           context.report({
-            node: handlerNode,
+            node: exportDefaultNode,
             messageId: 'missingAuthorize'
           })
         }
