@@ -6,9 +6,10 @@ export default defineI18nLocaleDetector((event, config) => {
 
   // Depending on your i18n version, it's usually under runtimeConfig.public.i18n
   // but we can also check the local config as a backup.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const i18nOptions = (runtimeConfig.public?.i18n || config) as any
 
-  // 2. Safely extract locales with a fallback to ['en']
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supportedLocales: string[] = i18nOptions.locales.map((l: any) => (typeof l === 'string' ? l : l.code))
 
   const detect = () => {

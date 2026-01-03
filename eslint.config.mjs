@@ -1,6 +1,8 @@
 // @ts-check
 import withNuxt from './.nuxt/eslint.config.mjs'
 import vueI18n from '@intlify/eslint-plugin-vue-i18n'
+import requireAuthorize from './eslint-rules/require-authorize.js'
+import validateAuthorizeParams from './eslint-rules/validate-authorize-params.js'
 
 export default withNuxt(
   // 1. Global Ignores (Must be a standalone object)
@@ -15,6 +17,23 @@ export default withNuxt(
       'data/*'
     ]
   },
+  // 2. Add your custom local rules plugin
+  {
+    files: ['server/api/**/*.ts', 'server/api/**/*.js'],
+    plugins: {
+      local: {
+        name: 'local',
+        rules: {
+          'require-authorize': requireAuthorize,
+          'validate-authorize-params': validateAuthorizeParams
+        }
+      }
+    },
+    rules: {
+      'local/require-authorize': 'error',
+      'local/validate-authorize-params': 'error'
+    }
+  },
   // Your custom configs here
   ...vueI18n.configs['flat/recommended'],
   {
@@ -22,6 +41,8 @@ export default withNuxt(
       'vue/max-attributes-per-line': 'off',
       'vue/html-closing-bracket-newline': 'off',
       '@typescript-eslint/member-delimiter-style': 'off',
+      '@stylistic/operator-linebreak': 'off',
+      '@stylistic/arrow-parens': 'off',
       '@stylistic/member-delimiter-style': 'off',
       '@intlify/vue-i18n/no-raw-text': [
         'error',

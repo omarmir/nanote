@@ -8,7 +8,8 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n',
     '@pinia/nuxt',
     'nuxt-codemirror',
-    'nuxt-auth-utils'
+    'nuxt-auth-utils',
+    'nuxt-authorization'
   ],
 
   ssr: false,

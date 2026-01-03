@@ -12,6 +12,7 @@ export default defineEventHandlerWithError(async (event): Promise<USearchResult[
   return defineEventHandlerWithSearch(async (_event, searchResults): Promise<USearchResult[]> => {
     const fullPath = resolve(notesPath)
     const { q: rawQuery } = getQuery(event)
+    const t = await useTranslation(event)
 
     if (!rawQuery || typeof rawQuery !== 'string') {
       throw createError({ statusCode: 400, message: 'Missing query.' })

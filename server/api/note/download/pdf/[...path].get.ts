@@ -7,8 +7,6 @@ import { blockRegex, regex as inlineRegex } from 'milkdown-plugin-file/regex'
 export default defineEventHandlerWithNotebookAndNote(async (event, _cleanNotebook, cleanNote, fullPath) => {
   const { origin, host } = getRequestURL(event)
 
-  const config = useRuntimeConfig()
-
   const content = readFileSync(fullPath, 'utf8')
   const newContent = content.replace(imageRegex, matchedUrl => `${origin}${matchedUrl}`)
 

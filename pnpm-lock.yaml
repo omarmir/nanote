@@ -100,6 +100,9 @@ importers:
       nuxt-auth-utils:
         specifier: 0.5.26
         version: 0.5.26(magicast@0.5.1)
+      nuxt-authorization:
+        specifier: 0.3.5
+        version: 0.3.5(magicast@0.5.1)
       nuxt-codemirror:
         specifier: 0.0.16
         version: 0.0.16(magicast@0.5.1)
@@ -4847,6 +4850,9 @@ packages:
         optional: true
       '@simplewebauthn/server':
         optional: true
+
+  nuxt-authorization@0.3.5:
+    resolution: {integrity: sha512-WvgEj+j1yE/XwMEIOUIhLIcvSQcZsJ/rl7J2abhPR4wzkqz0FJKoBJM/Pz3fBEmG+sl/aX6bn0Ja5HESRJhNnw==}
 
   nuxt-codemirror@0.0.16:
     resolution: {integrity: sha512-yNyaAJBQzTngsG5tPJigOtFvJG+TsR7ScWPsKFka1+hweJAbGOb0lO7toT6Q5xmbpXXa4a23X7QFx8xiKuBjyA==}
@@ -12132,6 +12138,12 @@ snapshots:
     transitivePeerDependencies:
       - argon2
       - bcrypt
+      - magicast
+
+  nuxt-authorization@0.3.5(magicast@0.5.1):
+    dependencies:
+      '@nuxt/kit': 3.19.3(magicast@0.5.1)
+    transitivePeerDependencies:
       - magicast
 
   nuxt-codemirror@0.0.16(magicast@0.5.1):

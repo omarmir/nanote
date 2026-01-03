@@ -4,10 +4,10 @@
       :title="t('loginTitle')"
       :description="t('loginMessage')"
       :fields="fields"
-      @submit="onSubmit"
-      icon="i-lucide-lock">
-      <template #leading class="">
-        <CommonLogo class="inline-block size-10 shrink-0"></CommonLogo>
+      icon="i-lucide-lock"
+      @submit="onSubmit">
+      <template #leading>
+        <CommonLogo class="inline-block size-10 shrink-0" />
       </template>
     </UAuthForm>
     <UAlert
@@ -24,7 +24,8 @@
 
 <script setup lang="ts">
 import type { FormSubmitEvent, AuthFormField } from '@nuxt/ui'
-import { FetchError } from 'ofetch'
+import type { FetchError } from 'ofetch'
+
 const { t } = useI18n()
 
 definePageMeta({

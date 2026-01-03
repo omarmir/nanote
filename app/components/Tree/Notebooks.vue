@@ -8,8 +8,8 @@
               v-bind="
                 item.isNote
                   ? {
-                      to: `/note/${item.apiPath}`
-                    }
+                    to: `/note/${item.apiPath}`
+                  }
                   : {}
               "
               class="target flex grow flex-row items-center justify-between group-hover:bg-neutral-500/20"
