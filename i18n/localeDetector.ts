@@ -1,28 +1,44 @@
 // Detect based on query, cookie, header
 export default defineI18nLocaleDetector((event, config) => {
   // try to get locale from query
-  const query = tryQueryLocale(event, { lang: '' }) // disable locale default value with `lang` option
-  if (query) {
-    return query.toString()
+
+  const runtimeConfig = useRuntimeConfig()
+
+  // Depending on your i18n version, it's usually under runtimeConfig.public.i18n
+  // but we can also check the local config as a backup.
+  const i18nOptions = (runtimeConfig.public?.i18n || config) as any
+
+  // 2. Safely extract locales with a fallback to ['en']
+  const supportedLocales: string[] = i18nOptions.locales.map((l: any) => (typeof l === 'string' ? l : l.code))
+
+  const detect = () => {
+    const query = tryQueryLocale(event, { lang: '' })
+    if (query) return query.toString()
+
+    const cookie = tryCookieLocale(event, { lang: '', name: 'i18n_preference' })
+    if (cookie) return cookie.toString()
+
+    const cookieRedirect = tryCookieLocale(event, { lang: '', name: 'i18n_redirected' }) // disable locale default value with `lang` option
+    if (cookieRedirect) return cookieRedirect.toString()
+
+    const header = tryHeaderLocale(event, { lang: '' })
+    if (header) return header.toString()
+
+    return config.defaultLocale
   }
 
-  // try to get locale from cookie
-  const cookie = tryCookieLocale(event, { lang: '', name: 'i18n_preference' }) // disable locale default value with `lang` option
-  if (cookie) {
-    return cookie.toString()
-  }
+  const detected = detect()
 
-  const cookieRedirect = tryCookieLocale(event, { lang: '', name: 'i18n_redirected' }) // disable locale default value with `lang` option
-  if (cookieRedirect) {
-    return cookieRedirect.toString()
-  }
+  // 2. Logic to handle "en-GB" -> "en" or fallback
+  // If it's something like 'en-GB', we take the first part 'en'
+  const baseLocale = detected.split('-')[0]
 
-  // try to get locale from header (`accept-header`)
-  const header = tryHeaderLocale(event, { lang: '' }) // disable locale default value with `lang` option
-  if (header) {
-    return header.toString()
+  if (supportedLocales.includes(detected)) {
+    return detected
+  } else if (baseLocale && supportedLocales.includes(baseLocale)) {
+    return baseLocale
   }
 
   // If the locale cannot be resolved up to this point, it is resolved with the value `defaultLocale` of the locale config passed to the function
-  return config.defaultLocale
+  return i18nOptions.defaultLocale
 })

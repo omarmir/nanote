@@ -2,8 +2,10 @@
   <UDashboardPanel id="home">
     <template #header>
       <TopBar
+        :is-exporting
         :name
         :note-opts="{ isReadOnly }"
+        @pdf="generatePDF"
         @readonly="toggleReadOnlyMode"
         @share="shareNote"
         @rename="renameNote"
@@ -47,11 +49,10 @@ import { LazyCommonDelete, LazyNotesRename, LazyNotesShare } from '#components'
 const { t } = useI18n()
 const overlay = useOverlay()
 const isReadOnly = useState('isReadOnly', () => false)
-const router = useRouter()
 
 // Use the composable for all note content logic (including route extraction)
-const { content, isMD, error, updated, savingState, pathArray, name, fetchMarkdown, apiPath, loadingState }
-  = useNoteContent()
+const { content, isMD, error, updated, savingState, pathArray, name, fetchMarkdown, apiPath, loadingState } =
+  useNoteContent()
 
 // Fetch markdown content on component setup
 await fetchMarkdown()
@@ -65,7 +66,7 @@ const deleteNote = async () => {
   const isDeleted = await deleteModal.open({ name, apiPath, pathArray, isNote: true })
 
   if (isDeleted) {
-    router.push('/')
+    navigateTo('/')
   }
 }
 
@@ -79,7 +80,32 @@ const renameNote = async () => {
   })
 
   if (renamed) {
-    router.push(`/note/${renamed}`)
+    navigateTo(`/note/${renamed}`)
+  }
+}
+
+const isExporting = ref(false)
+const generatePDF = async () => {
+  isExporting.value = true
+  try {
+    // Fetch binary PDF data from your API endpoint as ArrayBuffer
+    const pdfArrayBuffer = await $fetch<ArrayBuffer>(`/api/note/download/pdf/${apiPath}`, {
+      responseType: 'arrayBuffer'
+    })
+
+    // Create a Blob from the ArrayBuffer with PDF mime type
+    const pdfBlob = new Blob([pdfArrayBuffer], { type: 'application/pdf' })
+
+    // Optionally convert Blob to File if your downloadFile function expects File
+    // (Blob works fine for URL.createObjectURL too)
+    const pdfFile = new File([pdfBlob], `${name}.pdf`, { type: 'application/pdf' })
+
+    // Download the file using your helper
+    downloadFile(pdfFile)
+  } catch (error) {
+    console.error('Failed to export PDF:', error)
+  } finally {
+    isExporting.value = false
   }
 }
 </script>

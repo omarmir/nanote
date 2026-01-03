@@ -5,11 +5,10 @@ type EventHandlerWithError<T extends EventHandlerRequest, D> = (event: H3Event<T
 
 export function defineEventHandlerWithError<T extends EventHandlerRequest, D>(handler: EventHandlerWithError<T, D>) {
   return defineEventHandler(async event => {
-    const t = await useTranslation(event)
-
     try {
       return await handler(event)
     } catch (error) {
+      const t = await useTranslation(event)
       console.log(event, error)
       if (error instanceof URIError) {
         throw createError({

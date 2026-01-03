@@ -55,7 +55,7 @@ const onSubmit = async (event: FormSubmitEvent<{ secretKey: string }>) => {
     if (login) {
       await fetch()
       error.value = null
-      await navigateTo('/')
+      navigateTo('/')
     }
   } catch (e) {
     const err = e as FetchError

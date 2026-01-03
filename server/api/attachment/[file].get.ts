@@ -7,9 +7,9 @@ import { defineEventHandlerWithAttachmentAuthError } from '~~/server/wrappers/at
 
 export default defineEventHandlerWithAttachmentAuthError(async (event): Promise<ReadStream> => {
   const file = event.context.params?.file
-  const t = await useTranslation(event)
 
   if (!file) {
+    const t = await useTranslation(event)
     throw createError({
       statusCode: 400,
       statusMessage: t('errors.httpCodes.400'),
@@ -21,6 +21,7 @@ export default defineEventHandlerWithAttachmentAuthError(async (event): Promise<
 
   // Check if the file exists
   if (!existsSync(filePath)) {
+    const t = await useTranslation(event)
     throw createError({
       statusCode: 404,
       statusMessage: t('errors.httpCodes.404'),

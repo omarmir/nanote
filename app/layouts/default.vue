@@ -38,7 +38,6 @@ import type { NavigationMenuItem } from '@nuxt/ui'
 
 const { t } = useI18n()
 const route = useRoute()
-const router = useRouter()
 
 const { loggedIn, clear } = useUserSession()
 
@@ -85,7 +84,7 @@ const items = computed<NavigationMenuItem[]>(() => [
       onSelect: async (e: Event) => {
         e.preventDefault()
         await clear()
-        router.push('/login')
+        navigateTo('/login')
       }
     }
   ]

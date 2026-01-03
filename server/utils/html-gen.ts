@@ -1,12 +1,10 @@
-// markdownConverter.js
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remarkHtml from 'remark-html'
+import remarkGfm from 'remark-gfm'
 import { getIcon } from 'material-file-icons'
 import puppeteer from 'puppeteer'
 import { settings } from '~~/server/db/schema'
-// import jwt from 'jsonwebtoken'
-// import SECRET_KEY from '~~/server/key'
 
 export const fullRegex = /(?<=\(<|\()\/api\/attachment\/.*?(?=[)>])|(?<=href=")\/api\/attachment\/.*?(?=")/g
 export const imageRegex = /(?<=\(<|\()\/api\/attachment\/.*?(?=[)>])/g
@@ -15,6 +13,7 @@ export const convertMarkdownToHtml = async (markdownContent: string) => {
   try {
     const file = await unified()
       .use(remarkParse) // Parse the markdown string into an AST
+      .use(remarkGfm)
       .use(remarkHtml) // Convert the AST into an HTML string
       .process(markdownContent) // Process the content
 
@@ -43,29 +42,22 @@ export const replaceFileContent = (htmlContent: string, isBlock: boolean, regex:
   return htmlContent
 }
 
-export const printPDF = async (html: string, origin: string, hostname: string) => {
-  console.log(hostname)
-  // const token = jwt.sign({ app: 'nanote' }, SECRET_KEY, { expiresIn: '7d', audience: 'authorized' })
-
+export const printPDF = async (html: string, origin: string, hostname: string, pdfSecret: string) => {
   const browser = await puppeteer.launch({
     headless: true,
     executablePath: '/usr/bin/chromium',
     args: ['--no-sandbox', '--disable-setuid-sandbox']
   })
-  // Create a new browser context
+
   const context = await browser.createBrowserContext()
-  // context.setCookie({
-  //   httpOnly: true,
-  //   name: 'token',
-  //   // value: token,
-  //   domain: hostname,
-  //   sameSite: 'Strict',
-  //   expires: Math.floor(Date.now() / 1000) + 60 * 5, // expires in 5 minutes
-  //   path: '/'
-  // })
 
   try {
     const page = await context.newPage()
+
+    await page.setExtraHTTPHeaders({
+      'x-internal-secret': pdfSecret
+    })
+
     await page.goto(origin)
 
     await page.setContent(html, { waitUntil: 'networkidle0' })
@@ -93,7 +85,7 @@ export const printPDF = async (html: string, origin: string, hostname: string) =
       where: eq(settings.setting, 'isParagraphSpaced')
     })
     if (paraSpacing?.value === 'true') {
-      await page.addStyleTag({ content: 'p {padding-bottom: 0.25rem}' })
+      await page.addStyleTag({ content: 'p {padding-bottom: 0.5rem}' })
     }
 
     const pdf = await page.pdf({ format: 'A4' })

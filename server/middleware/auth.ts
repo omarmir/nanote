@@ -10,7 +10,8 @@ export default defineEventHandler(async event => {
     path === '/api/health' ||
     path.startsWith('/api/share') ||
     path.startsWith('/api/attachment/') ||
-    path.startsWith('/api/_nuxt_icon/')
+    path.startsWith('/api/_nuxt_icon/') ||
+    path.startsWith('/_i18n/')
 
   if (isPublicApi) return
 

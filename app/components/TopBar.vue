@@ -34,6 +34,7 @@
             size="md"
             :aria-label="t('pdf')"
             :title="t('pdf')"
+            :loading="isExporting"
             @click="$emit('pdf')" />
           <UButton
             icon="i-lucide-trash-2"
@@ -68,7 +69,15 @@
 </template>
 
 <script lang="ts" setup>
-const { name, noteOpts } = defineProps<{ name?: string; noteOpts?: { isReadOnly: boolean } }>()
+const {
+  name,
+  noteOpts,
+  isExporting = false
+} = defineProps<{
+  name?: string
+  noteOpts?: { isReadOnly: boolean }
+  isExporting?: boolean
+}>()
 const { t } = useI18n()
 
 const settingsStore = useSettingsStore()

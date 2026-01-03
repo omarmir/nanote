@@ -1,5 +1,5 @@
 <template>
-  <div class="line-clamp-6 overflow-hidden">
+  <div class="preview line-clamp-6 overflow-hidden">
     <!-- eslint-disable-next-line vue/no-v-html -->
     <span v-html="String(parsed)" />
   </div>
@@ -16,3 +16,9 @@ const markdownProcessor = unified().use(remarkParse).use(remarkGfm).use(remarkHT
 
 const parsed = await markdownProcessor.process(content)
 </script>
+
+<style lang="css">
+.preview img {
+  max-height: 96px;
+}
+</style>
