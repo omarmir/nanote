@@ -6,9 +6,6 @@ export default defineEventHandler(async (event): Promise<boolean> => {
 
   const isValid = secretKey === SECRET_KEY
 
-  console.log(secretKey)
-  console.log(SECRET_KEY)
-
   if (!isValid) {
     throw createError({
       statusCode: 401,
@@ -19,7 +16,7 @@ export default defineEventHandler(async (event): Promise<boolean> => {
   // 3. Set the session
   await setUserSession(event, {
     user: {
-      role: 'authenticated'
+      role: 'root'
     },
     loggedInAt: new Date()
   })

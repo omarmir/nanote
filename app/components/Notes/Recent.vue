@@ -32,6 +32,18 @@
         </UCard>
       </li>
     </ul>
+    <UAlert
+      v-if="notebookStore.recentError"
+      color="error"
+      variant="outline"
+      icon="i-lucide-circle-alert"
+      :title="t('failure')"
+      :description="
+        notebookStore.recentError.data.message ??
+        notebookStore.recentError.message ??
+        notebookStore.recentError.statusMessage
+      "
+      as="div" />
   </div>
 </template>
 

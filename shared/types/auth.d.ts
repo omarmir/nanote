@@ -5,8 +5,9 @@ declare module '#auth-utils' {
   }
 
   interface UserSession {
-    shareKey: string
-    role: 'root' | 'shared'
+    user: User
+    shareKey?: string
+    loggedInAt: Date
   }
 }
 

@@ -27,6 +27,16 @@
         <NotebooksRoot :notebook />
       </li>
     </ul>
+    <UAlert
+      v-if="notebookStore.error"
+      color="error"
+      variant="outline"
+      icon="i-lucide-circle-alert"
+      :title="t('failure')"
+      :description="
+        notebookStore.error.data.message ?? notebookStore.error.message ?? notebookStore.error.statusMessage
+      "
+      as="div" />
   </div>
 </template>
 
