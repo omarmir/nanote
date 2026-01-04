@@ -8,6 +8,8 @@ import { defineEventHandlerWithNotebookAndNote } from '~~/server/wrappers/note'
 
 export default defineEventHandlerWithNotebookAndNote(
   async (event, _cleanNotebook, cleanNote, fullPath): Promise<void> => {
+    await authorize(event, editAllNotes)
+
     // Get info
     const stats = await stat(fullPath)
 

@@ -2,7 +2,7 @@ import { envNotesPath, envUploadsPath, envConfigPath } from '~~/server/folder'
 import { defineEventHandlerWithError } from '../wrappers/error'
 import SECRET_KEY from '~~/server/utils/key'
 
-// eslint-disable local/require-authorize
+// eslint-disable-next-line local/require-authorize
 export default defineEventHandlerWithError(async (event): Promise<Health> => {
   const session = await getUserSession(event)
 

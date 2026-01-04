@@ -1,4 +1,4 @@
-import type { UserSession, User } from '#auth-utils'
+import type { UserSession } from '#auth-utils'
 
 export default defineNitroPlugin(nitroApp => {
   nitroApp.hooks.hook('request', async event => {

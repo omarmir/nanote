@@ -4,12 +4,8 @@ import { join, resolve, extname } from 'node:path'
 import { notesPath } from '~~/server/folder'
 import { access, constants, stat } from 'node:fs/promises'
 import { readFileSync } from 'node:fs'
-// import { fullRegex } from '~~/server/utils/html-gen'
-// import jwt from 'jsonwebtoken'
-// import SECRET_KEY from '~~/server/key'
 
-// import type { Note } from '#shared/types/notebook'
-
+// eslint-disable-next-line local/require-authorize  local/require-authorize
 export default defineEventHandlerWithError(async event => {
   const key = decodeURIComponent(event.context.params?.key ?? '')
   const t = await useTranslation(event)

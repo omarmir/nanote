@@ -39,9 +39,9 @@
       icon="i-lucide-circle-alert"
       :title="t('failure')"
       :description="
-        notebookStore.recentError.data.message ??
-        notebookStore.recentError.message ??
-        notebookStore.recentError.statusMessage
+        notebookStore.recentError.data.message
+          ?? notebookStore.recentError.message
+          ?? notebookStore.recentError.statusMessage
       "
       as="div" />
   </div>

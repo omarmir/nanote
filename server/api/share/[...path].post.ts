@@ -5,6 +5,8 @@ import type { Result } from '#shared/types/result'
 import { notePathArrayJoiner } from '#shared/utils/path-joiner'
 
 export default defineEventHandlerWithNotebookAndNote(async (event, pathArray, note): Promise<Result<string>> => {
+  await authorize(event, editAllNotes)
+
   const t = await useTranslation(event)
   const body = await readBody(event)
 

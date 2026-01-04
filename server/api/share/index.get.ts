@@ -4,6 +4,8 @@ import { type SelectShared, shared } from '~~/server/db/schema'
 // import type { Note } from '#shared/types/notebook'
 
 export default defineEventHandlerWithError(async (event): Promise<SelectShared[]> => {
+  await authorize(event, editAllNotes)
+
   const t = await useTranslation(event)
 
   try {

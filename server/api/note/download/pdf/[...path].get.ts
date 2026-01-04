@@ -5,6 +5,8 @@ import { defineEventHandlerWithNotebookAndNote } from '~~/server/wrappers/note'
 import { blockRegex, regex as inlineRegex } from 'milkdown-plugin-file/regex'
 
 export default defineEventHandlerWithNotebookAndNote(async (event, _cleanNotebook, cleanNote, fullPath) => {
+  await authorize(event, editAllNotes)
+
   const { origin, host } = getRequestURL(event)
 
   const content = readFileSync(fullPath, 'utf8')
