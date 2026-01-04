@@ -8,6 +8,8 @@ import { checkIfPathExists } from '~~/server/utils'
  */
 export default defineEventHandlerWithNotebook(
   async (event, pathArray, fullPath, _parentFolder, name): Promise<NotebookTreeItem> => {
+    await authorize(event, editAllNotes)
+
     const t = await useTranslation(event)
 
     // If folder already exists check

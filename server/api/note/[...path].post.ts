@@ -11,6 +11,8 @@ import type { NotebookTreeItem } from '~~/shared/types/notebook'
  */
 export default defineEventHandlerWithNotebookAndNote(
   async (event, pathArray, note, fullPath, isMarkdown): Promise<NotebookTreeItem> => {
+    await authorize(event, editAllNotes)
+
     let fileContent = Buffer.from('')
 
     // Parse form data if available

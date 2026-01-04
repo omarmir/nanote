@@ -5,6 +5,8 @@ import { defineEventHandlerWithError } from '~~/server/wrappers/error'
 import type { Result } from '#shared/types/result'
 
 export default defineEventHandlerWithError(async (event): Promise<Result<null>> => {
+  await authorize(event, editAllNotes)
+
   const setting = await readBody<InsertSetting>(event)
 
   await db

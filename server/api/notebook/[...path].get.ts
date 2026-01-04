@@ -5,13 +5,15 @@ import { LAZY_LOAD_PLACEHOLDER, type NotebookTreeItem } from '#shared/types/note
 /**
  * Returns contents for a specific notebook
  */
-export default defineEventHandlerWithNotebook(async (_event, pathArray, fullPath): Promise<NotebookTreeItem[]> => {
+export default defineEventHandlerWithNotebook(async (event, pathArray, fullPath): Promise<NotebookTreeItem[]> => {
+  await authorize(event, editAllNotes)
+
   // Read directory contents
   const files = await readdir(fullPath, { withFileTypes: true })
   const notebookContents: NotebookTreeItem[] = []
   // Process files concurrently
   await Promise.all(
-    files.map(async (dirent) => {
+    files.map(async dirent => {
       const filePath = join(fullPath, dirent.name)
       const stats = await stat(filePath)
       const createdAtTime = stats.birthtime.getTime() !== 0 ? stats.birthtime : stats.ctime
@@ -65,8 +67,8 @@ export default defineEventHandlerWithNotebook(async (_event, pathArray, fullPath
           notebookCount: folderCount,
           children: fileCount + folderCount > 0 ? [LAZY_LOAD_PLACEHOLDER] : [],
           updatedAt:
-            updatedAt?.toISOString()
-            ?? new Date(Math.max(stats.birthtime.getTime(), stats.mtime.getTime())).toISOString(),
+            updatedAt?.toISOString() ??
+            new Date(Math.max(stats.birthtime.getTime(), stats.mtime.getTime())).toISOString(),
           path: notebookPath,
           pathArray: [...pathArray, dirent.name],
           isNote: false,

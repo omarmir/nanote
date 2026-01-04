@@ -8,6 +8,8 @@ import type { RenameTreeItem } from '#shared/types/notebook'
  */
 export default defineEventHandlerWithNotebook(
   async (event, pathArray, fullPath, parentFolder): Promise<RenameTreeItem> => {
+    await authorize(event, editAllNotes)
+
     const t = await useTranslation(event)
     const body = await readBody(event)
     // Validate input

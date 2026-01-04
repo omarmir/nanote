@@ -6,13 +6,15 @@ import { defineEventHandlerWithAttachmentNotebookNote } from '~~/server/wrappers
  */
 export default defineEventHandlerWithAttachmentNotebookNote(
   async (
-    _event,
+    event,
     _notebook,
     _note,
     fullPath,
     _markAttachmentForDeletionIfNeeded,
     deleteAllAttachments
   ): Promise<boolean> => {
+    await authorize(event, editAllNotes)
+
     // Read file contents and stats
     await unlink(fullPath)
 

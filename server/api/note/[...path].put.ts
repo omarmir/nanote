@@ -8,7 +8,9 @@ import type { RenameTreeItem } from '#shared/types/notebook'
  * Renaming note
  */
 export default defineEventHandlerWithNotebookAndNote(
-  async (event, pathArray, note, fullPath, _isMarkdown, targetFolder): Promise<RenameTreeItem> => {
+  async (event, pathArray, _note, fullPath, _isMarkdown, targetFolder): Promise<RenameTreeItem> => {
+    await authorize(event, editAllNotes)
+
     const t = await useTranslation(event)
     const body = await readBody(event)
     // Validate input

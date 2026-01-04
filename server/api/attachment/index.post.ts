@@ -7,6 +7,8 @@ import type { MultiPartData } from '#shared/types/upload'
 import { defineEventHandlerWithAttachmentAuthError } from '~~/server/wrappers/attachment-auth'
 
 export default defineEventHandlerWithAttachmentAuthError(async event => {
+  await authorize(event, editAllNotes)
+
   const formData = await readMultipartFormData(event)
   const t = await useTranslation(event)
 

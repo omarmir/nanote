@@ -122,7 +122,8 @@
       "500": "Internal Server Error",
       "400": "Bad Request",
       "404": "Not Found",
-      "401": "Unauthorized"
+      "401": "Unauthorized",
+      "403": "Forbidden"
     }
   },
   "colours": {

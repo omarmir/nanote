@@ -6,6 +6,8 @@ import mime from 'mime'
 import { defineEventHandlerWithAttachmentAuthError } from '~~/server/wrappers/attachment-auth'
 
 export default defineEventHandlerWithAttachmentAuthError(async (event): Promise<ReadStream> => {
+  await authorize(event, editAllNotes)
+
   const file = event.context.params?.file
 
   if (!file) {

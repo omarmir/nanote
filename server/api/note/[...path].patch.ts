@@ -9,6 +9,8 @@ import type { NoteResponse } from '#shared/types/notebook'
 
 export default defineEventHandlerWithAttachmentNotebookNote(
   async (event, notebook, note, fullPath, markAttachmentForDeletionIfNeeded): Promise<NoteResponse> => {
+    await authorize(event, editAllNotes)
+
     const t = await useTranslation(event)
 
     // Parse form data

@@ -3,5 +3,5 @@ import type { UserSession } from '#auth-utils'
 
 export const editAllNotes = defineAbility((session: UserSession) => {
   if (session.role === 'root') return true
-  return deny({ statusCode: 403 })
+  return deny({ statusCode: 401 })
 })

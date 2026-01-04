@@ -5,6 +5,8 @@ import { defineEventHandlerWithAttachmentAuthError } from '~~/server/wrappers/at
 
 // This route is used by the milkdown plugin to see if the attachment is accessible
 export default defineEventHandlerWithAttachmentAuthError(async event => {
+  await authorize(event, editAllNotes)
+
   const query = getQuery(event)
   const fileURL = query.url as string
   const t = await useTranslation(event)

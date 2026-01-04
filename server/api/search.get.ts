@@ -9,6 +9,8 @@ import { CONTEXT_CHARS, MAX_RESULTS, type UgrepResult, type USearchResult } from
 import { matchScore, splitWords } from '../utils/search'
 
 export default defineEventHandlerWithError(async (event): Promise<USearchResult[]> => {
+  await authorize(event, editAllNotes)
+
   return defineEventHandlerWithSearch(async (_event, searchResults): Promise<USearchResult[]> => {
     const fullPath = resolve(notesPath)
     const { q: rawQuery } = getQuery(event)
