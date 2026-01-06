@@ -6,10 +6,10 @@ import mime from 'mime'
 import { defineEventHandlerWithError } from '~~/server/wrappers/error'
 
 export default defineEventHandlerWithError(async event => {
-  const currentSecret = getCurrentSecret()
-  const internalHeader = getHeader(event, 'x-internal-secret')
+  const headerToken = getRequestHeader(event, 'x-pdf-token')
+  const validToken = headerToken ? await verifyPdfToken(headerToken) : false
 
-  await authorize(event, getAttachments)
+  await authorize(event, getPDFAttachments, validToken)
 
   const file = event.context.params?.file
 

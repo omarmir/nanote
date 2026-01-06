@@ -16,8 +16,9 @@ export default defineEventHandlerWithNotebookAndNote(async (event, _cleanNoteboo
   htmlContent = replaceFileContent(htmlContent, true, blockRegex)
   htmlContent = replaceFileContent(htmlContent, false, inlineRegex)
 
-  const pdfSecret = getInternalSecret()
-  const pdf = await printPDF(htmlContent, origin, host, pdfSecret)
+  const pdfToken = await createPdfToken()
+
+  const pdf = await printPDF(htmlContent, origin, host, pdfToken)
 
   // Set appropriate headers
   setHeaders(event, {

@@ -6,12 +6,10 @@ export const editAllNotes = defineAbility((session: UserSession) => {
   return deny({ statusCode: 401 })
 })
 
-export const getAttachments = defineAbility((session: UserSession, internalHeader?: string, internalKey?: string) => {
+export const getPDFAttachments = defineAbility((session: UserSession, validToken?: boolean) => {
   if (session.user?.role === 'root') return true
 
-  if (!internalHeader || internalKey) return deny({ statusCode: 401 })
-
-  if (internalHeader === internalKey) return true
+  if (validToken === true) return true
 
   return deny({ statusCode: 401 })
 })

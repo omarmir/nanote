@@ -42,7 +42,7 @@ export const replaceFileContent = (htmlContent: string, isBlock: boolean, regex:
   return htmlContent
 }
 
-export const printPDF = async (html: string, origin: string, hostname: string, pdfSecret: string) => {
+export const printPDF = async (html: string, origin: string, hostname: string, pdfToken?: string) => {
   const browser = await puppeteer.launch({
     headless: true,
     executablePath: '/usr/bin/chromium',
@@ -54,9 +54,11 @@ export const printPDF = async (html: string, origin: string, hostname: string, p
   try {
     const page = await context.newPage()
 
-    await page.setExtraHTTPHeaders({
-      'x-internal-secret': pdfSecret
-    })
+    if (pdfToken) {
+      await page.setExtraHTTPHeaders({
+        'x-pdf-token': pdfToken
+      })
+    }
 
     await page.goto(origin)
 
