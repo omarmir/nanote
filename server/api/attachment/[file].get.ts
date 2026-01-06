@@ -3,10 +3,13 @@ import { createReadStream, existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { uploadPath } from '~~/server/folder'
 import mime from 'mime'
-import { defineEventHandlerWithAttachmentAuthError } from '~~/server/wrappers/attachment-auth'
+import { defineEventHandlerWithError } from '~~/server/wrappers/error'
 
-export default defineEventHandlerWithAttachmentAuthError(async (event): Promise<ReadStream> => {
-  await authorize(event, editAllNotes)
+export default defineEventHandlerWithError(async event => {
+  const currentSecret = getCurrentSecret()
+  const internalHeader = getHeader(event, 'x-internal-secret')
+
+  await authorize(event, getAttachments)
 
   const file = event.context.params?.file
 

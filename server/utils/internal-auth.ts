@@ -1,24 +1,23 @@
 // server/utils/internalAuth.ts
-import { nanoid } from 'nanoid'
+import { customAlphabet } from 'nanoid'
 
 // State stored in server memory
-let currentSecret = nanoid(32)
-let expiryTime = Date.now() + 1000 * 60 * 15 // 15 mins
+let currentSecret = `${customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz-', 32)}.${Date.now() + 1000 * 60 * 15}`
 
-export const getInternalSecret = () => {
+export const getCurrentSecret = () => currentSecret
+
+export const setCurrentSecret = (): string => {
+  const [_secret, expiryTime] = currentSecret.split('.')
   const now = Date.now()
 
-  // If expired, rotate the secret
-  if (now > expiryTime) {
-    currentSecret = nanoid(32)
-    expiryTime = now + 1000 * 60 * 60 * 24
-    console.warn('Internal PDF secret rotated')
+  if (Number.isNaN(expiryTime)) {
+    currentSecret = `${customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz-', 32)}.${Date.now() + 1000 * 60 * 15}`
+  }
+
+  if (now > Number(expiryTime)) {
+    currentSecret =
+      currentSecret = `${customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz-', 32)}.${Date.now() + 1000 * 60 * 15}`
   }
 
   return currentSecret
-}
-
-export const isValidInternalSecret = (headerValue: string | undefined) => {
-  if (!headerValue) return false
-  return headerValue === getInternalSecret()
 }

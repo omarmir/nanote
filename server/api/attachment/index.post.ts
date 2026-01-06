@@ -4,9 +4,9 @@ import path from 'node:path'
 import { access, existsSync } from 'node:fs'
 import { uploadPath } from '~~/server/folder'
 import type { MultiPartData } from '#shared/types/upload'
-import { defineEventHandlerWithAttachmentAuthError } from '~~/server/wrappers/attachment-auth'
+import { defineEventHandlerWithError } from '~~/server/wrappers/error'
 
-export default defineEventHandlerWithAttachmentAuthError(async event => {
+export default defineEventHandlerWithError(async event => {
   await authorize(event, editAllNotes)
 
   const formData = await readMultipartFormData(event)
