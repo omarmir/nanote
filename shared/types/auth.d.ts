@@ -5,8 +5,9 @@ declare module '#auth-utils' {
   }
 
   interface UserSession {
-    user: User
-    shareKey?: string
+    secure?: {
+      share?: { key: string; apiPath: string }
+    }
     loggedInAt: Date
   }
 }
