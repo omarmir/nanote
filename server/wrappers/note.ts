@@ -10,7 +10,8 @@ type EventHandlerWithNotebookAndNote<T extends EventHandlerRequest, D> = (
   note: string,
   fullPath: string,
   isMarkdown: boolean,
-  targetFolder: string
+  targetFolder: string,
+  apiPath: string
 ) => Promise<D>
 
 export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequest, D>(
@@ -36,8 +37,7 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
 
     // Construct paths
     const targetFolder = resolve(join(notesPath, ...pathArray))
-    const filename = note
-    const fullPath = join(targetFolder, filename)
+    const fullPath = join(targetFolder, note)
 
     const fileExtension = extname(fullPath).toLowerCase()
     const isMarkdown = fileExtension === '.md'
@@ -93,8 +93,10 @@ export function defineEventHandlerWithNotebookAndNote<T extends EventHandlerRequ
         message
       })
     }
+
+    const apiPath = [...pathArray, note].join('/')
     try {
-      return await handler(event, pathArray, note, fullPath, isMarkdown, targetFolder)
+      return await handler(event, pathArray, note, fullPath, isMarkdown, targetFolder, apiPath)
     } catch (error) {
       console.log(event, error)
       if ((error as NodeJS.ErrnoException).code === 'ENOENT') {

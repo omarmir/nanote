@@ -72,7 +72,12 @@ export default defineEventHandlerWithError(async event => {
 
   const attachments = [...content.matchAll(fullRegex)].map(m => m[0].split('/').at(-1))
 
-  // TODO: We need to invalidate this, it also invalidates in 24 hours to release memory
+  /**
+   * Shared notes cleanup removes shared attachment storage item:
+   * 1. Deletes from storage if the note is updatd such that attachment is removed
+   * 2. If the share is deleted
+   * 3. Deletes the shared link itself if the note is deleted and all attachments are removed from storage that were set below
+   */
   await useStorage().setItem(`${SHARED_ATTACHMENT_PREFIX}${note.path}`, attachments, { ttl: 60 * 60 * 24 })
 
   appendHeaders(event, {

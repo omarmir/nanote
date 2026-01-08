@@ -30,6 +30,10 @@ export default defineNuxtRouteMiddleware(async to => {
     initTasks.push(notebookStore.fetchBooks())
   }
 
+  if (notebookStore.recentStatus === 'idle') {
+    initTasks.push(notebookStore.refreshRecentNotes())
+  }
+
   // Run them in parallel to save time
   if (initTasks.length > 0) {
     await Promise.all(initTasks)

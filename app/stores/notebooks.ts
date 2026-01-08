@@ -22,9 +22,10 @@ export const useNotebookStore = defineStore('notebook', () => {
   const {
     data: recentNotes,
     refresh: refreshRecentNotes,
-    error: recentError
+    error: recentError,
+    status: recentStatus
   } = useFetch<Note[]>('/api/notes', {
-    immediate: true,
+    immediate: false,
     lazy: true,
     query: { display: 4 }
   })
@@ -285,6 +286,7 @@ export const useNotebookStore = defineStore('notebook', () => {
     // Recents
     recentNotes,
     refreshRecentNotes,
-    recentError
+    recentError,
+    recentStatus
   }
 })

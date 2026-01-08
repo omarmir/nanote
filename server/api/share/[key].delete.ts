@@ -15,15 +15,19 @@ export default defineEventHandlerWithError(async event => {
     })
 
   try {
-    const deleteNote = await db.delete(shared).where(eq(shared.key, sharingKey))
+    const deleteNote = await db.delete(shared).where(eq(shared.key, sharingKey)).returning({ notePath: shared.path })
 
-    if (deleteNote.rowsAffected === 1) {
+    for (const item of deleteNote) {
+      await useStorage().removeItem(`${SHARED_ATTACHMENT_PREFIX}${item.notePath}`, { removeMeta: true })
+    }
+
+    if (deleteNote.length === 1) {
       return true
     } else {
       throw createError({
         statusCode: 500,
         statusMessage: t('errors.httpCodes.500'),
-        message: t('errors.unexpectedDeleteCount', { count: deleteNote.rowsAffected })
+        message: t('errors.unexpectedDeleteCount', { count: deleteNote.length })
       })
     }
   } catch (dbError) {

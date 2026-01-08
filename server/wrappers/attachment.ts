@@ -12,14 +12,15 @@ type EventHandlerWithAttachment<T extends EventHandlerRequest, D> = (
   note: string,
   fullPath: string,
   markAttachmentForDeletionIfNeeded: (newFileData: Buffer<ArrayBufferLike> | null) => Promise<void>,
-  deleteAllAttachments: () => Promise<void>
+  deleteAllAttachments: () => Promise<void>,
+  apiPath: string
 ) => Promise<D>
 
 export function defineEventHandlerWithAttachmentNotebookNote<T extends EventHandlerRequest, D>(
   handler: EventHandlerWithAttachment<T, D>
 ) {
   return defineEventHandlerWithNotebookAndNote(
-    async (event, notebooks, note, fullPath) => {
+    async (event, notebooks, note, fullPath, _isMarkdown, _targetFolder, apiPath) => {
       const t = await useTranslation(event)
 
       const oldNoteContent = await readFile(fullPath, 'utf-8')
@@ -33,6 +34,7 @@ export function defineEventHandlerWithAttachmentNotebookNote<T extends EventHand
           const filePath = join(uploadPath, 'attachments', match)
           try {
             await unlink(filePath)
+            await useStorage().removeItem(`${SHARED_ATTACHMENT_PREFIX}${apiPath}`, { removeMeta: true })
           } catch (error) {
             if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
               throw error
@@ -58,6 +60,7 @@ export function defineEventHandlerWithAttachmentNotebookNote<T extends EventHand
           const filePath = join(uploadPath, 'attachments', match)
           try {
             await unlink(filePath)
+            await useStorage().removeItem(`${SHARED_ATTACHMENT_PREFIX}${apiPath}`, { removeMeta: true })
           } catch (error) {
             if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
               throw error
@@ -67,7 +70,15 @@ export function defineEventHandlerWithAttachmentNotebookNote<T extends EventHand
       }
 
       try {
-        return await handler(event, notebooks, note, fullPath, markAttachmentForDeletionIfNeeded, deleteAllAttachments)
+        return await handler(
+          event,
+          notebooks,
+          note,
+          fullPath,
+          markAttachmentForDeletionIfNeeded,
+          deleteAllAttachments,
+          apiPath
+        )
       } catch (error) {
         if (error instanceof Error && 'statusCode' in error) {
           throw error
