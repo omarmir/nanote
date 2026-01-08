@@ -23,8 +23,6 @@ export const viewAttachment = defineAbility(
     fileName: string,
     options?: { validToken: boolean } | { shared: { attachments?: string[]; apiPath?: string } }
   ) => {
-    console.log(session)
-
     // If its the root user - pass
     if (session.user?.role === 'root') return true
 

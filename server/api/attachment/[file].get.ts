@@ -7,9 +7,6 @@ import { defineEventHandlerWithError } from '~~/server/wrappers/error'
 export default defineEventHandlerWithError(async event => {
   const file = event.context.params?.file
 
-  const headerToken = getRequestHeader(event, 'Cookie')
-  console.log('cookie', headerToken)
-
   if (!file) {
     const t = await useTranslation(event)
     throw createError({
