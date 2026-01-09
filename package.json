@@ -8,7 +8,8 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
-    "typecheck": "nuxt typecheck"
+    "typecheck": "nuxt typecheck",
+    "test": "vitest run"
   },
   "dependencies": {
     "@codemirror/state": "^6.5.2",
@@ -60,8 +61,11 @@
     "@types/shell-escape": "^0.2.3",
     "drizzle-kit": "^0.31.1",
     "eslint": "^9.39.1",
+    "happy-dom": "^20.1.0",
     "prettier-plugin-tailwindcss": "^0.7.1",
     "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^6.0.3",
+    "vitest": "^4.0.16",
     "vue-tsc": "^3.1.5"
   },
   "pnpm": {
