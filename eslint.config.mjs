@@ -14,7 +14,8 @@ export default withNuxt(
       '!i18n/locales/**/*.json',
       // Other ignores
       '.vscode/*',
-      'data/*'
+      'data/*',
+      'tests/*'
     ]
   },
   // 2. Add your custom local rules plugin
