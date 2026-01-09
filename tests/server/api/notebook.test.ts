@@ -3,6 +3,11 @@ import { createTestContext } from '#tests/utils/fs-utils'
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 
+import postHandler from '#server/api/notebook/[...path].post'
+import putHandler from '#server/api/notebook/[...path].put'
+import deleteHandler from '#server/api/notebook/[...path].delete'
+import getHandler from '#server/api/notebook/[...path].get'
+
 let testContext: ReturnType<typeof createTestContext>
 
 vi.mock('#server/folder', () => {
@@ -17,11 +22,6 @@ vi.mock('#server/folder', () => {
 })
 
 vi.stubGlobal('readBody', vi.fn())
-
-import postHandler from '#server/api/notebook/[...path].post'
-import putHandler from '#server/api/notebook/[...path].put'
-import deleteHandler from '#server/api/notebook/[...path].delete'
-import getHandler from '#server/api/notebook/[...path].get'
 
 describe('server/api/notebook', () => {
   beforeEach(() => {

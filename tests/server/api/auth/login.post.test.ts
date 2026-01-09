@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
+import handler from '#server/api/auth/login.post'
+
 // Mock dependencies
 let mockSecretKey: string = 'nanote'
 vi.mock('#server/utils/key', () => ({
@@ -11,8 +13,6 @@ vi.mock('#server/utils/key', () => ({
 // We need to mock readBody since it's an auto-import that wraps h3
 vi.stubGlobal('readBody', vi.fn())
 vi.stubGlobal('setUserSession', vi.fn())
-
-import handler from '#server/api/auth/login.post'
 
 describe('server/api/auth/login.post', () => {
   beforeEach(() => {

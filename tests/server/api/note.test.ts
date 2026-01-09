@@ -3,6 +3,13 @@ import { createTestContext } from '#tests/utils/fs-utils'
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 
+import { readMultipartFormData } from 'h3'
+
+import postHandler from '#server/api/note/[...path].post'
+import putHandler from '#server/api/note/[...path].put'
+import deleteHandler from '#server/api/note/[...path].delete'
+import patchHandler from '#server/api/note/[...path].patch'
+
 let testContext: ReturnType<typeof createTestContext>
 
 vi.mock('#server/folder', () => {
@@ -15,8 +22,6 @@ vi.mock('#server/folder', () => {
     }
   }
 })
-
-import { readMultipartFormData } from 'h3'
 
 // Mock DB
 const mockDb = vi.hoisted(() => ({
@@ -41,11 +46,6 @@ vi.stubGlobal('useStorage', () => ({
   hasItem: vi.fn().mockResolvedValue([])
 }))
 vi.stubGlobal('SHARED_ATTACHMENT_PREFIX', 'shared:')
-
-import postHandler from '#server/api/note/[...path].post'
-import putHandler from '#server/api/note/[...path].put'
-import deleteHandler from '#server/api/note/[...path].delete'
-import patchHandler from '#server/api/note/[...path].patch'
 
 describe('server/api/note', () => {
   beforeEach(() => {

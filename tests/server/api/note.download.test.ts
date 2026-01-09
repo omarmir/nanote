@@ -3,6 +3,8 @@ import { createTestContext } from '#tests/utils/fs-utils'
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 
+import handler from '#server/api/note/download/[...path].get'
+
 let testContext: ReturnType<typeof createTestContext>
 
 vi.mock('#server/folder', () => {
@@ -19,8 +21,6 @@ vi.stubGlobal(
   vi.fn().mockImplementation((event, stream) => stream)
 )
 vi.stubGlobal('setHeaders', vi.fn())
-
-import handler from '#server/api/note/download/[...path].get'
 
 describe('server/api/note/download', () => {
   beforeEach(() => {

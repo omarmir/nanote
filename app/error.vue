@@ -12,7 +12,7 @@
         </p>
         <Can :ability="editAllNotes">
           <UButton to="/" variant="ghost">
-            <UIcon name="i-lucide-chevron-left" class="mr-2 -ml-1 h-5 w-5"></UIcon>
+            <UIcon name="i-lucide-chevron-left" class="mr-2 -ml-1 h-5 w-5" />
             {{ t('navigation.home') }}
           </UButton>
         </Can>
@@ -23,6 +23,7 @@
 
 <script setup lang="ts">
 import type { NuxtError } from '#app'
+
 const { t } = useI18n()
 
 defineProps({

@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import handler from '#server/api/search.get'
 import { createTestContext } from '#tests/utils/fs-utils'
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { join } from 'node:path'
+
+import handler from '#server/api/search.get'
 
 let testContext: ReturnType<typeof createTestContext>
 

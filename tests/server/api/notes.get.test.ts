@@ -1,13 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import handler from '#server/api/notes.get'
 import { createTestContext } from '#tests/utils/fs-utils'
 import { writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 
-// Context for the tests
+import handler from '#server/api/notes.get'
+
 let testContext: ReturnType<typeof createTestContext>
 
-// Mock server folder configuration to point to temp dir
 vi.mock('#server/folder', () => {
   return {
     get notesPath() {

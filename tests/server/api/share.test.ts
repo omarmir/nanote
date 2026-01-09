@@ -3,6 +3,10 @@ import { createTestContext } from '#tests/utils/fs-utils'
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 
+import postHandler from '#server/api/share/[...path].post'
+import getHandler from '#server/api/share/[key].get'
+import deleteHandler from '#server/api/share/[key].delete'
+
 let testContext: ReturnType<typeof createTestContext>
 
 vi.mock('#server/folder', () => {
@@ -73,10 +77,6 @@ vi.stubGlobal(
   vi.fn().mockImplementation((event, content) => content)
 )
 vi.stubGlobal('appendHeaders', vi.fn())
-
-import postHandler from '#server/api/share/[...path].post'
-import getHandler from '#server/api/share/[key].get'
-import deleteHandler from '#server/api/share/[key].delete'
 
 describe('server/api/share', () => {
   beforeEach(() => {

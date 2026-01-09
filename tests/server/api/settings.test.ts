@@ -1,5 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
+import getAllHandler from '#server/api/settings/all.get'
+import postIndexHandler from '#server/api/settings/index.post'
+
 // Mock Database
 const mockDb = vi.hoisted(() => ({
   select: vi.fn(),
@@ -22,9 +25,6 @@ vi.mock('#server/utils/drizzle', () => ({
 
 // Stub readBody for POST
 vi.stubGlobal('readBody', vi.fn())
-
-import getAllHandler from '#server/api/settings/all.get'
-import postIndexHandler from '#server/api/settings/index.post'
 
 describe('server/api/settings', () => {
   beforeEach(() => {

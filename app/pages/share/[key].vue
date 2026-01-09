@@ -43,6 +43,7 @@
     </div>
   </div>
 </template>
+
 <script lang="ts" setup>
 import Milkdown from '~/components/MilkdownEditor.vue'
 import { MilkdownProvider } from '@milkdown/vue'

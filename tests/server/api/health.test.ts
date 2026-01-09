@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
+import handler from '#server/api/health'
+
 // We need to mock the dependencies BEFORE importing the handler
 // because they are top-level imports in the handler file.
 
@@ -26,8 +28,6 @@ vi.mock('#server/utils/key', () => ({
     return mockSecretKey
   }
 }))
-
-import handler from '#server/api/health'
 
 describe('server/api/health', () => {
   beforeEach(() => {

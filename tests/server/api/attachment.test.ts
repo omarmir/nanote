@@ -3,6 +3,9 @@ import { createTestContext } from '#tests/utils/fs-utils'
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 
+import getHandler from '#server/api/attachment/[file].get'
+import postHandler from '#server/api/attachment/index.post'
+
 let testContext: ReturnType<typeof createTestContext>
 
 vi.mock('#server/folder', () => {
@@ -15,9 +18,6 @@ vi.mock('#server/folder', () => {
 
 // Stub readMultipartFormData
 vi.stubGlobal('readMultipartFormData', vi.fn())
-
-import getHandler from '#server/api/attachment/[file].get'
-import postHandler from '#server/api/attachment/index.post'
 
 describe('server/api/attachment', () => {
   beforeEach(() => {
