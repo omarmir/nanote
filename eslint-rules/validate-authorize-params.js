@@ -1,8 +1,9 @@
 /**
  * ESLint rule to validate authorize() call parameters match ability requirements
  *
- * This rule dynamically reads ability definitions from shared/utils/abilities/**
- * and parses the complete parameter signature to validate authorize() calls.
+ * This rule dynamically reads ability definitions from shared/utils/abilities.ts
+ * and shared/utils/abilities/*.ts, then parses the complete parameter signature
+ * to validate authorize() calls.
  *
  * This rule ensures that:
  * 1. The first parameter is always the event object
@@ -36,7 +37,7 @@ export default {
       missingAbility: 'Second parameter of authorize() must be an ability identifier',
 
       unknownAbility:
-        'Unknown ability "{{abilityName}}". Could not find ability definition in shared/utils/abilities/**/*.ts',
+        'Unknown ability "{{abilityName}}". Could not find ability definition in shared/utils/abilities.ts or shared/utils/abilities/*.ts',
       wrongParameterType:
         'Parameter {{position}} ({{paramName}}) should be of type {{expectedType}}, but may be incorrect. Expected: authorize(event, {{abilityName}}, {{expectedParams}})'
     },
@@ -109,18 +110,30 @@ export default {
           return abilitySignatures
         }
 
-        const abilitiesDir = path.join(workspaceRoot, 'shared', 'utils', 'abilities')
+        const utilsDir = path.join(workspaceRoot, 'shared', 'utils')
+        const abilitiesDir = path.join(utilsDir, 'abilities')
+        const abilitiesFile = path.join(utilsDir, 'abilities.ts')
 
-        if (!fs.existsSync(abilitiesDir)) {
+        const filePaths = []
+
+        if (fs.existsSync(abilitiesFile)) {
+          filePaths.push(abilitiesFile)
+        }
+
+        if (fs.existsSync(abilitiesDir) && fs.statSync(abilitiesDir).isDirectory()) {
+          const dirFiles = fs
+            .readdirSync(abilitiesDir)
+            .filter(f => f.endsWith('.ts'))
+            .map(f => path.join(abilitiesDir, f))
+          filePaths.push(...dirFiles)
+        }
+
+        if (filePaths.length === 0) {
           abilitySignaturesCache = abilitySignatures
           return abilitySignatures
         }
 
-        // Read all .ts files in the abilities directory
-        const files = fs.readdirSync(abilitiesDir).filter(f => f.endsWith('.ts'))
-
-        for (const file of files) {
-          const filePath = path.join(abilitiesDir, file)
+        for (const filePath of filePaths) {
           const content = fs.readFileSync(filePath, 'utf-8')
 
           // Regex to match ability definitions and capture the full parameter list
