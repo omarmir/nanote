@@ -6,7 +6,8 @@
     "paths": {
       "~~/*": ["./*"],
       "~/*": ["./*"],
-      "#server/*": ["./server/*"]
+      "#server/*": ["./server/*"],
+      "#tests/*": ["./tests/*"]
     }
   },
   "include": ["./.nuxt/nuxt.d.ts", "**/*.ts", "**/*.test.ts", "**/*.spec.ts"]
