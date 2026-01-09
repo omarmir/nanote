@@ -86,7 +86,8 @@ export function defineEventHandlerWithAttachmentNotebookNote<T extends EventHand
         throw createError({
           statusCode: 500,
           statusMessage: t('errors.httpCodes.500'),
-          message: t('errors.failedProcessAttachment')
+          message: t('errors.failedProcessAttachment'),
+          cause: error
         })
       }
     },

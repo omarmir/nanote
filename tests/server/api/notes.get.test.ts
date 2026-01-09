@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import './setup'
 import handler from '#server/api/notes.get'
 import { createTestContext } from '#tests/utils/fs-utils'
 import { writeFileSync } from 'node:fs'
