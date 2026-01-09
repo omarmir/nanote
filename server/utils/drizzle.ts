@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/libsql'
-import * as schema from '~/server/db/schema'
-import { dbPath } from '~/server/folder'
+import * as schema from '~~/server/db/schema'
+import { dbPath } from '~~/server/folder'
 
 export const tables = schema
 

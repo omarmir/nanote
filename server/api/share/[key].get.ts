@@ -1,34 +1,47 @@
 import { defineEventHandlerWithError } from '../../wrappers/error'
-import { shared } from '~/server/db/schema'
+import { shared } from '~~/server/db/schema'
 import { join, resolve, extname } from 'node:path'
-import { notesPath } from '~/server/folder'
+import { notesPath } from '~~/server/folder'
 import { access, constants, stat } from 'node:fs/promises'
 import { readFileSync } from 'node:fs'
-import { fullRegex } from '~/server/utils/html-gen'
-import jwt from 'jsonwebtoken'
-import SECRET_KEY from '~/server/key'
 
-// import type { Note } from '~/types/notebook'
-
-export default defineEventHandlerWithError(async (event) => {
+export default defineEventHandlerWithError(async event => {
   const key = decodeURIComponent(event.context.params?.key ?? '')
+  const t = await useTranslation(event)
 
   if (!key)
-    return {
-      success: false,
-      message: 'Sharing key is required'
-    }
+    throw createError({
+      statusCode: 401,
+      statusMessage: t('errors.httpCodes.401'),
+      message: t('errors.wrongKey')
+    })
 
   const note = await db.query.shared.findFirst({
     where: eq(shared.key, key)
   })
 
   if (!note) {
-    return {
-      success: false,
-      message: 'No shared note found'
-    }
+    throw createError({
+      statusCode: 404,
+      statusMessage: t('errors.httpCodes.404'),
+      message: t('errors.shareDoesntExist')
+    })
   }
+
+  const userSession = await getUserSession(event)
+  if (userSession.user?.role !== 'root') {
+    await replaceUserSession(event, {
+      user: {
+        role: 'shared'
+      },
+      secure: {
+        share: { key, apiPath: note.path }
+      },
+      loggedInAt: new Date()
+    })
+  }
+
+  await authorize(event, viewSharedNote, note.path)
 
   const fullPath = resolve(join(notesPath, ...note.path.split('/')))
 
@@ -37,11 +50,10 @@ export default defineEventHandlerWithError(async (event) => {
     await access(fullPath, constants.R_OK | constants.W_OK)
   } catch (error) {
     console.error('Note error:', error)
-    const message = 'Access error: Applicaiton does not have access to the note or is no longer on filesystem.'
     throw createError({
-      statusCode: 404,
-      statusMessage: 'Not Found',
-      message
+      statusCode: 403,
+      statusMessage: t('errors.httpCodes.403'),
+      message: t('errors.accessError')
     })
   }
 
@@ -58,20 +70,17 @@ export default defineEventHandlerWithError(async (event) => {
 
   const content = readFileSync(fullPath, 'utf8')
 
-  const result = content.matchAll(fullRegex)
-  const attachments = Array.from(result, (match) => match[0].split('/').at(-1))
+  const attachments = [...content.matchAll(fullRegex)].map(m => m[0].split('/').at(-1))
 
-  const token = jwt.sign({ app: 'nanote', attachments }, SECRET_KEY, { expiresIn: '1d', audience: 'shared' })
+  /**
+   * Shared notes cleanup removes shared attachment storage item:
+   * 1. Deletes from storage if the note is updatd such that attachment is removed
+   * 2. If the share is deleted
+   * 3. Deletes the shared link itself if the note is deleted and all attachments are removed from storage that were set below
+   */
+  await useStorage().setItem(`${SHARED_ATTACHMENT_PREFIX}${note.path}`, attachments, { ttl: 60 * 60 * 24 })
 
-  setCookie(event, 'token', token, {
-    httpOnly: true,
-    sameSite: 'strict',
-    maxAge: 3600 * 24 * 1, // 1 day
-    path: '/'
-  })
-
-  // Set appropriate headers
-  setHeaders(event, {
+  appendHeaders(event, {
     'Content-Type': contentType,
     'Content-Disposition': `attachment; filename="${fullPath.split('/').at(-1)}"`,
     'Cache-Control': 'no-cache',

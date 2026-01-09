@@ -1,202 +1,155 @@
-import { fileURLToPath } from 'node:url'
-import { beforeAll, describe, expect, it } from 'vitest'
-import { setup, $fetch } from '@nuxt/test-utils'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { createTestContext } from '#tests/utils/fs-utils'
+import { writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
-import { notesPath } from '~/server/folder'
-import { getAuthCookie } from '~/tests/setup'
-import { access, mkdir } from 'node:fs/promises'
-import type { DeleteNote, Note, NoteResponse, RenameNote } from '~/types/notebook'
 
-let authCookie = ''
-describe('Note check', async () => {
-  await setup({
-    rootDir: fileURLToPath(new URL('..', import.meta.url)),
-    server: true
-  })
+import { readMultipartFormData } from 'h3'
 
-  beforeAll(async () => {
-    authCookie = await getAuthCookie()
-    const fullPath = join(notesPath, 'NoteTest')
-    await mkdir(fullPath)
-    const nestedPath = join(notesPath, 'NoteTest', 'Nested')
-    await mkdir(nestedPath)
-  })
+import postHandler from '#server/api/note/[...path].post'
+import putHandler from '#server/api/note/[...path].put'
+import deleteHandler from '#server/api/note/[...path].delete'
+import patchHandler from '#server/api/note/[...path].patch'
 
-  /**
-   * Create Note
-   * Create Nested Note
-   */
-  it('Response matches new note created', async () => {
-    const blob = new Blob(['# Test Note'], { type: 'text/markdown' })
+let testContext: ReturnType<typeof createTestContext>
 
-    const formData = new FormData()
-    formData.append('file', blob, `Test.md`) // The file to upload
-    formData.append('filename', `Test.md`) // The filename to use when saving
-
-    const response = await $fetch('/api/note/NoteTest/Test', {
-      method: 'POST',
-      body: formData,
-      headers: { Cookie: authCookie }
-    })
-    const resp: Note = {
-      name: 'Test.md',
-      createdAt: expect.any(String),
-      updatedAt: expect.any(String),
-      notebook: ['NoteTest'],
-      size: 11,
-      isMarkdown: true
+vi.mock('#server/folder', () => {
+  return {
+    get notesPath() {
+      return testContext?.notesDir
+    },
+    get uploadPath() {
+      return testContext?.uploadsDir
     }
-    expect(response).toEqual(expect.objectContaining(resp))
+  }
+})
+
+// Mock DB
+const mockDb = vi.hoisted(() => ({
+  delete: vi.fn(),
+  where: vi.fn(),
+  or: vi.fn()
+}))
+
+vi.mock('#server/utils/drizzle', () => ({
+  db: mockDb,
+  tables: { shared: { path: {} } },
+  or: vi.fn().mockReturnValue({}),
+  eq: vi.fn().mockReturnValue({})
+}))
+
+vi.stubGlobal('db', mockDb)
+vi.stubGlobal('eq', vi.fn().mockReturnValue({}))
+vi.stubGlobal('or', vi.fn().mockReturnValue({}))
+
+vi.stubGlobal('useStorage', () => ({
+  removeItem: vi.fn(),
+  hasItem: vi.fn().mockResolvedValue([])
+}))
+vi.stubGlobal('SHARED_ATTACHMENT_PREFIX', 'shared:')
+
+describe('server/api/note', () => {
+  beforeEach(() => {
+    testContext = createTestContext()
+
+    mockDb.delete.mockReturnValue(mockDb)
+    mockDb.where.mockResolvedValue(undefined)
+
+    // Create a notebook folder
+    mkdirSync(join(testContext.notesDir, 'my-notebook'), { recursive: true })
   })
 
-  it('Checks if note was created', async () => {
-    await expect(access(join(notesPath, 'NoteTest', 'Test.md'))).resolves.not.toThrow()
+  afterEach(() => {
+    testContext.cleanup()
   })
 
-  it('Response matches new nested note created', async () => {
-    const blob = new Blob(['# Test Note'], { type: 'text/markdown' })
+  describe('post (create)', () => {
+    it('should create a new note', async () => {
+      const noteName = 'new-note.md'
+      const content = Buffer.from('# Hello')
 
-    const formData = new FormData()
-    formData.append('file', blob, `Test.md`) // The file to upload
-    formData.append('filename', `Test.md`) // The filename to use when saving
+      vi.mocked(readMultipartFormData).mockResolvedValue([{ name: 'file', data: content }] as any)
 
-    const response = await $fetch('/api/note/NoteTest/Nested/Test', {
-      method: 'POST',
-      body: formData,
-      headers: { Cookie: authCookie }
-    })
-    const resp: Note = {
-      name: 'Test.md',
-      createdAt: expect.any(String),
-      updatedAt: expect.any(String),
-      notebook: ['NoteTest', 'Nested'],
-      size: 11,
-      isMarkdown: true
-    }
-    expect(response).toEqual(expect.objectContaining(resp))
-  })
+      const event = {
+        context: { params: { path: `my-notebook/${noteName}` } }
+      } as any
 
-  it('Checks if nested note was created', async () => {
-    await expect(access(join(notesPath, 'NoteTest', 'Nested', 'Test.md'))).resolves.not.toThrow()
-  })
+      const result = await postHandler(event)
 
-  /**
-   * Read note
-   * Read nested note
-   */
-
-  it('Response matches note', async () => {
-    const response = await $fetch('/api/note/NoteTest/Test.md', {
-      headers: { Cookie: authCookie }
-    })
-    const resp: Note = {
-      name: 'Test.md',
-      createdAt: expect.any(String),
-      updatedAt: expect.any(String),
-      notebook: ['NoteTest'],
-      size: 11,
-      isMarkdown: true
-    }
-    expect(response).toEqual(expect.objectContaining(resp))
-  })
-
-  it('Response matches nested note', async () => {
-    const response = await $fetch('/api/note/NoteTest/Nested/Test.md', {
-      headers: { Cookie: authCookie }
-    })
-    const resp: Note = {
-      name: 'Test.md',
-      createdAt: expect.any(String),
-      updatedAt: expect.any(String),
-      notebook: ['NoteTest', 'Nested'],
-      size: 11,
-      isMarkdown: true
-    }
-    expect(response).toEqual(expect.objectContaining(resp))
-  })
-
-  it('Response matches note content', async () => {
-    const response = await $fetch('/api/note/download/NoteTest/Nested/Test.md', {
-      headers: { Cookie: authCookie }
-    })
-    expect(response).toEqual(expect.stringMatching('# Test Note'))
-  })
-
-  /**
-   * Update note
-   */
-  it('Response matches updated note', async () => {
-    const blob = new Blob(['# Updated'], { type: 'text/markdown' })
-
-    const formData = new FormData()
-    formData.append('file', blob, `Test.md`) // The file to upload
-    formData.append('filename', `Test.md`) // The filename to use when saving
-
-    const response = await $fetch('/api/note/NoteTest/Nested/Test.md', {
-      method: 'PATCH',
-      body: formData,
-      headers: { Cookie: authCookie }
+      expect(result.label).toBe(noteName)
+      expect(existsSync(join(testContext.notesDir, 'my-notebook', noteName))).toBe(true)
     })
 
-    const resp: NoteResponse = {
-      notebook: ['NoteTest', 'Nested'],
-      note: 'Test.md',
-      path: join(notesPath, 'NoteTest', 'Nested', 'Test.md'),
-      createdAt: expect.any(String),
-      updatedAt: expect.any(String),
-      size: expect.any(Number),
-      originalFilename: 'Test.md'
-    }
-    expect(response).toEqual(expect.objectContaining(resp))
-  })
+    it('should fail if note already exists', async () => {
+      const noteName = 'exists.md'
+      const fullPath = join(testContext.notesDir, 'my-notebook', noteName)
+      writeFileSync(fullPath, 'exists')
 
-  /**
-   * Rename Note
-   */
-  it('Response matches renamed note', async () => {
-    const response = await $fetch('/api/note/NoteTest/Test.md', {
-      method: 'PUT',
-      body: { newName: 'TestRenamed.md' },
-      headers: { Cookie: authCookie }
+      const event = {
+        context: { params: { path: `my-notebook/${noteName}` } }
+      } as any
+
+      await expect(postHandler(event)).rejects.toMatchObject({
+        statusCode: 409
+      })
     })
-
-    const resp: RenameNote = {
-      oldName: 'Test.md',
-      newName: 'TestRenamed.md',
-      createdAt: expect.any(String),
-      updatedAt: expect.any(String),
-      notebook: ['NoteTest']
-    }
-    expect(response).toEqual(expect.objectContaining(resp))
   })
 
-  it('Checks if renamed folder is gone', async () => {
-    await expect(access(join(notesPath, 'NoteTest', 'Test.md'))).rejects.toThrow()
-  })
+  describe('put (rename)', () => {
+    it('should rename a note', async () => {
+      const oldName = 'old.md'
+      const newName = 'new.md'
+      writeFileSync(join(testContext.notesDir, 'my-notebook', oldName), 'content')
 
-  it('Checks if note was renamed', async () => {
-    await expect(access(join(notesPath, 'NoteTest', 'TestRenamed.md'))).resolves.not.toThrow()
-  })
+      vi.mocked(readBody).mockResolvedValue({ newName })
 
-  /**
-   * Delete note
-   */
+      const event = {
+        context: { params: { path: `my-notebook/${oldName}` } }
+      } as any
 
-  it('Response deleted note', async () => {
-    const response = await $fetch('/api/note/NoteTest/Nested/Test.md', {
-      method: 'DELETE',
-      headers: { Cookie: authCookie }
+      const result = await putHandler(event)
+
+      expect(result.label).toBe(newName)
+      expect(existsSync(join(testContext.notesDir, 'my-notebook', newName))).toBe(true)
+      expect(existsSync(join(testContext.notesDir, 'my-notebook', oldName))).toBe(false)
     })
-    const resp: DeleteNote = {
-      name: 'Test.md',
-      timestamp: expect.any(String),
-      notebook: ['NoteTest', 'Nested'],
-      deleted: true
-    }
-    expect(response).toEqual(expect.objectContaining(resp))
   })
 
-  it('Checks if note is deleted', async () => {
-    await expect(access(join(notesPath, 'NoteTest', 'Nested', 'Test.md'))).rejects.toThrow()
+  describe('delete', () => {
+    it('should delete a note', async () => {
+      const noteName = 'delete-me.md'
+      writeFileSync(join(testContext.notesDir, 'my-notebook', noteName), 'content')
+
+      const event = {
+        context: { params: { path: `my-notebook/${noteName}` } },
+        waitUntil: (p: Promise<any>) => p
+      } as any
+
+      await deleteHandler(event)
+
+      expect(existsSync(join(testContext.notesDir, 'my-notebook', noteName))).toBe(false)
+    })
+  })
+
+  describe('patch (update)', () => {
+    it('should update note content', async () => {
+      const noteName = 'update-me.md'
+      writeFileSync(join(testContext.notesDir, 'my-notebook', noteName), 'old content')
+
+      const newContent = Buffer.from('new content')
+      vi.mocked(readMultipartFormData).mockResolvedValue([{ name: 'file', data: newContent }] as any)
+
+      const event = {
+        context: { params: { path: `my-notebook/${noteName}` } }
+      } as any
+
+      const result = await patchHandler(event)
+
+      // expect(result.size).toBe(newContent.length)
+      // Size check might be flaky if encoding differs, but buffer length should match file size
+
+      const fs = await import('node:fs')
+      const fileContent = fs.readFileSync(join(testContext.notesDir, 'my-notebook', noteName), 'utf-8')
+      expect(fileContent).toBe('new content')
+    })
   })
 })

@@ -1,28 +1,29 @@
-import SECRET_KEY from '~/server/key'
-import { envNotesPath, envUploadsPath, envConfigPath } from '~/server/folder'
+import { envNotesPath, envUploadsPath, envConfigPath } from '~~/server/folder'
 import { defineEventHandlerWithError } from '../wrappers/error'
+import SECRET_KEY from '~~/server/utils/key'
 
-type Health = {
-  status: 'OK'
-  message: 'Service is running'
-  warnings: string[]
-}
+// eslint-disable-next-line local/require-authorize
+export default defineEventHandlerWithError(async (event): Promise<Health> => {
+  const session = await getUserSession(event)
 
-export default defineEventHandlerWithError(async (_event): Promise<Health> => {
+  if (session.user?.role !== 'root') {
+    return {
+      status: 'OK',
+      warnings: []
+    }
+  }
+
   const warnings = []
 
-  if (SECRET_KEY === 'nanote') warnings.push('Secret key should be changed from the default.')
-  if (!envNotesPath)
-    if (!envNotesPath) warnings.push('Storage location is not set, this could result in loss of notes.')
-  if (!envUploadsPath)
-    if (!envUploadsPath) warnings.push('Uploads location is not set, this could result in loss of uploads.')
+  const t = await useTranslation(event)
 
-  if (!envConfigPath)
-    warnings.push('Config location is not set, this could result in loss of settings and shared notes.')
+  if (SECRET_KEY === 'nanote') warnings.push(t('health.warnings.secretKey'))
+  if (!envNotesPath) if (!envNotesPath) warnings.push(t('health.warnings.storageLocation'))
+  if (!envUploadsPath) if (!envUploadsPath) warnings.push(t('health.warnings.uploadsLocation'))
+  if (!envConfigPath) warnings.push(t('health.warnings.configPath'))
 
   return {
-    status: 'OK',
-    message: 'Service is running',
+    status: warnings.length > 0 ? 'Warnings' : 'OK',
     warnings
   }
 })

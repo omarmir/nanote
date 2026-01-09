@@ -1,7 +1,7 @@
 import { writeFile, stat } from 'node:fs/promises'
 import { readMultipartFormData } from 'h3'
-import { defineEventHandlerWithAttachmentNotebookNote } from '~/server/wrappers/attachment'
-import type { NoteResponse } from '~/types/notebook'
+import { defineEventHandlerWithAttachmentNotebookNote } from '~~/server/wrappers/attachment'
+import type { NoteResponse } from '#shared/types/notebook'
 
 /**
  * Update note
@@ -9,23 +9,27 @@ import type { NoteResponse } from '~/types/notebook'
 
 export default defineEventHandlerWithAttachmentNotebookNote(
   async (event, notebook, note, fullPath, markAttachmentForDeletionIfNeeded): Promise<NoteResponse> => {
+    await authorize(event, editAllNotes)
+
+    const t = await useTranslation(event)
+
     // Parse form data
     const formData = await readMultipartFormData(event)
     if (!formData) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'Bad Request',
-        message: 'Missing form data'
+        statusMessage: t('errors.httpCodes.400'),
+        message: t('errors.missingNoteFormData')
       })
     }
 
     // Find file in form data
-    const fileEntry = formData.find((entry) => entry.name === 'file')
+    const fileEntry = formData.find(entry => entry.name === 'file')
     if (!fileEntry?.data) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'Bad Request',
-        message: 'No file uploaded'
+        statusMessage: t('errors.httpCodes.400'),
+        message: t('errors.noFileUploaded')
       })
     }
 

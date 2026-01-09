@@ -1,9 +1,9 @@
-version: '3.8'
+version: "3.8"
 services:
   nanote:
     image: omarmir/nanote:latest
     ports:
-      - '3030:3000'
+      - "3030:3000"
     # Make sure these folders (notes, uploads, config) already exist or the notes will be created in the main folder of the app.
     environment:
       - NOTES_PATH=/nanote/notes
@@ -13,7 +13,7 @@ services:
     volumes:
       - /path/to/local/uploads/nanote/volume:/nanote
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:3000/api/health']
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
       interval: 30s # Check every 30 seconds
       timeout: 10s # Fail if no response in 10s
       retries: 3 # Mark as unhealthy after 3 failed checks

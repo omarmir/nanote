@@ -1,6 +1,6 @@
 # Nanote
 
-A lightweight, self-hosted note-taking application with filesystem-based storage. Built with Nuxt 3, TypeScript, and designed for simplicity and performance. The primary goal of this app is to manage your notes in a manner that is 100% portable. You should be able to manage your notes in terminal, notepad or any other app - there is no database, just folders and files.
+A lightweight, self-hosted note-taking application with filesystem-based storage. Built with Nuxt 4, TypeScript, and designed for simplicity and performance. The primary goal of this app is to manage your notes in a manner that is 100% portable. You should be able to manage your notes in terminal, notepad or any other app - there is no database, just folders and files.
 
 **Auth** : If you don't set the SECRET_KEY environment variable the default secret key is `nanote` though you should set your own key
 
@@ -13,7 +13,7 @@ A lightweight, self-hosted note-taking application with filesystem-based storage
 - 📂 **Notebook-based Organization** - Folders as notebooks, markdown files as notes
 - 🔍 **Universal Search** - Fast content search across all notes (OS-optimized)
 - 📄 **Markdown Support** - Native .md file handling with proper MIME types
-- 🔒 **Local Storage** - No databases - uses your existing filesystem
+- 🔒 **Local Storage** - No databases for notes - uses your existing filesystem
 - 🐳 **Docker Ready** - Full container support with sample compose file
 - 🔧 **TypeSafe API** - Fully typed REST endpoints with validation
 - 🚀 **Performance** - Optimized file operations and platform-specific search
@@ -70,7 +70,6 @@ environment:
 volumes:
   - /path/to/local/uploads/nanote/volume:/nanote
 ```
-***Note:*** Make sure these folders (notes, uploads, config) already exist or the notes will be created in the main folder of the app.
 
 If these are not set then the app will save files locally within itself. The notes environment variable is where it will save your notes, and uploads is where any attachments are stored.
 

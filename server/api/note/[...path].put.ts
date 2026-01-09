@@ -1,35 +1,42 @@
 import { rename, access, constants, stat } from 'node:fs/promises'
-import { join } from 'node:path'
-import { defineEventHandlerWithNotebookAndNote } from '~/server/wrappers/note'
-import type { RenameNote } from '~/types/notebook'
-// import { waitforme } from '~/server/utils'
+import { extname, join, resolve } from 'node:path'
+import { defineEventHandlerWithNotebookAndNote } from '~~/server/wrappers/note'
+import type { RenameTreeItem } from '#shared/types/notebook'
+// import { waitforme } from '~~/server/utils'
 
 /**
  * Renaming note
  */
 export default defineEventHandlerWithNotebookAndNote(
-  async (event, notebook, note, fullPath, notebookPath): Promise<RenameNote> => {
-    const body = await readBody(event)
+  async (event, pathArray, _note, fullPath, _isMarkdown, targetFolder): Promise<RenameTreeItem> => {
+    await authorize(event, editAllNotes)
 
-    // Validate and decode parameters
+    const t = await useTranslation(event)
+    const body = await readBody(event)
+    // Validate input
     if (!body?.newName) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'Bad Request',
-        message: 'Missing new name.'
+        statusMessage: t('errors.httpCodes.400'),
+        message: t('errors.missingNewNoteName')
       })
     }
 
+    console.log('fp', fullPath)
+
     const cleanNewNote = body.newName.replace(/[\\/:*?"<>|]/g, '')
 
-    const newPath = join(notebookPath, cleanNewNote)
+    // Construct paths
+    const newPath = resolve(join(targetFolder, cleanNewNote))
+
+    console.log('np', newPath)
 
     try {
       await access(newPath, constants.F_OK)
       throw createError({
         statusCode: 409,
         statusMessage: 'Conflict',
-        message: 'New note name already exists'
+        message: t('errors.noteAlreadyExists')
       })
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error
@@ -37,14 +44,24 @@ export default defineEventHandlerWithNotebookAndNote(
 
     // Perform rename
     await rename(fullPath, newPath)
+
+    // create new path array
+    const newPathArray = [...pathArray, cleanNewNote]
+
+    // Get updated stats
     const stats = await stat(newPath)
 
+    const fileExtension = extname(newPath).toLowerCase()
+    const isMarkdown = fileExtension === '.md'
+
     return {
-      oldName: note,
-      newName: cleanNewNote,
-      notebook: notebook,
+      label: cleanNewNote,
       createdAt: stats.birthtime.toISOString(),
-      updatedAt: stats.mtime.toISOString()
-    } satisfies RenameNote
+      updatedAt: stats.mtime.toISOString(),
+      path: newPath,
+      pathArray: newPathArray,
+      apiPath: `/${newPathArray.join('/')}`,
+      isMarkdown
+    } satisfies RenameTreeItem
   }
 )

@@ -1,0 +1,25 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "always",
+    "source.fixAll.eslint": "always"
+  },
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "i18n-ally.localesPaths": ["i18n", "i18n/locales"],
+  "i18n-ally.dirStructure": "file",
+  "i18n-ally.namespace": false,
+  "oxc.enable": true,
+  "i18n-ally.keystyle": "nested",
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "eslint.useFlatConfig": true,
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "vue"],
+  "[xml]": {
+    "editor.defaultFormatter": "redhat.vscode-xml"
+  },
+  "postman.settings.dotenv-detection-notification-visibility": false
+}

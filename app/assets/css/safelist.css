@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+/* Background colors */
+@source inline("{,hover:,focus:,}bg-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone}-{50,{100..900..100},950}");
+
+/* Text colors */
+@source inline("{,hover:,focus:,}text-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone}-{50,{100..900..100},950}");
+
+/* Border colors */
+@source inline("{,hover:,focus:,}border-{red,orange,amber,yellow,lime,green,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,pink,rose,slate,gray,zinc,neutral,stone}-{50,{100..900..100},950}");

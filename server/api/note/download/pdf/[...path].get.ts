@@ -1,22 +1,24 @@
 // import { sendStream, setHeaders } from 'h3'
 import { readFileSync } from 'node:fs'
 import contentDisposition from 'content-disposition'
-import { defineEventHandlerWithNotebookAndNote } from '~/server/wrappers/note'
-import { convertMarkdownToHtml, imageRegex, printPDF, replaceFileContent } from '~/server/utils/html-gen'
+import { defineEventHandlerWithNotebookAndNote } from '~~/server/wrappers/note'
 import { blockRegex, regex as inlineRegex } from 'milkdown-plugin-file/regex'
 
 export default defineEventHandlerWithNotebookAndNote(async (event, _cleanNotebook, cleanNote, fullPath) => {
+  await authorize(event, editAllNotes)
+
   const { origin, host } = getRequestURL(event)
-  // const nanoid = customAlphabet('abcdefghijklmnop')
 
   const content = readFileSync(fullPath, 'utf8')
-  const newContent = content.replace(imageRegex, (matchedUrl) => `${origin}${matchedUrl}`)
+  const newContent = content.replace(imageRegex, matchedUrl => `${origin}${matchedUrl}`)
 
   let htmlContent: string = await convertMarkdownToHtml(newContent)
   htmlContent = replaceFileContent(htmlContent, true, blockRegex)
   htmlContent = replaceFileContent(htmlContent, false, inlineRegex)
 
-  const pdf = await printPDF(htmlContent, origin, host)
+  const pdfToken = await createPdfToken()
+
+  const pdf = await printPDF(htmlContent, origin, host, pdfToken)
 
   // Set appropriate headers
   setHeaders(event, {

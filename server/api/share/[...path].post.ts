@@ -1,25 +1,23 @@
 import { defineEventHandlerWithNotebookAndNote } from '../../wrappers/note'
-import { shared } from '~/server/db/schema'
+import { shared } from '~~/server/db/schema'
 import { nanoid } from 'nanoid'
-import type { Result } from '~/types/result'
-import { notePathArrayJoiner } from '~/utils/path-joiner'
+import type { Result } from '#shared/types/result'
 
 export default defineEventHandlerWithNotebookAndNote(
-  async (event, notebooks, note, fullPath): Promise<Result<string>> => {
-    const { name } = await readBody(event)
+  async (event, pathArray, note, _fullPath, _isMarkdown, _targetFolder, apiPath): Promise<Result<string>> => {
+    await authorize(event, editAllNotes)
 
-    console.log(`Attempting to share note at: ${fullPath}`)
+    const t = await useTranslation(event)
+    const body = await readBody(event)
 
     const sharingKey = nanoid(40)
 
     try {
       await db.insert(shared).values({
         key: sharingKey,
-        name,
-        path: '/'.concat(notePathArrayJoiner([...notebooks, note]))
+        name: body?.name ?? nanoid(16),
+        path: apiPath
       })
-
-      console.log(`Successfully created share link for "${fullPath}" with key "${sharingKey}"`)
 
       // Return success response with the generated key
       return {
@@ -31,8 +29,8 @@ export default defineEventHandlerWithNotebookAndNote(
       // Handle potential database errors (e.g., connection issues, constraint violations)
       throw createError({
         statusCode: 500,
-        statusMessage: 'Internal Server Error',
-        message: 'Could not create share link for the note due to a database error.'
+        statusMessage: t('errors.httpCodes.500'),
+        message: t('errors.failedCreateShareLink')
       })
     }
   }

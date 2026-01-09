@@ -1,25 +1,82 @@
-import { fileURLToPath } from 'node:url'
-import { describe, expect, it } from 'vitest'
-import { setup, $fetch } from '@nuxt/test-utils'
-describe('Health check', async () => {
-  await setup({
-    rootDir: fileURLToPath(new URL('..', import.meta.url)),
-    server: true
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+
+import handler from '#server/api/health'
+
+// We need to mock the dependencies BEFORE importing the handler
+// because they are top-level imports in the handler file.
+
+// Variables to control the mock values
+let mockEnvNotesPath: string | undefined
+let mockEnvUploadsPath: string | undefined
+let mockEnvConfigPath: string | undefined
+let mockSecretKey: string = 'nanote'
+
+vi.mock('#server/folder', () => ({
+  get envNotesPath() {
+    return mockEnvNotesPath
+  },
+  get envUploadsPath() {
+    return mockEnvUploadsPath
+  },
+  get envConfigPath() {
+    return mockEnvConfigPath
+  }
+}))
+
+vi.mock('#server/utils/key', () => ({
+  get default() {
+    return mockSecretKey
+  }
+}))
+
+describe('server/api/health', () => {
+  beforeEach(() => {
+    // Reset defaults
+    mockEnvNotesPath = '/tmp/notes'
+    mockEnvUploadsPath = '/tmp/uploads'
+    mockEnvConfigPath = '/tmp/config'
+    mockSecretKey = 'some-secure-key'
+    vi.clearAllMocks()
+    vi.mocked(getUserSession).mockResolvedValue({ user: { role: 'root' } })
   })
 
-  it('Response expected health check', async () => {
-    const response = await $fetch('/api/health')
-    const resp = {
-      status: 'OK',
-      message: 'Service is running',
-      warnings: [
-        'Secret key should be changed from the default.',
-        'Storage location is not set, this could result in loss of notes.',
-        'Uploads location is not set, this could result in loss of uploads.',
-        'Config location is not set, this could result in loss of settings and shared notes.'
-      ]
-    }
+  it('should return OK when everything is configured', async () => {
+    const event = {} as any
+    const result = await handler(event)
+    expect(result.status).toBe('OK')
+    expect(result.warnings).toHaveLength(0)
+  })
 
-    expect(response).toEqual(expect.objectContaining(resp))
+  it('should warn if folders are missing', async () => {
+    mockEnvNotesPath = undefined
+
+    // We mock useTranslation in setup.ts to return the key
+    const event = {} as any
+    const result = await handler(event)
+
+    expect(result.status).toBe('Warnings')
+    expect(result.warnings).toContain('health.warnings.storageLocation')
+  })
+
+  it('should warn if secret key is default "nanote"', async () => {
+    mockSecretKey = 'nanote'
+
+    const event = {} as any
+    const result = await handler(event)
+
+    expect(result.status).toBe('Warnings')
+    expect(result.warnings).toContain('health.warnings.secretKey')
+  })
+
+  it('should return OK (hidden details) if not root', async () => {
+    vi.mocked(getUserSession).mockResolvedValue({ user: { role: 'user' } })
+    mockEnvNotesPath = undefined // Should have warnings if checking
+
+    const event = {} as any
+    const result = await handler(event)
+
+    // Should return OK and no warnings because user is not root
+    expect(result.status).toBe('OK')
+    expect(result.warnings).toHaveLength(0)
   })
 })

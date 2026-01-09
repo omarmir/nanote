@@ -2,18 +2,21 @@ import { customAlphabet } from 'nanoid'
 import { writeFile, mkdir, constants } from 'node:fs/promises'
 import path from 'node:path'
 import { access, existsSync } from 'node:fs'
-import { uploadPath } from '~/server/folder'
-import type { MultiPartData } from '~/types/upload'
-import { defineEventHandlerWithAttachmentAuthError } from '~/server/wrappers/attachment-auth'
-// import { waitforme } from '~/server/utils'
+import { uploadPath } from '~~/server/folder'
+import type { MultiPartData } from '#shared/types/upload'
+import { defineEventHandlerWithError } from '~~/server/wrappers/error'
 
-export default defineEventHandlerWithAttachmentAuthError(async (event) => {
+export default defineEventHandlerWithError(async event => {
+  await authorize(event, editAllNotes)
+
   const formData = await readMultipartFormData(event)
+  const t = await useTranslation(event)
+
   if (!formData) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Bad Request',
-      message: 'Missing form data'
+      statusMessage: t('errors.httpCodes.400'),
+      message: t('errors.missingFormData')
     })
   }
 
@@ -31,8 +34,8 @@ export default defineEventHandlerWithAttachmentAuthError(async (event) => {
   if (!fileEntry?.data || !pathEntry?.data) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Bad Request',
-      message: 'No file uploaded or note path unspecified'
+      statusMessage: t('errors.httpCodes.400'),
+      message: t('errors.noFileOrPath')
     })
   }
 
@@ -41,13 +44,13 @@ export default defineEventHandlerWithAttachmentAuthError(async (event) => {
     await mkdir(attachBasePath, { recursive: true })
   }
 
-  access(attachBasePath, constants.R_OK | constants.W_OK, (err) => {
+  access(attachBasePath, constants.R_OK | constants.W_OK, err => {
     if (err) {
       console.log(err)
       throw createError({
         statusCode: 401,
-        statusMessage: 'Unauthorized',
-        message: 'Attachment folder is not read/write accessible.'
+        statusMessage: t('errors.httpCodes.401'),
+        message: t('errors.attachmentNotWritable')
       })
     }
   })
@@ -59,8 +62,8 @@ export default defineEventHandlerWithAttachmentAuthError(async (event) => {
   if (fileName.length > 255) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Bad Request',
-      message: `Filename ${fileName} will exceed allowed length of 255 characters.`
+      statusMessage: t('errors.httpCodes.400'),
+      message: t('errors.fileNameExceed', { fileName })
     })
   }
 
@@ -71,8 +74,8 @@ export default defineEventHandlerWithAttachmentAuthError(async (event) => {
   if (attachPath.length > maxPathLength) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Bad Request',
-      message: 'Attachment file path is going to exceed maximum path length for your operating system.'
+      statusMessage: t('errors.httpCodes.400'),
+      message: t('errors.pathWillExceedOS')
     })
   }
 

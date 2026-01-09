@@ -1,0 +1,69 @@
+<template>
+  <UCard :variant="notebook.isOpen ? 'subtle' : 'outline'" :ui="{ body: 'sm:p-4' }">
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-row justify-between">
+        <div class="flex grow flex-row gap-3">
+          <div class="bg-primary-500/20 flex size-12 place-content-center items-center rounded-md">
+            <UIcon name="i-lucide-book" class="text-primary-400 size-6" />
+          </div>
+          <div>
+            <UButton
+              variant="ghost"
+              class="text-black dark:text-white"
+              :title="t('openNotebook', { notebook: notebook.label })"
+              @click="toggle(notebook)">
+              <h3 class="font-bold">
+                {{ notebook.label }}
+              </h3>
+            </UButton>
+            <div class="ml-2 flex flex-row items-center text-neutral-400">
+              <small>{{ notebook.noteCount }} {{ t('note', notebook.noteCount === 1 ? 1 : 2) }}</small>
+              <span class="mx-1 font-extrabold">&middot;</span>
+              <small>{{ notebook.notebookCount }} {{ t('notebook', notebook.notebookCount === 1 ? 1 : 2) }}</small>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-row items-start">
+          <UButton
+            size="sm"
+            variant="ghost"
+            color="warning"
+            icon="i-lucide-fold-vertical"
+            :title="t('closeNotebooks', 1)"
+            :class="{ invisible: !notebook.isOpen }"
+            @click="toggle(notebook)" />
+          <NotebooksActions :notebook />
+        </div>
+      </div>
+      <div
+        v-if="!settingsStore.settings.isDense"
+        class="flex flex-row gap-2 rounded-md bg-zinc-300/20 p-3 dark:bg-zinc-700/20">
+        <small class="text-neutral-500 dark:text-neutral-400">{{ t('Created') }}:</small>
+        <small class="text-neutral-600 dark:text-neutral-300">
+          <CommonDateDisplay :date="notebook.createdAt" />
+        </small>
+      </div>
+    </div>
+    <template v-if="notebook.children && notebook.isOpen" #footer>
+      <TreeNotebooks :items="notebook.children" type="root" @toggle="toggle" />
+    </template>
+  </UCard>
+</template>
+
+<script lang="ts" setup>
+const settingsStore = useSettingsStore()
+
+const { notebook } = defineProps<{ notebook: NotebookTreeItemClient }>()
+const { t } = useI18n()
+const notebookStore = useNotebookStore()
+const openError: Ref<string | null> = ref(null)
+
+const toggle = async (item: NotebookTreeItemClient) => {
+  const resp = await notebookStore.toggleRootNotebook(item)
+  if (!resp.success) {
+    openError.value = resp.message
+  } else {
+    openError.value = null
+  }
+}
+</script>

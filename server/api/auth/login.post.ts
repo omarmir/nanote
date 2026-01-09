@@ -1,32 +1,25 @@
-import jwt from 'jsonwebtoken'
-import SECRET_KEY from '~/server/key'
-import { defineEventHandlerWithError } from '~/server/wrappers/error'
+import SECRET_KEY from '~~/server/utils/key'
 
-export default defineEventHandlerWithError(async (event) => {
-  const body = await readBody(event)
-  const { key } = body
+export default defineEventHandler(async (event): Promise<boolean> => {
+  const { secretKey } = await readBody(event)
+  const t = await useTranslation(event)
 
-  // Example user authentication (replace with DB lookup)
-  if (key !== SECRET_KEY) {
+  const isValid = secretKey === SECRET_KEY
+
+  if (!isValid) {
     throw createError({
       statusCode: 401,
-      statusMessage: 'Unauthorized',
-      message: 'Secret key does not match.'
+      message: t('errors.wrongKey')
     })
   }
 
-  // Create JWT token
-  const token = jwt.sign({ app: 'nanote' }, SECRET_KEY, { expiresIn: '7d', audience: 'authorized' })
-
-  setCookie(event, 'token', token, {
-    httpOnly: true,
-    sameSite: 'strict',
-    maxAge: 3600 * 24 * 7, // 7 days
-    path: '/'
+  // 3. Set the session
+  await setUserSession(event, {
+    user: {
+      role: 'root'
+    },
+    loggedInAt: new Date()
   })
 
-  return {
-    success: true,
-    token
-  }
+  return true
 })

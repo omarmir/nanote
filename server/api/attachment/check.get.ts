@@ -1,18 +1,20 @@
 import { access, constants } from 'node:fs/promises'
 import { resolve } from 'node:path'
-import { uploadPath } from '~/server/folder'
-import { defineEventHandlerWithAttachmentAuthError } from '~/server/wrappers/attachment-auth'
+import { uploadPath } from '~~/server/folder'
+import { defineEventHandlerWithError } from '~~/server/wrappers/error'
 
-// This route is used by the milkdown plugin to see if the attachment is accessible
-export default defineEventHandlerWithAttachmentAuthError(async (event) => {
+export default defineEventHandlerWithError(async event => {
+  await authorize(event, editAllNotes)
+
   const query = getQuery(event)
   const fileURL = query.url as string
+  const t = await useTranslation(event)
 
   if (!fileURL) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Bad Request',
-      message: 'No file specified in query parameters'
+      statusMessage: t('errors.httpCodes.400'),
+      message: t('errors.missingFileInQuery')
     })
   }
 
@@ -21,8 +23,8 @@ export default defineEventHandlerWithAttachmentAuthError(async (event) => {
   if (!fileName) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Bad Request',
-      message: 'Unable to get file name from the query parameters'
+      statusMessage: t('errors.httpCodes.400'),
+      message: t('errors.unableToGetFileName')
     })
   }
 

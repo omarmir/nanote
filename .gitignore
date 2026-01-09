@@ -23,10 +23,6 @@ logs
 .env.*
 !.env.example
 
-# notes dir
 notes
 uploads
-config
-
-# debugging plugin
-utils/md-plugins
+config/data.db

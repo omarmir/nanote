@@ -1,179 +1,121 @@
-import { fileURLToPath } from 'node:url'
-import { beforeAll, describe, expect, it } from 'vitest'
-import { setup, $fetch } from '@nuxt/test-utils'
-import type { DeleteNotebook, Notebook, NotebookContents, RenameNotebook } from '~/types/notebook'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { createTestContext } from '#tests/utils/fs-utils'
+import { writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
-import { notesPath } from '~/server/folder'
-import { getAuthCookie } from '~/tests/setup'
-import { access, mkdir, writeFile } from 'node:fs/promises'
 
-let authCookie = ''
-describe('Notebook check', async () => {
-  await setup({
-    rootDir: fileURLToPath(new URL('..', import.meta.url)),
-    server: true
-  })
+import postHandler from '#server/api/notebook/[...path].post'
+import putHandler from '#server/api/notebook/[...path].put'
+import deleteHandler from '#server/api/notebook/[...path].delete'
+import getHandler from '#server/api/notebook/[...path].get'
 
-  beforeAll(async () => {
-    const fullPath = join(notesPath, 'Test')
-    await mkdir(fullPath)
+let testContext: ReturnType<typeof createTestContext>
 
-    const notePath = join(fullPath, 'Content.md')
-    await writeFile(notePath, ['Content Test'])
-    const notebookPath = join(fullPath, 'Initial Notebook')
-    await mkdir(notebookPath)
-    authCookie = await getAuthCookie()
-  })
-
-  /**
-   * Notebook contents shows note created inside notebook
-   */
-  it('Reponse shows notebook content including the created note', async () => {
-    const response = await $fetch('api/notebook/Test', { method: 'GET', headers: { Cookie: authCookie } })
-    const resp: NotebookContents = {
-      path: join(notesPath, 'Test'),
-      notes: [
-        {
-          createdAt: expect.any(String),
-          name: 'Content.md',
-          notebook: ['Test'],
-          size: 0.01171875,
-          isMarkdown: true,
-          updatedAt: expect.any(String)
-        }
-      ],
-      notebooks: {
-        'Initial Notebook': {
-          name: 'Initial Notebook',
-          createdAt: expect.any(String),
-          noteCount: 0,
-          notebookCount: 0,
-          notebooks: ['Test'],
-          updatedAt: expect.any(String),
-          path: join(notesPath, 'Test', 'Initial Notebook')
-        }
-      },
-      pathArray: ['Test']
+vi.mock('#server/folder', () => {
+  return {
+    get notesPath() {
+      return testContext?.notesDir
+    },
+    get uploadPath() {
+      return testContext?.uploadsDir
     }
-    expect(response).toEqual(expect.objectContaining(resp))
+  }
+})
+
+vi.stubGlobal('readBody', vi.fn())
+
+describe('server/api/notebook', () => {
+  beforeEach(() => {
+    testContext = createTestContext()
+    vi.resetModules()
   })
 
-  /**
-   * Create Notebook
-   */
-  it('Response matches new nested notebook created', async () => {
-    const response = await $fetch('/api/notebook/Test/Nested', { method: 'POST', headers: { Cookie: authCookie } })
-    const resp: Notebook = {
-      notebooks: ['Test'],
-      name: 'Nested',
-      createdAt: expect.any(String),
-      updatedAt: null,
-      notebookCount: 0,
-      noteCount: 0,
-      path: join(notesPath, 'Test', 'Nested')
-    }
-    expect(response).toEqual(expect.objectContaining(resp))
+  afterEach(() => {
+    testContext.cleanup()
   })
 
-  it('Checks if nested folder was created', async () => {
-    await expect(access(join(notesPath, 'Test', 'Nested'))).resolves.not.toThrow()
-  })
+  describe('post (create)', () => {
+    it('should create a new notebook', async () => {
+      const notebookName = 'NewNotebook'
+      // vi.mocked(readBody).mockResolvedValue({ notebookName }) // Not used since path param is key
 
-  it('Response matches new nested notebook created', async () => {
-    const response = await $fetch('/api/notebook/Test/Nested/Deeply', {
-      method: 'POST',
-      headers: { Cookie: authCookie }
+      const event = {
+        context: { params: { path: notebookName } }
+      } as any
+
+      const result = await postHandler(event)
+
+      expect(result.label).toBe(notebookName)
+      expect(existsSync(join(testContext.notesDir, notebookName))).toBe(true)
     })
-    const resp: Notebook = {
-      notebooks: ['Test', 'Nested'],
-      name: 'Deeply',
-      createdAt: expect.any(String),
-      updatedAt: null,
-      notebookCount: 0,
-      noteCount: 0,
-      path: join(notesPath, 'Test', 'Nested', 'Deeply')
-    }
-    expect(response).toEqual(expect.objectContaining(resp))
-  })
 
-  it('Checks if nested folder was created', async () => {
-    await expect(access(join(notesPath, 'Test', 'Nested', 'Deeply'))).resolves.not.toThrow()
-  })
+    it('should fail if exists', async () => {
+      const notebookName = 'Existing'
+      mkdirSync(join(testContext.notesDir, notebookName))
 
-  /**
-   * Rename Notebook
-   */
+      const event = {
+        context: { params: { path: notebookName } }
+      } as any
 
-  it('Response matches nested renamed notebook', async () => {
-    const response = await $fetch('/api/notebook/Test/Nested', {
-      method: 'PUT',
-      headers: { Cookie: authCookie },
-      body: { newName: 'NestedTested' }
+      await expect(postHandler(event)).rejects.toMatchObject({
+        statusCode: 409
+      })
     })
-    const resp: RenameNotebook = {
-      notebooks: ['Test'],
-      oldName: 'Nested',
-      newName: 'NestedTested',
-      createdAt: expect.any(String),
-      path: join(notesPath, 'Test', 'NestedTested'),
-      updatedAt: expect.any(String)
-    }
-    expect(response).toEqual(expect.objectContaining(resp))
   })
 
-  it('Checks if renamed folder is gone', async () => {
-    await expect(access(join(notesPath, 'Test', 'Nested'))).rejects.toThrow()
-  })
+  describe('put (rename)', () => {
+    it('should rename a notebook', async () => {
+      const oldName = 'OldNotebook'
+      const newName = 'NewNotebook'
+      mkdirSync(join(testContext.notesDir, oldName))
 
-  it('Checks if renamed folder is present', async () => {
-    await expect(access(join(notesPath, 'Test', 'NestedTested'))).resolves.not.toThrow()
-  })
+      vi.mocked(readBody).mockResolvedValue({ newName })
 
-  /**
-   * Get Notebook
-   */
+      const event = {
+        context: { params: { path: oldName } }
+      } as any
 
-  it('Response matches nested notebook contents', async () => {
-    const response = await $fetch('/api/notebook/Test/NestedTested', {
-      method: 'GET',
-      headers: { Cookie: authCookie }
+      const result = await putHandler(event)
+
+      expect(result.label).toBe(newName)
+      expect(existsSync(join(testContext.notesDir, newName))).toBe(true)
+      expect(existsSync(join(testContext.notesDir, oldName))).toBe(false)
     })
-    const resp: NotebookContents = {
-      pathArray: ['Test', 'NestedTested'],
-      notes: [],
-      path: join(notesPath, 'Test', 'NestedTested'),
-      notebooks: {
-        Deeply: {
-          notebooks: ['Test', 'NestedTested'],
-          name: 'Deeply',
-          createdAt: expect.any(String),
-          updatedAt: expect.any(String),
-          notebookCount: 0,
-          noteCount: 0,
-          path: join(notesPath, 'Test', 'NestedTested', 'Deeply')
-        }
-      }
-    }
-    expect(response).toEqual(expect.objectContaining(resp))
   })
 
-  /**
-   * Delete Notebook
-   */
-  it('Response matches deleted nested notebook', async () => {
-    const response = await $fetch('/api/notebook/Test/NestedTested', {
-      method: 'DELETE',
-      headers: { Cookie: authCookie }
+  describe('delete', () => {
+    it('should delete a notebook', async () => {
+      const notebookName = 'DeleteMe'
+      mkdirSync(join(testContext.notesDir, notebookName))
+      // Add a file inside
+      writeFileSync(join(testContext.notesDir, notebookName, 'note.md'), 'content')
+
+      const event = {
+        context: { params: { path: notebookName } }
+      } as any
+
+      const result = await deleteHandler(event)
+
+      expect(result).toBe(true)
+      expect(existsSync(join(testContext.notesDir, notebookName))).toBe(false)
     })
-    const resp: DeleteNotebook = {
-      timestamp: expect.any(String),
-      notebook: ['Test', 'NestedTested'],
-      deleted: true
-    }
-    expect(response).toEqual(expect.objectContaining(resp))
   })
 
-  it('Checks if deleted nested folder is gone', async () => {
-    await expect(access(join(notesPath, 'Test', 'NestedTested'))).rejects.toThrow()
+  describe('get (list)', () => {
+    it('should list notebook contents', async () => {
+      const notebookName = 'MyNotebook'
+      mkdirSync(join(testContext.notesDir, notebookName))
+      writeFileSync(join(testContext.notesDir, notebookName, 'note1.md'), 'c1')
+      writeFileSync(join(testContext.notesDir, notebookName, 'note2.md'), 'c2')
+
+      const event = {
+        context: { params: { path: notebookName } }
+      } as any
+
+      const result = await getHandler(event)
+
+      expect(result).toHaveLength(2)
+      expect(result.map(i => i.label)).toContain('note1.md')
+      expect(result.map(i => i.label)).toContain('note2.md')
+    })
   })
 })

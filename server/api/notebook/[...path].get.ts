@@ -1,34 +1,36 @@
 import { readdir, stat } from 'node:fs/promises'
 import { join, extname } from 'node:path'
-import { defineEventHandlerWithNotebook } from '~/server/wrappers/notebook'
-import type { Note, Notebook, NotebookContents } from '~/types/notebook'
+import { defineEventHandlerWithNotebook } from '~~/server/wrappers/notebook'
+import { LAZY_LOAD_PLACEHOLDER, type NotebookTreeItem } from '#shared/types/notebook'
 /**
  * Returns contents for a specific notebook
  */
-export default defineEventHandlerWithNotebook(async (_event, notebook, fullPath): Promise<NotebookContents> => {
+export default defineEventHandlerWithNotebook(async (event, pathArray, fullPath): Promise<NotebookTreeItem[]> => {
+  await authorize(event, editAllNotes)
+
   // Read directory contents
   const files = await readdir(fullPath, { withFileTypes: true })
-  const notebookContents: NotebookContents = {
-    notes: [] as Note[],
-    path: fullPath,
-    pathArray: notebook
-  }
+  const notebookContents: NotebookTreeItem[] = []
   // Process files concurrently
   await Promise.all(
-    files.map(async (dirent) => {
+    files.map(async dirent => {
       const filePath = join(fullPath, dirent.name)
       const stats = await stat(filePath)
       const createdAtTime = stats.birthtime.getTime() !== 0 ? stats.birthtime : stats.ctime
       if (dirent.isFile()) {
         const note = {
-          name: dirent.name,
-          notebook: notebook,
+          label: dirent.name,
           createdAt: createdAtTime.toISOString(),
           updatedAt: stats.mtime.toISOString(),
           size: stats.size / 1024,
-          isMarkdown: extname(filePath).toLowerCase() === '.md'
-        } satisfies Note
-        notebookContents.notes.push(note)
+          isMarkdown: extname(filePath).toLowerCase() === '.md',
+          path: filePath,
+          pathArray: [...pathArray, dirent.name],
+          isNote: true,
+          apiPath: `${pathArray.join('/')}/${dirent.name}`,
+          disabled: false
+        } satisfies NotebookTreeItem
+        notebookContents.push(note)
       } else if (dirent.isDirectory()) {
         const notebookPath = join(fullPath, dirent.name)
         const notebookFiles = await readdir(notebookPath, { withFileTypes: true })
@@ -59,20 +61,22 @@ export default defineEventHandlerWithNotebook(async (_event, notebook, fullPath)
         )
 
         const nestedNotebook = {
-          name: dirent.name,
+          label: dirent.name,
           createdAt: createdAtTime.toISOString(),
           noteCount: fileCount,
           notebookCount: folderCount,
-          notebooks: notebook ?? [],
+          children: fileCount + folderCount > 0 ? [LAZY_LOAD_PLACEHOLDER] : [],
           updatedAt:
             updatedAt?.toISOString() ??
             new Date(Math.max(stats.birthtime.getTime(), stats.mtime.getTime())).toISOString(),
-          path: notebookPath
-        } satisfies Notebook
-        if (!notebookContents.notebooks) {
-          notebookContents.notebooks = {}
-        }
-        notebookContents.notebooks[nestedNotebook.name] = nestedNotebook
+          path: notebookPath,
+          pathArray: [...pathArray, dirent.name],
+          isNote: false,
+          apiPath: `${pathArray.join('/')}/${dirent.name}`,
+          disabled: false
+        } satisfies NotebookTreeItem
+
+        notebookContents.push(nestedNotebook)
       }
     })
   )

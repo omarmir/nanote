@@ -1,72 +1,76 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-
 export default defineNuxtConfig({
-  app: {
-    head: {
-      title: 'Nanote', // default fallback title
-      htmlAttrs: {
-        lang: 'en'
-      },
-      link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
-    }
-  },
-  compatibilityDate: '2024-11-01',
-  ssr: false,
-  devtools: {
-    enabled: true,
-    timeline: {
-      enabled: true
-    }
-  },
-  css: ['~/assets/css/main.css'],
   modules: [
-    '@nuxt/fonts',
     '@nuxt/eslint',
-    '@nuxtjs/eslint-module',
-    '@nuxtjs/tailwindcss',
+    '@nuxt/ui',
+    '@nuxt/test-utils',
+    '@nuxt/hints',
+    '@nuxtjs/i18n',
     '@pinia/nuxt',
-    '@nuxt/test-utils/module',
-    '@nuxt/icon',
-    'nuxt-codemirror'
+    'nuxt-codemirror',
+    'nuxt-auth-utils',
+    'nuxt-authorization'
   ],
-  tailwindcss: {
-    config: {
-      content: {
-        files: ['./components/**/*.{vue,js,ts}', './layouts/**/*.vue', './pages/**/*.vue', '!./node_modules']
+
+  ssr: false,
+
+  imports: {
+    presets: [
+      {
+        from: 'material-file-icons',
+        imports: ['getIcon']
       }
-    }
-  },
-  icon: {
-    size: '20px',
-    class: 'icon',
-    mode: 'svg',
-    cssLayer: 'base',
-    clientBundle: {
-      scan: true
-    }
-  },
-  fonts: {
-    families: [
-      // do not resolve this font with any provider from `@nuxt/fonts`
-      { name: 'Rubik', provider: 'google', global: true },
-      // only resolve this font with the `google` provider
-      { name: 'Inter', provider: 'google', global: true },
-      // specify specific font data - this will bypass any providers
-      { name: 'JetBrains Mono', provider: 'google', global: true }
     ]
   },
-  routeRules: {
-    '/api/notebook': { redirect: '/api/notebook/*' }
+
+  devtools: {
+    enabled: true
   },
-  vite: {
-    server: {
-      watch: {
-        usePolling: false // on Linux/macOS you usually don’t need polling
+
+  css: ['~/assets/css/main.css'],
+
+  routeRules: {
+    '/': { prerender: true }
+  },
+
+  compatibilityDate: '2025-01-15',
+
+  eslint: {
+    config: {
+      stylistic: {
+        commaDangle: 'never',
+        braceStyle: '1tbs'
       }
-    },
-    optimizeDeps: {
-      // pre-bundle common deps so they’re not re-scanned each time
-      include: ['vue', 'vue-router', 'pinia']
+    }
+  },
+
+  fonts: {
+    families: [
+      { name: 'JetBrains Mono', global: true },
+      { name: 'Fira Code', global: true },
+      { name: 'Public Sans', global: true },
+      { name: 'Inter', global: true }
+    ]
+  },
+
+  i18n: {
+    defaultLocale: 'en',
+    locales: [{ code: 'en', name: 'English', file: 'en.json' }],
+    experimental: {
+      localeDetector: 'localeDetector.ts'
+    }
+  },
+
+  icon: {
+    customCollections: [
+      {
+        prefix: 'custom',
+        dir: './app/assets/icons'
+      }
+    ],
+    provider: 'server',
+    clientBundle: {
+      scan: true
     }
   }
 })

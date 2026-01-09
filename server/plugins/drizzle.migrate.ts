@@ -1,15 +1,15 @@
 // server/plugins/drizzle.migrate.ts
 import { migrate } from 'drizzle-orm/libsql/migrator' // Or your SQLite driver's migrator
 import { access, constants } from 'node:fs/promises'
-import { dbSystemPath } from '~/server/folder'
-import { db } from '~/server/utils/drizzle'
+import { dbSystemPath } from '~~/server/folder'
+import { db } from '~~/server/utils/drizzle'
 import { createError } from 'h3' // ← This import is mandatory
 
 export default defineNitroPlugin(async (app) => {
-  if (process.env.NODE_ENV === 'development') {
-    console.log('Skipping automatic migrations in development mode.')
-    return
-  }
+  // if (process.env.NODE_ENV === 'development') {
+  //   console.log('Skipping automatic migrations in development mode.')
+  //   return
+  // }
 
   console.log(`Checking database status for SQLite file at: ${dbSystemPath}`)
 

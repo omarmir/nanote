@@ -2,16 +2,19 @@ import { resolve } from 'node:path'
 import type { ExecException, ExecSyncOptionsWithStringEncoding } from 'node:child_process'
 import { execSync } from 'node:child_process'
 import escape from 'shell-escape'
-import { notesPath } from '~/server/folder'
+import { notesPath } from '~~/server/folder'
 import { defineEventHandlerWithSearch } from '../wrappers/search'
 import { defineEventHandlerWithError } from '../wrappers/error'
-import { CONTEXT_CHARS, MAX_RESULTS, type UgrepResult, type USearchResult } from '~/types/ugrep'
+import { CONTEXT_CHARS, MAX_RESULTS, type UgrepResult, type USearchResult } from '#shared/types/ugrep'
 import { matchScore, splitWords } from '../utils/search'
 
 export default defineEventHandlerWithError(async (event): Promise<USearchResult[]> => {
+  await authorize(event, editAllNotes)
+
   return defineEventHandlerWithSearch(async (_event, searchResults): Promise<USearchResult[]> => {
     const fullPath = resolve(notesPath)
     const { q: rawQuery } = getQuery(event)
+    const t = await useTranslation(event)
 
     if (!rawQuery || typeof rawQuery !== 'string') {
       throw createError({ statusCode: 400, message: 'Missing query.' })
@@ -25,7 +28,7 @@ export default defineEventHandlerWithError(async (event): Promise<USearchResult[
       const searchPath = escape([fullPath])
       // const ugrepPattern = queryWords.map((q) => `-e ${escape([q])}`).join(' ')
       // const lookaheads = queryWords.map((word) => `(?=.*\\b${escape([word])}\\b)`).join('')
-      const lookaheads = queryWords.map((word) => `(?=.*${escape([word])})`).join('')
+      const lookaheads = queryWords.map(word => `(?=.*${escape([word])})`).join('')
 
       // Combine them into the full pattern
       const ugrepPattern = `-P '^${lookaheads}.*$'`
@@ -39,7 +42,7 @@ export default defineEventHandlerWithError(async (event): Promise<USearchResult[
         '--json', // JSON output
         '--ignore-case', // case insensitive
         '--format=json',
-        '--max-files=2000', //if this is too big, then it ends up causing issues
+        '--max-files=2000', // if this is too big, then it ends up causing issues
         ugrepPattern,
         searchPath
       ].join(' ')
@@ -61,7 +64,7 @@ export default defineEventHandlerWithError(async (event): Promise<USearchResult[
           console.dir(error, { depth: null })
           throw createError({
             statusCode: 500,
-            statusMessage: 'Internal Server Error',
+            statusMessage: t('errors.httpCodes.500'),
             data: error,
             message: 'Unable to search. Check console for details.'
           })
@@ -75,10 +78,14 @@ export default defineEventHandlerWithError(async (event): Promise<USearchResult[
 
         return matches.map(({ match, line }) => {
           const score = matchScore(queryWords, match)
+          const name = relativePath.at(-1) as string
+          const pathArray = [...relativePath.slice(0, -1), name]
+          const apiPath = pathArray.join('/')
 
           return {
-            notebook: relativePath.slice(0, -1),
-            name: relativePath.at(-1) as string,
+            pathArray,
+            apiPath,
+            name,
             snippet: match.trim().slice(0, CONTEXT_CHARS * 2),
             score,
             matchType: 'content',
@@ -87,40 +94,33 @@ export default defineEventHandlerWithError(async (event): Promise<USearchResult[
         })
       })
 
-      results.push(...contentResults.filter((r) => r.notebook))
+      results.push(...contentResults.filter(r => r.pathArray))
     } catch (error) {
       console.dir(error, { depth: null })
       throw createError({
         statusCode: 500,
-        statusMessage: 'Internal Server Error',
+        statusMessage: t('errors.httpCodes.500'),
         data: error,
         message: 'Unable to search. Check console for details.'
       })
     }
 
-    // const searchSortedResults = Array.from(new Set(results))
-
     const seen = new Set<string>()
-    const dedupedResults = results.filter((r) => {
-      const key = `${r.notebook.join('')}|${r.name}|${r.lineNum}`
+    const dedupedResults = results.filter(r => {
+      const key = `${r.pathArray.join('')}:${r.lineNum}`
       if (seen.has(key)) return false
       seen.add(key)
       return true
     })
+
     const sortedContentResults = [
       ...dedupedResults,
-      ...searchResults.map((r) => ({ ...r, lineNum: 0, score: r.score ?? 0 }))
+      ...searchResults.map(r => ({ ...r, lineNum: 0, score: r.score ?? 0 }))
     ]
       .sort((a, b) => b.score - a.score)
       .slice(0, MAX_RESULTS)
 
-    // Deduplicate and sort
-    // const sortedContentResults = Array.from(new Set(results.map((r) => JSON.stringify(r))))
-    //   .map((r) => JSON.parse(r) as USearchResult)
-    //   .sort((a, b) => b.score - a.score)
-    //   .slice(0, MAX_RESULTS)
-
-    // sortedContentResults.push(...searchResults.map((r) => ({ ...r, lineNum: 0, score: r.score ?? 0 }))) // Folders returned from search wrapper have no line number, we can fix this later
+    // sortedContentResults.push(...searchResults.map((r) => ({ ...r, lineNum: 0, score: r.score ?? 0 })))
     return sortedContentResults
   })(event)
 })

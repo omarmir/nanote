@@ -4,11 +4,13 @@ import { extname } from 'node:path'
 import { createReadStream } from 'node:fs'
 import contentDisposition from 'content-disposition'
 
-import { defineEventHandlerWithNotebookAndNote } from '~/server/wrappers/note'
+import { defineEventHandlerWithNotebookAndNote } from '~~/server/wrappers/note'
 
 export default defineEventHandlerWithNotebookAndNote(
   async (event, _cleanNotebook, cleanNote, fullPath): Promise<void> => {
-    //Get info
+    await authorize(event, editAllNotes)
+
+    // Get info
     const stats = await stat(fullPath)
 
     const createdAtTime = stats.birthtime.getTime() !== 0 ? stats.birthtime : stats.ctime

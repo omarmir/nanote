@@ -1,28 +1,51 @@
-import type { ReadStream } from 'node:fs'
 import { createReadStream, existsSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { uploadPath } from '~/server/folder'
+import { uploadPath } from '~~/server/folder'
 import mime from 'mime'
-import { defineEventHandlerWithAttachmentAuthError } from '~/server/wrappers/attachment-auth'
+import { defineEventHandlerWithError } from '~~/server/wrappers/error'
 
-export default defineEventHandlerWithAttachmentAuthError(async (event): Promise<ReadStream> => {
+export default defineEventHandlerWithError(async event => {
   const file = event.context.params?.file
 
   if (!file) {
+    const t = await useTranslation(event)
     throw createError({
       statusCode: 400,
-      statusMessage: 'Bad Request',
-      message: 'No file specified'
+      statusMessage: t('errors.httpCodes.400'),
+      message: t('errors.missingFileParam')
     })
   }
+
+  const fileName = decodeURIComponent(file)
+
+  const userSession = await getUserSession(event)
+
+  if (!userSession.user) {
+    const headerToken = getRequestHeader(event, 'x-pdf-token')
+    const validToken = headerToken ? await verifyPdfToken(headerToken) : false
+
+    await authorize(event, viewAttachment, fileName, { validToken })
+  } else if (userSession.user.role === 'shared') {
+    // @ts-expect-error - not sure why it doesnt see it here
+    const notePath = userSession.secure?.share?.apiPath
+
+    const attachments = notePath ? await useStorage().hasItem(`${SHARED_ATTACHMENT_PREFIX}${notePath}`) : []
+
+    const shared = { attachments, apiPath: notePath }
+
+    await authorize(event, viewAttachment, fileName, { shared })
+  }
+
   // Construct the path to your file. Adjust the base folder as needed.
-  const filePath = resolve(uploadPath, 'attachments', decodeURIComponent(file))
+  const filePath = resolve(uploadPath, 'attachments', fileName)
 
   // Check if the file exists
   if (!existsSync(filePath)) {
+    const t = await useTranslation(event)
     throw createError({
       statusCode: 404,
-      statusMessage: 'File not found'
+      statusMessage: t('errors.httpCodes.404'),
+      message: t('errors.fileDoesNotExist')
     })
   }
 

@@ -1,7 +1,6 @@
 import { unlink } from 'node:fs/promises'
-import { defineEventHandlerWithAttachmentNotebookNote } from '~/server/wrappers/attachment'
-
-import type { DeleteNote } from '~/types/notebook'
+import { shared } from '~~/server/db/schema'
+import { defineEventHandlerWithAttachmentNotebookNote } from '~~/server/wrappers/attachment'
 
 /**
  * Delete note
@@ -10,21 +9,26 @@ export default defineEventHandlerWithAttachmentNotebookNote(
   async (
     event,
     notebook,
-    note,
+    _note,
     fullPath,
     _markAttachmentForDeletionIfNeeded,
-    deleteAllAttachments
-  ): Promise<DeleteNote> => {
-    // Read file contents and stats
+    deleteAllAttachments,
+    apiPath
+  ): Promise<boolean> => {
+    await authorize(event, editAllNotes)
+
     await unlink(fullPath)
 
     await deleteAllAttachments()
 
-    return {
-      notebook: notebook,
-      name: note,
-      deleted: true,
-      timestamp: new Date().toISOString()
-    } satisfies DeleteNote
+    // Delete the note if it was shared but don't need to wait for it
+    event.waitUntil(
+      db
+        .delete(shared)
+        .where(eq(shared.path, apiPath))
+        .catch(() => ({}))
+    )
+
+    return true
   }
 )
