@@ -6,7 +6,7 @@ import SECRET_KEY from '~~/server/utils/key'
 export default defineEventHandlerWithError(async (event): Promise<Health> => {
   const session = await getUserSession(event)
 
-  if (session.role !== 'root') {
+  if (session.user?.role !== 'root') {
     return {
       status: 'OK',
       warnings: []
