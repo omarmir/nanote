@@ -32,7 +32,7 @@
           v-model="md"
           :theme="isDark ? 'dark' : 'light'"
           class="file-editor mt-4 w-full"
-          placeholder="Enter your content here..."
+          :placeholder="t('contentHere')"
           :auto-focus="true"
           :line-wrapping="true"
           :editable="false"

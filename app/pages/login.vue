@@ -60,7 +60,7 @@ const onSubmit = async (event: FormSubmitEvent<{ secretKey: string }>) => {
     }
   } catch (e) {
     const err = e as FetchError
-    error.value = err.data.statusMessage || 'Login failed'
+    error.value = err.data.statusMessage || t('errors.loginFailed')
   }
 }
 </script>
