@@ -31,6 +31,7 @@
     "@nuxt/ui": "^4.2.1",
     "@nuxtjs/i18n": "10.2.1",
     "@pinia/nuxt": "0.11.3",
+    "@tailwindcss/vite": "^4.0.0",
     "content-disposition": "^0.5.4",
     "drizzle-orm": "^0.43.1",
     "fast-glob": "^3.3.3",
@@ -48,6 +49,7 @@
     "remark-html": "^16.0.1",
     "remark-parse": "^11.0.0",
     "shell-escape": "^0.2.0",
+    "tailwindcss": "^4.0.0",
     "unified": "^11.0.5",
     "valibot": "^1.2.0",
     "view": "link:@milkdown/prose/view"
