@@ -14,7 +14,7 @@ RUN npm install -g pnpm
 FROM base AS build
 
 # Copy only lockfile and manifest first to leverage cache
-COPY package.json pnpm-lock.yaml .npmrc ./
+COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies (no dev dependencies in production build)
 RUN pnpm install --frozen-lockfile
