@@ -1,5 +1,12 @@
+import { nanoid } from 'nanoid'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  runtimeConfig: {
+    session: {
+      password: process.env.NUXT_SESSION_PASSWORD || nanoid(32)
+    }
+  },
   modules: [
     '@nuxt/eslint',
     '@nuxt/ui',
