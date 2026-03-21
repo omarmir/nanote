@@ -4,7 +4,8 @@ import { nanoid } from 'nanoid'
 export default defineNuxtConfig({
   runtimeConfig: {
     session: {
-      password: process.env.NUXT_SESSION_PASSWORD || nanoid(32)
+      password: process.env.NUXT_SESSION_PASSWORD || nanoid(32),
+      maxAge: 60 * 60 * 24 * 30 // 30 days
     }
   },
   modules: [
