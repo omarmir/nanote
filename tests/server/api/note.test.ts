@@ -112,6 +112,26 @@ describe('server/api/note', () => {
       expect(existsSync(join(testContext.notesDir, 'my-notebook', newName))).toBe(true)
       expect(existsSync(join(testContext.notesDir, 'my-notebook', oldName))).toBe(false)
     })
+
+    it.each([
+      ['plain', 'plain.txt', false],
+      ['plain', 'plain.md', true],
+      ['draft.md', 'draft.txt', false]
+    ])('should change the extension from %s to %s', async (oldName, newName, isMarkdown) => {
+      writeFileSync(join(testContext.notesDir, 'my-notebook', oldName), 'content')
+      vi.mocked(readBody).mockResolvedValue({ newName })
+
+      const event = {
+        context: { params: { path: `my-notebook/${oldName}` } }
+      } as any
+
+      const result = await putHandler(event)
+
+      expect(result.label).toBe(newName)
+      expect(result.isMarkdown).toBe(isMarkdown)
+      expect(existsSync(join(testContext.notesDir, 'my-notebook', newName))).toBe(true)
+      expect(existsSync(join(testContext.notesDir, 'my-notebook', oldName))).toBe(false)
+    })
   })
 
   describe('delete', () => {

@@ -22,14 +22,10 @@ export default defineEventHandlerWithNotebookAndNote(
       })
     }
 
-    console.log('fp', fullPath)
-
     const cleanNewNote = body.newName.replace(/[\\/:*?"<>|]/g, '')
 
     // Construct paths
     const newPath = resolve(join(targetFolder, cleanNewNote))
-
-    console.log('np', newPath)
 
     try {
       await access(newPath, constants.F_OK)

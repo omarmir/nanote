@@ -170,7 +170,7 @@ export const useNotebookStore = defineStore('notebook', () => {
       if (parentNotebook?.children) {
         const index = parentNotebook.children.findIndex(item => item.label === originalName)
         if (index !== -1) {
-          const replacedItem: NotebookTreeItemClient = { ...notebooks.value[index]!, ...renamedItem }
+          const replacedItem: NotebookTreeItemClient = { ...parentNotebook.children[index]!, ...renamedItem }
           parentNotebook.children.splice(index, 1, replacedItem)
         }
       }

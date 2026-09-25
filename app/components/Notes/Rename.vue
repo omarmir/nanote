@@ -20,7 +20,7 @@
             <UInput v-model="state.name" class="w-full" :placeholder="t('renameItem', { item: originalName })" />
             <USwitch v-model="state.isManual" :label="t('manual')" :aria-details="t('manualAddNewNote')" />
             <div class="flex w-full flex-row place-content-end items-center gap-4">
-              <UButton type="submit" color="warning" :disabled="isRenaming">
+              <UButton type="submit" color="warning" :disabled="isRenaming || newFilename === originalName">
                 {{ t('rename') }}
                 <template #leading>
                   <UIcon v-if="isRenaming" name="i-lucide-loader-circle" class="animate-spin" />
@@ -66,15 +66,31 @@ const notebookStore = useNotebookStore()
 const isRenaming = ref(false)
 
 const renameError: Ref<null | string> = ref(null)
+const markdownExtension = isMarkdown ? originalName.slice(-3) : '.md'
 
 const state = reactive({
-  name: originalName,
+  name: isMarkdown ? originalName.slice(0, -markdownExtension.length) : originalName,
   isManual: !isMarkdown
 })
 
-async function onSubmit(event: FormSubmitEvent<NewName>) {
+// Automatic mode edits the Markdown title; manual mode edits the whole filename.
+const newFilename = computed(() => state.isManual ? state.name : `${state.name}${markdownExtension}`)
+
+watch(() => state.isManual, (isManual) => {
+  if (isManual) {
+    state.name += markdownExtension
+  } else {
+    const lastDot = state.name.lastIndexOf('.')
+    if (lastDot > 0) state.name = state.name.slice(0, lastDot)
+  }
+})
+
+async function onSubmit(event: FormSubmitEvent<NewNote>) {
+  const filename = event.data.isManual ? event.data.name : `${event.data.name}${markdownExtension}`
+  if (filename === originalName) return
+
   isRenaming.value = true
-  const renamedResp = await notebookStore.renameNote(originalAPIPath, event.data.name, originalName, originalPathArray)
+  const renamedResp = await notebookStore.renameNote(originalAPIPath, filename, originalName, originalPathArray)
   if (renamedResp.success) {
     toast.add({
       title: t('success'),
