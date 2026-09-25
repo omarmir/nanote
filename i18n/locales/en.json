@@ -56,6 +56,7 @@
   "copy": "Copy",
   "contentHere": "Enter your content here...",
   "theme": "Theme",
+  "language": "Language",
   "github": "Follow this project or report issues on github",
   "toggleEdit": "Toggle edit mode",
   "toggleMetadata": "Toggle metadata",

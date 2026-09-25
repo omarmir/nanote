@@ -19,7 +19,7 @@ import type { NavigationMenuItem } from '@nuxt/ui'
 
 const { t } = useI18n()
 
-const links = [
+const links = computed<NavigationMenuItem[][]>(() => [
   [
     {
       label: t('settings.navigation.general'),
@@ -45,5 +45,5 @@ const links = [
       to: '/guide'
     }
   ]
-] satisfies NavigationMenuItem[][]
+])
 </script>

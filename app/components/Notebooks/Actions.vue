@@ -12,7 +12,7 @@ const { notebook, isOpen = false } = defineProps<{ notebook: NotebookTreeItemCli
 const { t } = useI18n()
 const overlay = useOverlay()
 
-const items: DropdownMenuItem[][] = [
+const items = computed<DropdownMenuItem[][]>(() => [
   [
     {
       label: t('rename'),
@@ -58,5 +58,5 @@ const items: DropdownMenuItem[][] = [
       }
     }
   ]
-]
+])
 </script>

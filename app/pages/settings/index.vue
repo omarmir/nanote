@@ -2,7 +2,7 @@
   <UForm id="settings">
     <UPageCard
       :title="t('settings.navigation.general')"
-      description="These informations will be displayed publicly."
+      :description="t('settings.pageSubtitles.general')"
       variant="naked"
       orientation="horizontal"
       class="mb-4" />

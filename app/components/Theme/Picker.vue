@@ -112,11 +112,11 @@ const primary = computed({
   }
 })
 
-const modes = [
+const modes = computed(() => [
   { label: t('modes.light'), icon: appConfig.ui.icons.light, type: 'light' },
   { label: t('modes.dark'), icon: appConfig.ui.icons.dark, type: 'dark' },
   { label: t('modes.system'), icon: appConfig.ui.icons.system, type: 'system' }
-]
+])
 const mode = computed({
   get() {
     return colorMode.value

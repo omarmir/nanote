@@ -1,5 +1,5 @@
 <template>
-  <UApp :locale="locales[locale]">
+  <UApp :locale="uiLocale">
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
@@ -11,8 +11,13 @@ import * as locales from '@nuxt/ui/locale'
 
 const { locale } = useI18n()
 
-const lang = computed(() => locales[locale.value].code)
-const dir = computed(() => locales[locale.value].dir)
+const uiLocale = computed(() => {
+  if (locale.value === 'zh-CN') return locales.zh_cn
+  if (locale.value === 'fr') return locales.fr
+  return locales.en
+})
+const lang = computed(() => uiLocale.value.code)
+const dir = computed(() => uiLocale.value.dir)
 
 useHead({
   meta: [{ name: 'viewport', content: 'width=device-width, initial-scale=1' }],

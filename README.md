@@ -100,6 +100,12 @@ docker compose -d up
 
 Right now, the place that needs the most help is the home page, it's hard to read so some help there would be appreciated. Open an issue and discuss the issue first. Nanote is distributed under the GNU Affero General Public License.
 
+### Translations
+
+Use the language menu beside the GitHub icon to switch between English, French, and Simplified Chinese. Your choice is saved in a browser cookie.
+
+Translation files are in [`i18n/locales`](i18n/locales). You can edit `zh-CN.json` directly to change Chinese wording. To add another language, copy `en.json`, translate its values while preserving keys and placeholders such as `{note}`, and register the new file in `nuxt.config.ts` under `i18n.locales`.
+
 ### Local Development
 
 ```bash

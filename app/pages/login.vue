@@ -36,7 +36,7 @@ const { fetch } = useUserSession()
 
 const error: Ref<null | string> = ref(null)
 
-const fields: AuthFormField[] = [
+const fields = computed<AuthFormField[]>(() => [
   {
     name: 'secretKey',
     label: t('secretKey'),
@@ -44,7 +44,7 @@ const fields: AuthFormField[] = [
     placeholder: t('secretKeyPlaceholder'),
     required: true
   }
-]
+])
 
 const onSubmit = async (event: FormSubmitEvent<{ secretKey: string }>) => {
   try {

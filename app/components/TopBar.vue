@@ -54,6 +54,7 @@
           :title="t('toggleMetadata')"
           :aria-pressed="settingsStore.settings.isDense"
           @click="settingsStore.toggleDenseMode()" />
+        <LanguageSwitcher />
         <UButton
           to="https://github.com/omarmir/nanote"
           icon="i-custom-simple-icons-github"
