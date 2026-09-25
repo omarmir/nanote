@@ -4,9 +4,15 @@ A lightweight, self-hosted note-taking application with filesystem-based storage
 
 **Auth** : If you don't set the SECRET_KEY environment variable the default secret key is `nanote` though you should set your own key
 
-## Screenshot
+## Screenshots
 
-![Screenshot](https://raw.githubusercontent.com/omarmir/nanote/refs/heads/master/screenshot.png 'Nanote screenshot')
+### Home
+
+![Nanote home page showing notebooks and recent notes](screenshot-home.png)
+
+### Note editor
+
+![Nanote showing notebook navigation and a Markdown note with a checklist](screenshot.png)
 
 ## Features
 
