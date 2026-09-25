@@ -8,11 +8,11 @@ A lightweight, self-hosted note-taking application with filesystem-based storage
 
 ### Home
 
-![Nanote home page showing notebooks and recent notes](screenshot-home.png)
+![Nanote home page showing notebooks and recent notes](https://raw.githubusercontent.com/omarmir/nanote/master/screenshot-home.png)
 
 ### Note editor
 
-![Nanote showing notebook navigation and a Markdown note with a checklist](screenshot.png)
+![Nanote showing notebook navigation and a Markdown note with a checklist](https://raw.githubusercontent.com/omarmir/nanote/master/screenshot.png)
 
 ## Features
 
