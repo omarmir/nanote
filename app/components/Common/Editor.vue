@@ -1,11 +1,11 @@
 <template>
   <div class="mb-5 flex flex-wrap" :class="{ 'sm:mx-[60px]': isMD }">
     <div class="mb-6 w-full max-w-full px-3 sm:flex-none">
-      <MilkdownProvider v-if="isMD && settingsStore.settings.isCodeViewAllFiles !== true">
+      <MilkdownProvider v-if="isMD && !isCodeView">
         <MilkdownEditor v-model="content" :ln :api-path :disabled />
       </MilkdownProvider>
       <NuxtCodeMirror
-        v-else-if="!isMD || settingsStore.settings.isCodeViewAllFiles"
+        v-else
         :key="`${disabled.toString()}`"
         ref="codemirror"
         v-model="content"
@@ -28,14 +28,14 @@ import { EditorView } from '@codemirror/view'
 import { useRouter } from 'vue-router'
 import type { EditorState } from '@codemirror/state'
 
-const { isMD, apiPath, disabled } = defineProps<{
+const { isMD, isCodeView, apiPath, disabled } = defineProps<{
   isMD: boolean
+  isCodeView: boolean
   apiPath: string
   disabled: boolean
 }>()
 
 const router = useRouter()
-const settingsStore = useSettingsStore()
 const { t } = useI18n()
 
 const content = defineModel<string>('content', { required: true })

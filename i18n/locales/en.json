@@ -59,6 +59,7 @@
   "language": "Language",
   "github": "Follow this project or report issues on github",
   "toggleEdit": "Toggle edit mode",
+  "toggleCodeView": "Toggle source view",
   "toggleMetadata": "Toggle metadata",
   "searchAll": "Start typing to search all notes and notebooks",
   "searchResults": "Notes matching “{searchTerm}”...",

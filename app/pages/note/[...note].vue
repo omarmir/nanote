@@ -4,7 +4,8 @@
       <TopBar
         :is-exporting
         :name
-        :note-opts="{ isReadOnly }"
+        :note-opts="{ isReadOnly, isMarkdown: isMD === true, isCodeView }"
+        @codeview="toggleCodeView"
         @pdf="generatePDF"
         @readonly="toggleReadOnlyMode"
         @share="shareNote"
@@ -27,6 +28,7 @@
           v-model:content="content"
           :api-path
           :is-m-d
+          :is-code-view
           :disabled="isReadOnly"
           :note="name" />
       </template>
@@ -49,10 +51,17 @@ import { LazyCommonDelete, LazyNotesRename, LazyNotesShare } from '#components'
 const { t } = useI18n()
 const overlay = useOverlay()
 const isReadOnly = useState('isReadOnly', () => false)
+const settingsStore = useSettingsStore()
+const route = useRoute()
 
 // Use the composable for all note content logic (including route extraction)
 const { content, isMD, error, updated, savingState, pathArray, name, fetchMarkdown, apiPath, loadingState } =
   useNoteContent()
+const { isCodeView, toggleCodeView } = useNoteEditorMode(
+  isMD,
+  computed(() => settingsStore.settings.isCodeViewAllFiles),
+  computed(() => route.path)
+)
 
 // Fetch markdown content on component setup
 await fetchMarkdown()

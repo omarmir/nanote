@@ -7,6 +7,15 @@
       <div class="flex flex-row items-center gap-2">
         <div v-if="noteOpts" class="flex flex-row items-center gap-2">
           <UButton
+            v-if="noteOpts.isMarkdown"
+            :icon="noteOpts.isCodeView ? 'i-lucide-code-xml' : 'i-lucide-file-code-2'"
+            variant="ghost"
+            :aria-pressed="noteOpts.isCodeView"
+            size="md"
+            :aria-label="t('toggleCodeView')"
+            :title="t('toggleCodeView')"
+            @click="$emit('codeview')" />
+          <UButton
             :icon="noteOpts.isReadOnly ? 'i-lucide-pencil' : 'i-lucide-pencil-off'"
             variant="ghost"
             :aria-pressed="noteOpts.isReadOnly"
@@ -76,12 +85,12 @@ const {
   isExporting = false
 } = defineProps<{
   name?: string
-  noteOpts?: { isReadOnly: boolean }
+  noteOpts?: { isReadOnly: boolean; isMarkdown: boolean; isCodeView: boolean }
   isExporting?: boolean
 }>()
 const { t } = useI18n()
 
 const settingsStore = useSettingsStore()
 
-defineEmits(['share', 'pdf', 'delete', 'rename', 'readonly'])
+defineEmits(['share', 'pdf', 'delete', 'rename', 'readonly', 'codeview'])
 </script>

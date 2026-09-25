@@ -59,6 +59,7 @@
   "language": "Langue",
   "github": "Suivre ce projet ou signaler un problème sur GitHub",
   "toggleEdit": "Activer ou désactiver le mode édition",
+  "toggleCodeView": "Activer ou désactiver l’affichage du code source",
   "toggleMetadata": "Afficher ou masquer les métadonnées",
   "searchAll": "Saisissez du texte pour rechercher dans les notes et les carnets",
   "searchResults": "Notes correspondant à « {searchTerm} »...",

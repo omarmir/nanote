@@ -59,6 +59,7 @@
   "language": "语言",
   "github": "在 GitHub 上关注此项目或反馈问题",
   "toggleEdit": "切换编辑模式",
+  "toggleCodeView": "切换源代码视图",
   "toggleMetadata": "切换元数据显示",
   "searchAll": "输入内容以搜索所有笔记和笔记本",
   "searchResults": "与“{searchTerm}”匹配的笔记...",
