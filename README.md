@@ -83,6 +83,12 @@ If these are not set then the app will save files locally within itself. The not
 docker compose -d up
 ```
 
+### Easypanel
+
+Nanote has a one-click deployment template on [Easypanel](https://easypanel.io), a self-hosted Docker deployment platform:
+
+[![Deploy on Easypanel](https://easypanel.io/img/deploy-on-easypanel-40.svg)](https://easypanel.io/templates/nanote)
+
 ### Prerequisites
 
 - Node.js 18+
